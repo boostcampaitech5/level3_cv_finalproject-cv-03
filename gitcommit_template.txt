@@ -1,0 +1,39 @@
+# Subject should be under 50 character (ex. Feat: Add Key mapping)  
+
+
+# Write body underneath  
+
+
+# Write Footer underneath (ex. Github issue #23)  
+
+# --- COMMIT END ---  
+#   <type> list  
+#   feat        : feature (new feature)  
+#   fix         : bug (bug fix)  
+#   refactor    : refactoring  
+#   design      : UI or design (ex. css)   
+#   style       : style (code format)  
+#   docs        : documentation (document add, fix, delete, README), annotation fix  
+#   test        : test (test code add, fix, change)  
+#   chore       : other changes (build script fix, assets, package manager etc..)  
+#   init        : project initialization  
+#   rename      : renaming files or directories 
+#   remove      : deleting files or directories 
+# ------------------  
+#   <Subject>  
+#   First character of Subject must be capitalized  
+#   write in statement  
+#   "." is not allowed  
+#   seperate Subject and Body with a new line feed  
+# ------------------  
+#   <Body>  
+#   write "what" you did and "why" you did it  
+#   each line should be under 72 character  
+# ------------------  
+#   <Footer>  
+#   Footer is optional  
+#   Fixes        : issue currently fixing (if not resolved)  
+#   Resolves     : if issue is resolved  
+#   Ref          : if there is a issue to refer 
+#   Related to   : related issue for this commit (if not resolved)  
+#   (ex. Fixes: #47 Related to: #32, #21)

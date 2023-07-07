@@ -41,7 +41,7 @@ def train(
         for step, (imgs, texts) in enumerate(train_dataloader):
             # If you use resume, update the progress to resume.
             if args.resume and epoch == first_epoch and step < resume_step:
-                if step % args.gradient_accumulation_steps == 0:
+                if step % args.grad_accum == 0:
                     progress_bar.update(1)
                 continue
 

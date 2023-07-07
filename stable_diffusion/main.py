@@ -280,7 +280,7 @@ if __name__ == "__main__":
     )
 
     # 3. Prepare Dataset
-    parser.add_argument("--resolution", type=int, default=256)
+    parser.add_argument("--resolution", nargs="+", type=int, default=[256, 256])
 
     parser.add_argument("--csv-path", type=str, default="albums.csv")
     parser.add_argument("--batch-size", type=int, default=16)

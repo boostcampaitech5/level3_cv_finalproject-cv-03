@@ -38,8 +38,7 @@ class MelonDataset(Dataset):
         # Image
         img_url = data["img_url"]
         res = requests.get(img_url)
-        img = Image.open(BytesIO(res.content))
-        img.convert("RGB")
+        img = Image.open(BytesIO(res.content)).convert("RGB")
 
         if self.transform:
             img = self.transform(img)

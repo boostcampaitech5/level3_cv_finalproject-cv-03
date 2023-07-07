@@ -22,17 +22,6 @@ from train import train
 from utils.util import set_seed
 
 
-def save_model_hook(models, weights, output_dir):
-    if args.use_ema:
-        ema_unet.save_pretrained(os.path.join(output_dir, "unet_ema"))
-
-    for i, model in enumerate(models):
-        model.save_pretrained(os.path.join(output_dir, "unet"))
-
-        # make sure to pop weight so that corresponding model is not saved again
-        weights.pop()
-
-
 def main(args):
     # 1. Set default value-1
     if args.use_wandb:
@@ -142,7 +131,42 @@ def main(args):
         unet, optimizer, train_dataloader, lr_scheduler
     )
 
+    def save_model_hook(models, weights, output_dir):
+        if args.use_ema:
+            ema_unet.averaged_model.save_pretrained(
+                os.path.join(output_dir, "unet_ema")
+            )
+
+        for i, model in enumerate(models):
+            model.save_pretrained(os.path.join(output_dir, "unet"))
+
+            # make sure to pop weight so that corresponding model is not saved again
+            weights.pop()
+
+    def load_model_hook(models, input_dir):
+        if args.use_ema:
+            load_model = UNet2DConditionModel.from_pretrained(
+                os.path.join(input_dir, "unet_ema")
+            )
+            ema_unet = EMAModel(load_model)
+            ema_unet.averaged_model.to(accelerator.device)
+            del load_model
+
+        for i in range(len(models)):
+            # pop models so that they are not loaded again
+            model = models.pop()
+
+            # load diffusers style into model
+            load_model = UNet2DConditionModel.from_pretrained(
+                input_dir, subfolder="unet"
+            )
+            model.register_to_config(**load_model.config)
+
+            model.load_state_dict(load_model.state_dict())
+            del load_model
+
     accelerator.register_save_state_pre_hook(save_model_hook)
+    accelerator.register_load_state_pre_hook(load_model_hook)
 
     if args.use_ema:
         ema_unet.averaged_model.to(accelerator.device)

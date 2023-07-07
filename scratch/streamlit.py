@@ -12,7 +12,8 @@ from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.training_utils import EMAModel
 from diffusers.optimization import get_scheduler
 
-from get_description import get_description
+import openai
+from gpt3_api import get_description
 
 
 @st.cache_resource

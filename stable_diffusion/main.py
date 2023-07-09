@@ -11,7 +11,7 @@ from torch.optim.lr_scheduler import LambdaLR
 
 import xformers
 
-from transformers import CLIPTextModel, CLIPTokenizer
+from transformers import CLIPTextModel, CLIPTokenizer, AutoModel, AutoTokenizer
 
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.training_utils import EMAModel
@@ -54,12 +54,18 @@ def main(args):
     noise_scheduler = DDPMScheduler.from_pretrained(
         args.pretrained_model, subfolder="scheduler"
     )
-    tokenizer = CLIPTokenizer.from_pretrained(
-        args.pretrained_model, subfolder="tokenizer"
-    )
-    text_encoder = CLIPTextModel.from_pretrained(
-        args.pretrained_model, subfolder="text_encoder", revision=args.revision
-    )
+
+    if args.text_model == "clip":
+        tokenizer = CLIPTokenizer.from_pretrained(
+            args.pretrained_model, subfolder="tokenizer"
+        )
+        text_encoder = CLIPTextModel.from_pretrained(
+            args.pretrained_model, subfolder="text_encoder", revision=args.revision
+        )
+    elif args.text_model == "klue":
+        tokenizer = AutoTokenizer.from_pretrained("klue/roberta-base", use_fast=False)
+        text_encoder = AutoModel.from_pretrained("klue/roberta-base")
+
     vae = AutoencoderKL.from_pretrained(
         args.pretrained_model, subfolder="vae", revision=args.revision
     )
@@ -252,6 +258,7 @@ if __name__ == "__main__":
         default="CompVis/stable-diffusion-v1-4",
         help="https://huggingface.co/CompVis",
     )
+    parser.add_argument("--text-model", type=str, default="clip", help="[clip, klue]")
 
     parser.add_argument(
         "--revision",

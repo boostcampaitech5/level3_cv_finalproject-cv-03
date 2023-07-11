@@ -11,20 +11,20 @@ import base64
 import torch
 from torch import cuda
 
-from transformers import CLIPTextModel, CLIPTokenizer
-
-from diffusers import StableDiffusionPipeline
-from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
-from diffusers.training_utils import EMAModel
-from diffusers.optimization import get_scheduler
-
-import openai
 from gpt3_api import get_description
 
+from datetime import datetime
+import uuid
+
+from bigquery_logger import BigQueryLogger
+from cloud_storage_manager import GCSUploader
+from model import Model
 
 app = FastAPI()
 
-pipeline = None
+model = Model()
+bigquery_logger = BigQueryLogger()
+gcs_uploader = GCSUploader()
 
 
 # Input Schema
@@ -37,28 +37,20 @@ class AlbumInput(BaseModel):
     lyric: str
 
 
-# 시작시 model load
-# pipeline을 global variable로 설정했지만 변경 예정
+# Load model on Start (Will be changed)
 @app.on_event("startup")
 def load_model():
-    global pipeline
-    device = "cuda" if cuda.is_available() else "cpu"
-    pipeline = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
-    pipeline = pipeline.to(device)
-    pipeline.enable_xformers_memory_efficient_attention()
-
-
-# pipeline이 global variable이라서 그냥 사용하지만, 보통은 의존성 주입(Depends) 같은 방법으로 사용하는 듯 합니다
-
-# 예시) async def generate_cover(album: AlbumInput, pipeline: StableDiffusionPipeline = Depends(get_pipeline)):
-"""def get_pipeline():
-    return pipeline"""
+    model.load()
 
 
 @app.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
+    # Generate a unique ID for this request
+    request_id = str(uuid.uuid4())
+
     device = "cuda" if cuda.is_available() else "cpu"
     images = []
+    image_urls = []
 
     # Determine season from release date
     month = int(album.release.split("-")[1])
@@ -75,12 +67,13 @@ async def generate_cover(album: AlbumInput):
         album.lyric, album.artist_name, album.album_name, season, album.song_names
     )
 
-    for _ in range(4):
+    for i in range(4):
         seed = random.randint(100)
         generator = torch.Generator(device=device).manual_seed(seed)
 
+        # Generate Images
         with torch.no_grad():
-            image_tensor = pipeline(
+            image_tensor = model.pipeline(
                 prompt=f"A photo of a {album.genre} album cover with a {summarization} atmosphere visualized.",
                 num_inference_steps=20,
                 generator=generator,
@@ -89,12 +82,19 @@ async def generate_cover(album: AlbumInput):
         image = image_tensor
         image = image.resize((256, 256))
 
-        # base64-encoded string으로 변환
+        # Convert to base64-encoded string
         byte_arr = io.BytesIO()
         image.save(byte_arr, format="JPEG")
         byte_arr = byte_arr.getvalue()
         base64_str = base64.b64encode(byte_arr).decode()
 
+        # Upload to GCS
+        image_url = gcs_uploader.save_image_to_gcs(image, f"{request_id}_image_{i}.jpg")
+        image_urls.append(image_url)
+
         images.append(base64_str)
+
+    # Log to BigQuery
+    bigquery_logger.log(album, summarization, request_id, image_urls)
 
     return {"images": images}

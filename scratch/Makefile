@@ -1,5 +1,5 @@
 run_server:
-	uvicorn fastapi-server:app --reload
+	uvicorn main:app --reload
 
 run_client:
 	streamlit run streamlit-frontend-kr.py --server.port 30009

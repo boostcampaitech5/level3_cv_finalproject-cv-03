@@ -26,6 +26,9 @@ model = Model()
 bigquery_logger = BigQueryLogger()
 gcs_uploader = GCSUploader()
 
+# Generate a unique ID for this request
+request_id = str(uuid.uuid4())
+
 
 # Input Schema
 class AlbumInput(BaseModel):
@@ -35,6 +38,7 @@ class AlbumInput(BaseModel):
     album_name: str
     release: str
     lyric: str
+
 
 class ReviewInput(BaseModel):
     rating: int
@@ -49,9 +53,6 @@ def load_model():
 
 @app.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
-    # Generate a unique ID for this request
-    request_id = str(uuid.uuid4())
-
     device = "cuda" if cuda.is_available() else "cpu"
     images = []
     image_urls = []
@@ -103,8 +104,8 @@ async def generate_cover(album: AlbumInput):
 
     return {"images": images}
 
+
 @app.post("/review")
 async def review(review: ReviewInput):
-    request_id = str(uuid.uuid4())
     bigquery_logger.log_review(review, request_id)
     return review

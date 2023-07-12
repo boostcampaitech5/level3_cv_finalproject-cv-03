@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, Response
+from fastapi import FastAPI, Depends, Response, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 
@@ -19,16 +20,15 @@ import uuid
 from bigquery_logger import BigQueryLogger
 from cloud_storage_manager import GCSUploader
 from model import Model
+from google.cloud import error_reporting
 
 app = FastAPI()
 
 model = Model()
 bigquery_logger = BigQueryLogger()
 gcs_uploader = GCSUploader()
-
-# Generate a unique ID for this request
 request_id = str(uuid.uuid4())
-
+error_reporting_client = error_reporting.Client()
 
 # Input Schema
 class AlbumInput(BaseModel):
@@ -38,7 +38,6 @@ class AlbumInput(BaseModel):
     album_name: str
     release: str
     lyric: str
-
 
 class ReviewInput(BaseModel):
     rating: int
@@ -104,8 +103,17 @@ async def generate_cover(album: AlbumInput):
 
     return {"images": images}
 
-
 @app.post("/review")
 async def review(review: ReviewInput):
+    request_id = request_id
     bigquery_logger.log_review(review, request_id)
+    
     return review
+
+@app.exception_handler(Exception)
+async def handle_exceptions(request: Request, exc: Exception):
+    error_reporting_client.report_exception()
+    
+    # Additional error handling code if needed
+    
+    return JSONResponse(status_code=500, content={"message": "Internal Server Error"})

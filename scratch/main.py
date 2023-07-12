@@ -36,6 +36,10 @@ class AlbumInput(BaseModel):
     release: str
     lyric: str
 
+class ReviewInput(BaseModel):
+    rating: int
+    comment: str
+
 
 # Load model on Start (Will be changed)
 @app.on_event("startup")
@@ -98,3 +102,9 @@ async def generate_cover(album: AlbumInput):
     bigquery_logger.log(album, summarization, request_id, image_urls)
 
     return {"images": images}
+
+@app.post("/review")
+async def review(review: ReviewInput):
+    request_id = str(uuid.uuid4())
+    bigquery_logger.log_review(review, request_id)
+    return review

@@ -106,5 +106,5 @@ async def generate_cover(album: AlbumInput):
 @app.post("/review")
 async def review(review: ReviewInput):
     request_id = str(uuid.uuid4())
-    bigquery_logger.log(review, request_id)
+    bigquery_logger.log_review(review, request_id)
     return review

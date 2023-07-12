@@ -42,7 +42,7 @@ class BigQueryLogger:
         if errors:
             print(f"Encountered errors while inserting rows: {errors}")
 
-    def log(self, review, request_id):
+    def log_review(self, review, request_id):
         row_to_insert = [
             {
                 "request_id": request_id,

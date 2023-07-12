@@ -14,7 +14,9 @@ class BigQueryLogger:
         project_id = bigquery_config["project_id"]
         dataset_id = bigquery_config["dataset_id"]
         table_id = bigquery_config["table_id"]
+        table_id2 = bigquery_config["table_id2"]
         self.table_id_full = f"{project_id}.{dataset_id}.{table_id}"
+        self.table_id_full2 = f"{project_id}.{dataset_id}.{table_id2}"
 
         credentials = service_account.Credentials.from_service_account_file(
             credentials_path
@@ -37,6 +39,19 @@ class BigQueryLogger:
             }
         ]
         errors = self.client.insert_rows_json(self.table_id_full, row_to_insert)
+        if errors:
+            print(f"Encountered errors while inserting rows: {errors}")
+
+    def log(self, review, request_id):
+        row_to_insert = [
+            {
+                "request_id": request_id,
+                "request_time": datetime.utcnow().isoformat(),
+                "rating": review.rating,
+                "comment": review.comment,
+            }
+        ]
+        errors = self.client.insert_rows_json(self.table_id_full2, row_to_insert)
         if errors:
             print(f"Encountered errors while inserting rows: {errors}")
 

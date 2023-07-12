@@ -85,27 +85,56 @@ def main():
     )
     info_table = st.dataframe(info_df, use_container_width=True)
 
+    # Set 'img' variable to session state
+    if 'img' not in st.session_state:
+        st.session_state.img = ['', '', '', '']
+
     # 3. Inference
     st.header("Generate Album Cover")
-    if st.button("Generate Album Cover", use_container_width=True):
+    gen_button = st.button("Generate Album Cover", use_container_width=True)
+
+    # Create 2x2 grid
+    col1, col2 = st.columns(2)
+    cols = [col1, col2, col1, col2]
+
+    if gen_button:
         with st.spinner("Wait for it..."):
             # Call the FastAPI server to generate the album cover
             response = requests.post("http://localhost:8000/generate_cover", json=info)
             if response.status_code == 200:
                 images = response.json()["images"]
 
-                # Create 2x2 grid
-                col1, col2 = st.columns(2)
-                cols = [col1, col2, col1, col2]
-
                 # Assign images to the cells in the grid
                 for i, image in enumerate(images):
                     img_data = base64.b64decode(image)
                     img = Image.open(io.BytesIO(img_data))
+                    st.session_state.img[i] = img
                     cols[i].image(img, width=300)
             else:
                 st.error("Failed to generate album cover. Please try again.")
+    else:
+        if st.session_state.img == ['', '', '', '']:
+            for i in range(len(cols)):
+                cols[i].empty()
+        else:
+            for i in range(len(cols)):
+                cols[i].image(st.session_state.img[i], width=300)
 
+    with st.expander("**REVIEW US!**"):
+        review_rating = st.select_slider('How satisfied are you with the created images?', options=range(1, 6), value=5)
+        st.markdown("<h5 style='text-align: center;'>"+"❤️"*review_rating+"🖤"*(5-review_rating)+"</h5>", unsafe_allow_html=True)
+        review_text = st.text_input("review_text", placeholder="Input Your Comments", label_visibility="hidden")
+        review_btn = st.button("Send")
+        if review_btn:
+            review = {
+                "rating": review_rating,
+                "comment": review_text
+            }
+            response = requests.post("http://localhost:8000/review", json=review)
+            if response.status_code == 200:
+                st.write("Thank you for your comments!")
+            else:
+                st.error("Failed to send review. Please try again.")
 
 if __name__ == "__main__":
     main()

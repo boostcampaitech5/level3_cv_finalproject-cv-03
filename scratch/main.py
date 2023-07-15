@@ -1,46 +1,60 @@
-from fastapi import FastAPI, Depends, Response, Request
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List
-
-import pandas as pd
-from numpy import random
-from PIL import Image
+# Python built-in modules
 import io
 import base64
+import uuid
+from datetime import datetime
 
+# Pytorch
 import torch
 from torch import cuda
 
+# Backend
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+
+from pydantic import BaseModel
+
+# Other modules
+import numpy as np
+from pytz import timezone
+
+# Built-in modules
 from gpt3_api import get_description
+from gcp.bigquery import BigQueryLogger
+from gcp.cloud_storage import GCSUploader
+from gcp.error import ErrorReporter
+from model import AlbumModel
+from utils import load_yaml
 
-from datetime import datetime
-import uuid
 
-from bigquery_logger import BigQueryLogger
-from cloud_storage_manager import GCSUploader
-from model import Model
-from google.cloud import error_reporting
+# Load config
+gcp_config = load_yaml("private.yaml", "gcp")
+public_config = load_yaml("public.yaml")
 
+# Start fastapi
 app = FastAPI()
 
-model = Model()
-bigquery_logger = BigQueryLogger()
-gcs_uploader = GCSUploader()
+bigquery_logger = BigQueryLogger(gcp_config)
+gcs_uploader = GCSUploader(gcp_config)
+error_reporter = ErrorReporter(gcp_config)
+
+device = "cuda" if cuda.is_available() else "cpu"
+model = AlbumModel(public_config["model"], public_config["language"], device)
+
+# Generate a unique ID for this request
 request_id = str(uuid.uuid4())
-error_reporting_client = error_reporting.Client()
 
 
-# Input Schema
+# Album input Schema
 class AlbumInput(BaseModel):
     song_names: str
     artist_name: str
     genre: str
     album_name: str
-    release: str
     lyric: str
 
 
+# Review input Schema
 class ReviewInput(BaseModel):
     rating: int
     comment: str
@@ -49,73 +63,101 @@ class ReviewInput(BaseModel):
 # Load model on Start (Will be changed)
 @app.on_event("startup")
 def load_model():
-    model.load()
+    model.get_model()
 
 
+# REST API - Post ~/generate_cover
 @app.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
-    device = "cuda" if cuda.is_available() else "cpu"
     images = []
-    image_urls = []
-
-    # Determine season from release date
-    month = int(album.release.split("-")[1])
-    if month > 11 or month < 3:
-        season = "winter"
-    elif 3 <= month < 6:
-        season = "spring"
-    elif 6 <= month < 9:
-        season = "summer"
-    elif 9 <= month < 12:
-        season = "fall"
+    urls = []
 
     summarization = get_description(
-        album.lyric, album.artist_name, album.album_name, season, album.song_names
+        album.lyric,
+        album.artist_name,
+        album.album_name,
+        album.song_names,
     )
 
-    for i in range(4):
-        seed = random.randint(100)
-        generator = torch.Generator(device=device).manual_seed(seed)
+    seeds = np.random.randint(
+        public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
+    )
+
+    for i, seed in enumerate(seeds):
+        generator = torch.Generator(device=device).manual_seed(int(seed))
 
         # Generate Images
         with torch.no_grad():
-            image_tensor = model.pipeline(
+            image = model.pipeline(
                 prompt=f"A photo of a {album.genre} album cover with a {summarization} atmosphere visualized.",
-                num_inference_steps=20,
+                num_inference_steps=public_config["generate"]["inference_step"],
                 generator=generator,
             ).images[0]
 
-        image = image_tensor
-        image = image.resize((256, 256))
+        image = image.resize(
+            (public_config["generate"]["height"], public_config["generate"]["width"])
+        )
 
         # Convert to base64-encoded string
         byte_arr = io.BytesIO()
-        image.save(byte_arr, format="JPEG")
+        image.save(byte_arr, format=public_config["generate"]["save_format"])
         byte_arr = byte_arr.getvalue()
         base64_str = base64.b64encode(byte_arr).decode()
 
-        # Upload to GCS
-        image_url = gcs_uploader.save_image_to_gcs(image, f"{request_id}_image_{i}.jpg")
-        image_urls.append(image_url)
+        urls.append(
+            [
+                byte_arr,
+                f"{request_id}_image_{i}.{public_config['generate']['save_format']}",
+            ]
+        )
 
         images.append(base64_str)
 
+    # Upload to GCS
+    image_urls = gcs_uploader.save_image_to_gcs(urls)
+
     # Log to BigQuery
-    bigquery_logger.log(album, summarization, request_id, image_urls)
+    album_log = {
+        "request_id": request_id,
+        "request_time": datetime.utcnow()
+        .astimezone(timezone("Asia/Seoul"))
+        .isoformat(),
+        "song_names": album.song_names,
+        "artist_name": album.artist_name,
+        "genre": album.genre,
+        "album_name": album.album_name,
+        "lyric": album.lyric,
+        "summarization": summarization,
+        "image_urls": image_urls,
+        "language": public_config["language"],
+    }
+    bigquery_logger.log(album_log, "user_album")
 
     return {"images": images}
 
 
+# REST API - Post ~/review
 @app.post("/review")
 async def review(review: ReviewInput):
-    request_id = request_id
-    bigquery_logger.log_review(review, request_id)
+    # Log to BigQuery
+    review_log = {
+        "request_id": request_id,
+        "request_time": datetime.utcnow()
+        .astimezone(timezone("Asia/Seoul"))
+        .isoformat(),
+        "rating": review.rating,
+        "comment": review.comment,
+        "language": public_config["language"],
+    }
+
+    bigquery_logger.log(review_log, "user_review")
 
     return review
 
 
+# Exception handling using google cloud
 @app.exception_handler(Exception)
 async def handle_exceptions(request: Request, exc: Exception):
-    error_reporting_client.report_exception()
+    error_reporter.python_error()
 
     return JSONResponse(status_code=500, content={"message": "Internal Server Error"})

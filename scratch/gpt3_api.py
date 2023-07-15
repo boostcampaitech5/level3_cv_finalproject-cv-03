@@ -1,47 +1,50 @@
+# OpenAI API
 import openai
 
+# Built-in modules
+from utils import load_yaml
 
-def get_description(lyrics, artist_name, album_name, season, song_names):
+
+def get_description(
+    lyrics: str, artist_name: str, album_name: str, song_names: str
+) -> str:
+    gpt_config = load_yaml("private.yaml", "gpt")
+
     # OpenAI API key
     # https://platform.openai.com/
-    openai.api_key = "Your_API_Key"
+    openai.api_key = gpt_config["api_key"]
 
     # -- 공백, 줄바꿈 제거
     lyrics = lyrics.strip()
     lyrics = lyrics.replace("\n\n", " ")
     lyrics = lyrics.replace("\n", " ")
 
+    # message
+    message = [
+        f"Describe the atmosphere or vibe of these lyrics into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. \n\n{lyrics}",
+        f"Also describe a atmosphere using the following Artist name, Album name and Song names into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. Artist name : {artist_name} \n Album name : {album_name} \n Song names : {song_names}",
+    ]
+
     # Set up the API call
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Describe the atmosphere or vibe of these lyrics into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. \n\n{lyrics}",
-            }
-        ],
-        max_tokens=50,  # Adjust the value to control the length of the generated description
-        temperature=0.5,  # Adjust the temperature to control the randomness of the output
-        n=1,  # Generate a single response
-        stop=None,  # Stop generating text at any point
-    )
+    responses = []
+    for idx in range(len(message)):
+        response = openai.ChatCompletion.create(
+            model=gpt_config["model"],
+            messages=[
+                {
+                    "role": gpt_config["role"],
+                    "content": message[idx],
+                }
+            ],
+            max_tokens=gpt_config[
+                "max_tokens"
+            ],  # Adjust the value to control the length of the generated description
+            temperature=gpt_config[
+                "temperature"
+            ],  # Adjust the temperature to control the randomness of the output
+            n=gpt_config["n_response"],  # Generate a single response
+            stop=gpt_config["stop"],  # Stop generating text at any point
+        )
+        responses.append(response["choices"][0]["message"]["content"])
 
-    response2 = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Also describe a atmosphere using the following Artist name, Album name, Season and Song names into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. Artist name : {artist_name} \n Album name : {album_name} \n Season : {season}, Song names : {song_names}",
-            }
-        ],
-        max_tokens=50,
-        temperature=0.5,
-        n=1,
-        stop=None,
-    )
-
-    # Get the generated description
-    description1 = response["choices"][0]["message"]["content"]
-    description2 = response2["choices"][0]["message"]["content"]
-
-    return description1 + "," + description2
+    return ",".join(responses)

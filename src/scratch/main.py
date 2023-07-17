@@ -1,4 +1,5 @@
 # Python built-in modules
+import os
 import io
 import base64
 import uuid
@@ -9,7 +10,7 @@ import torch
 from torch import cuda
 
 # Backend
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 
 from pydantic import BaseModel
@@ -19,17 +20,17 @@ import numpy as np
 from pytz import timezone
 
 # Built-in modules
-from gpt3_api import get_description
-from gcp.bigquery import BigQueryLogger
-from gcp.cloud_storage import GCSUploader
-from gcp.error import ErrorReporter
-from model import AlbumModel
-from utils import load_yaml
+from src.scratch.gpt3_api import get_description
+from src.scratch.gcp.bigquery import BigQueryLogger
+from src.scratch.gcp.cloud_storage import GCSUploader
+from src.scratch.gcp.error import ErrorReporter
+from src.scratch.model import AlbumModel
+from src.scratch.utils import load_yaml
 
 
 # Load config
-gcp_config = load_yaml("private.yaml", "gcp")
-public_config = load_yaml("public.yaml")
+gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
+public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 
 # Start fastapi
 app = FastAPI()
@@ -39,10 +40,14 @@ gcs_uploader = GCSUploader(gcp_config)
 error_reporter = ErrorReporter(gcp_config)
 
 device = "cuda" if cuda.is_available() else "cpu"
-model = AlbumModel(public_config["model"], public_config["language"], device)
 
 # Generate a unique ID for this request
 request_id = str(uuid.uuid4())
+
+
+def load_model():
+    model = AlbumModel(public_config["model"], public_config["language"], device)
+    return model
 
 
 # Album input Schema
@@ -60,15 +65,9 @@ class ReviewInput(BaseModel):
     comment: str
 
 
-# Load model on Start (Will be changed)
-@app.on_event("startup")
-def load_model():
-    model.get_model()
-
-
 # REST API - Post ~/generate_cover
 @app.post("/generate_cover")
-async def generate_cover(album: AlbumInput):
+async def generate_cover(album: AlbumInput, model: AlbumModel = Depends(load_model)):
     images = []
     urls = []
 

@@ -1,14 +1,17 @@
+# Python built-in modules
+import os
+
 # OpenAI API
 import openai
 
 # Built-in modules
-from utils import load_yaml
+from src.scratch.utils import load_yaml
 
 
 def get_description(
     lyrics: str, artist_name: str, album_name: str, song_names: str
 ) -> str:
-    gpt_config = load_yaml("private.yaml", "gpt")
+    gpt_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gpt")
 
     # OpenAI API key
     # https://platform.openai.com/

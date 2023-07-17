@@ -27,8 +27,10 @@ class AlbumModel:
                 "klue/roberta-base", use_fast=False
             )
 
+        self.pipeline = self.get_model()
+
     def get_model(self) -> None:
-        self.pipeline = StableDiffusionPipeline.from_pretrained(
+        pipeline = StableDiffusionPipeline.from_pretrained(
             self.model_config["stable_diffusion"],
             unet=UNet2DConditionModel.from_pretrained(
                 self.model_config["unet"], subfolder="unet"
@@ -36,6 +38,8 @@ class AlbumModel:
             text_encoder=self.text_encoder,
             tokenizer=self.tokenizer,
         )
-        self.pipeline = self.pipeline.to(self.device)
+        pipeline = pipeline.to(self.device)
         if self.model_config["xformers"]:
-            self.pipeline.enable_xformers_memory_efficient_attention()
+            pipeline.enable_xformers_memory_efficient_attention()
+
+        return pipeline

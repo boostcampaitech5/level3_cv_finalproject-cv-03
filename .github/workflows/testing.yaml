@@ -48,11 +48,10 @@ jobs:
           TRANSLATION: ${{secrets.TRANSLATION}}
       - name: Run airflow
         run: |
-          echo ${{ env.working-directory }}
           poetry run airflow db init
           poetry run airflow users create --username admin --password kjy961226 --firstname 'JunYoung' --lastname 'Kim' --role Admin --email 'kjy961226@naver.com'
         env:
-          AIRFLOW_HOME: src/scratch
+          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
       - name: Run pytest
         run: poetry run python -m pytest

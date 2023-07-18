@@ -41,15 +41,18 @@ jobs:
           echo $PUBLIC | base64 --decode > src/scratch/config/public.yaml
           echo $PRIVATE | base64 --decode > src/scratch/config/private.yaml
           echo $TRANSLATION | base64 --decode > src/scratch/config/translation.yaml
-          echo $AIRFLOW_CFG | base64 --decode > src/scratch/airflow.cfg
         env:
           GCP: ${{secrets.GCP}}
           PUBLIC: ${{secrets.PUBLIC}}
           PRIVATE: ${{secrets.PRIVATE}}
           TRANSLATION: ${{secrets.TRANSLATION}}
-          AIRFLOW_CFG: ${{secrets.AIRFLOW_CFG}}
       - name: Run pytest
-        run: poetry run python -m pytest
+        run: |
+          poetry run airflow db init
+          poetry run python -m pytest
+        env: |
+          AIRFLOW_HOME: src/scratch
+          TZ: UTC
       - name: Send slack
         uses: 8398a7/action-slack@v3
         with:

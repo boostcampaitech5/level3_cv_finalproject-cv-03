@@ -1,5 +1,6 @@
 # Python built-in modules
 import base64
+import os
 import io
 from io import BytesIO
 

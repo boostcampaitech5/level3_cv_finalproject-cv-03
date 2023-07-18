@@ -5,13 +5,15 @@ import os
 import openai
 
 # Built-in modules
-from utils import load_yaml
+from src.redis_celery.utils import load_yaml
 
 
 def get_description(
     lyrics: str, artist_name: str, album_name: str, song_names: str
 ) -> str:
-    gpt_config = load_yaml(os.path.join("config", "private.yaml"), "gpt")
+    gpt_config = load_yaml(
+        os.path.join("src/redis_celery/config", "private.yaml"), "gpt"
+    )
 
     # OpenAI API key
     # https://platform.openai.com/

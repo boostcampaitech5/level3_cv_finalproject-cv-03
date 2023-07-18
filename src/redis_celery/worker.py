@@ -17,16 +17,20 @@ from celery import Celery
 from celery import signals
 
 # User Defined modules
-from model import AlbumModel
-from gpt3_api import get_description
-from gcp.cloud_storage import GCSUploader
-from utils import load_yaml
+from src.redis_celery.model import AlbumModel
+from src.redis_celery.gpt3_api import get_description
+from src.redis_celery.gcp.cloud_storage import GCSUploader
+from src.redis_celery.utils import load_yaml
 
 # Load config
-gcp_config = load_yaml(os.path.join("config", "private.yaml"), "gcp")
-redis_config = load_yaml(os.path.join("config", "private.yaml"), "redis")
-celery_config = load_yaml(os.path.join("config", "public.yaml"), "celery")
-public_config = load_yaml(os.path.join("config", "public.yaml"))
+gcp_config = load_yaml(os.path.join("src/redis_celery/config", "private.yaml"), "gcp")
+redis_config = load_yaml(
+    os.path.join("src/redis_celery/config", "private.yaml"), "redis"
+)
+celery_config = load_yaml(
+    os.path.join("src/redis_celery/config", "public.yaml"), "celery"
+)
+public_config = load_yaml(os.path.join("src/redis_celery/config", "public.yaml"))
 
 
 # f'redis://{redis_config["host"]}:{redis_config["port"]}/{redis_config["db"]}'

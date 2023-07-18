@@ -19,16 +19,20 @@ import numpy as np
 from pytz import timezone
 
 # User Defined modules
-from gcp.bigquery import BigQueryLogger
-from gcp.error import ErrorReporter
-from utils import load_yaml
+from src.redis_celery.gcp.bigquery import BigQueryLogger
+from src.redis_celery.gcp.error import ErrorReporter
+from src.redis_celery.utils import load_yaml
 
 
 # Load config
-gcp_config = load_yaml(os.path.join("config", "private.yaml"), "gcp")
-redis_config = load_yaml(os.path.join("config", "private.yaml"), "redis")
-celery_config = load_yaml(os.path.join("config", "public.yaml"), "celery")
-public_config = load_yaml(os.path.join("config", "public.yaml"))
+gcp_config = load_yaml(os.path.join("src/redis_celery/config", "private.yaml"), "gcp")
+redis_config = load_yaml(
+    os.path.join("src/redis_celery/config", "private.yaml"), "redis"
+)
+celery_config = load_yaml(
+    os.path.join("src/redis_celery/config", "public.yaml"), "celery"
+)
+public_config = load_yaml(os.path.join("src/redis_celery/config", "public.yaml"))
 
 # Start fastapi
 app = FastAPI()

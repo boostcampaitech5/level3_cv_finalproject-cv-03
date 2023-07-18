@@ -1,11 +1,8 @@
 from airflow import DAG
+from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOperator
 from datetime import datetime, timedelta
 import pendulum 
-import pandas as pd
 import os 
-
-from airflow.operators.python import PythonOperator 
-from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOperator
 import csv
 
 data_dir = './airflow-data'

@@ -50,7 +50,7 @@ jobs:
         run: |
           poetry run airflow db init
           poetry run python -m pytest
-        env: |
+        env:
           AIRFLOW_HOME: src/scratch
           TZ: UTC
       - name: Send slack

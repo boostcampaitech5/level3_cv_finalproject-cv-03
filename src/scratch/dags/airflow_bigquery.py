@@ -28,7 +28,7 @@ with DAG(
         dataset_id="online_serving_logs",
         table_id="user_input",
         max_results=100,
-        gcp_conn_id="album-cover-generation-392406",
+        gcp_conn_id="3076028714-compute@developer.gserviceaccount.com",
     )
 
     # user_review
@@ -37,7 +37,7 @@ with DAG(
         dataset_id="online_serving_logs",
         table_id="user_review",
         max_results=100,
-        gcp_conn_id="album-cover-generation-392406",
+        gcp_conn_id="3076028714-compute@developer.gserviceaccount.com",
     )
 
     get_user_input >> get_user_review

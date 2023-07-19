@@ -46,9 +46,13 @@ jobs:
           PUBLIC: ${{secrets.PUBLIC}}
           PRIVATE: ${{secrets.PRIVATE}}
           TRANSLATION: ${{secrets.TRANSLATION}}
-      - uses: 'google-github-actions/auth@v1'
+      - name: Run gcloud
+        uses: google-github-actions/auth@v1
         with:
-          credentials_json: src/scratch/config/gcp.json
+          workload_identity_provider: 'projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci'
+          service_account: 3076028714-compute@developer.gserviceaccount.com
+      # - name: 'Set up Cloud SDK'
+      #     uses: 'google-github-actions/setup-gcloud@v1'
       # - id: 'deploy'
       #   uses: 'google-github-actions/deploy-cloudrun@v1'
       - name: Run airflow

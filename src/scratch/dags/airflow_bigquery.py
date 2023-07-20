@@ -27,6 +27,7 @@ with DAG(
         task_id="get_user_input",
         dataset_id="online_serving_logs",
         table_id="user_input",
+        project_id="album-cover-generation-392406",
         max_results=100,
     )
 
@@ -35,6 +36,7 @@ with DAG(
         task_id="get_user_review",
         dataset_id="online_serving_logs",
         table_id="user_review",
+        project_id="album-cover-generation-392406",
         max_results=100,
     )
 

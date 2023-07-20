@@ -61,7 +61,7 @@ jobs:
         run: |
           poetry run airflow db init
         env:
-          AIRFLOW_HOME: src/scratch
+          AIRFLOW_HOME: ./src/scratch
           TZ: UTC
       - name: Run pytest
         run: poetry run python -m pytest

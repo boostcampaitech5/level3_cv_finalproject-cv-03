@@ -7,7 +7,23 @@
     border: 1px;
 }
 
+.water_mark {
+    position: absolute;
+    z-index: 1;
+    top: 40%;
+    margin-left: 10%;
+    transform: rotate(-30deg);
+    user-select: none;
+    font-size: 2vmax;
+    color: rgba(128, 128, 128, 0.522);
+}
+
+.created_image {
+    position: relative;
+}
+
 .created_image:hover {
+    position: relative;
     filter: brightness(1.2);
 }
 

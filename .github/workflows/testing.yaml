@@ -60,7 +60,6 @@ jobs:
       - name: Run airflow
         run: |
           poetry run airflow db init
-          poetry run airflow users create --username admin --password kjy961226 --firstname 'JunYoung' --lastname 'Kim' --role Admin --email 'kjy961226@naver.com'
         env:
           AIRFLOW_HOME: src/scratch
           TZ: UTC

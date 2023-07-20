@@ -71,7 +71,7 @@ jobs:
           poetry run airflow config get-value database sql_alchemy_conn
         env:
           # AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch/airflow.db
-          AIRFLOW_HOME: home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
+          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
 
       # Pytest

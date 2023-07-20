@@ -59,9 +59,9 @@ jobs:
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
       - name: Run airflow
         run: |
-          cd ${{ AIRFLOW_HOME }}
+          cd $AIRFLOW_HOME
           poetry run airflow db init
-          cd ${{ HOME }}
+          cd $HOME
         env:
           HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch

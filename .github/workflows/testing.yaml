@@ -10,6 +10,7 @@ on:
     branches: ["main", "develop"]
 
 permissions:
+  id-token: write # This is required for requesting the JWT
   contents: read
 
 jobs:
@@ -46,15 +47,16 @@ jobs:
           PUBLIC: ${{secrets.PUBLIC}}
           PRIVATE: ${{secrets.PRIVATE}}
           TRANSLATION: ${{secrets.TRANSLATION}}
-      - name: Run gcloud
-        uses: google-github-actions/auth@v1
+      - id: auth
+        name: Authenticate to GCP
+        uses: google-github-actions/auth@v0.3.1
         with:
-          workload_identity_provider: 'projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci'
-          service_account: 3076028714-compute@developer.gserviceaccount.com
-      # - name: 'Set up Cloud SDK'
-      #     uses: 'google-github-actions/setup-gcloud@v1'
-      # - id: 'deploy'
-      #   uses: 'google-github-actions/deploy-cloudrun@v1'
+            create_credentials_file: true
+            workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
+            service_account: 3076028714-compute@developer.gserviceaccount.com
+      - id: gcloud
+        name: gcloud
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
       - name: Run airflow
         run: |
           poetry run airflow db init

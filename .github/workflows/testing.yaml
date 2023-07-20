@@ -60,10 +60,10 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v1'
         with:
           project_id: album-cover-generation-392406
-      # - id: gcloud
-      #   name: Google Cloud Platform
-      #   run: |
-      #     poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+      - id: gcloud
+        name: Google Cloud Platform
+        run: |
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       # Airflow
       - name: Run airflow
@@ -74,11 +74,8 @@ jobs:
           TZ: UTC
 
       # Pytest
-      - id: gcloud
-        name: Run pytest
-        run: |
-          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-          poetry run python -m pytest
+      - name: Run pytest
+        run: poetry run python -m pytest
 
       # Slack
       - name: Send slack

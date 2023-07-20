@@ -56,15 +56,12 @@ jobs:
             service_account: 3076028714-compute@developer.gserviceaccount.com
       - id: gcloud
         name: gcloud
-        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+        run: poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
       - name: Run airflow
         run: |
-          cd $AIRFLOW_HOME
           poetry run airflow db init
-          cd $HOME
         env:
-          HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03
-          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
+          AIRFLOW_HOME: src/scratch
           TZ: UTC
       - name: Run pytest
         run: poetry run python -m pytest

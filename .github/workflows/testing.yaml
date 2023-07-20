@@ -59,7 +59,9 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v1'
       - id: gcloud
         name: gcloud
-        run: poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+        run: |
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          poetry run gcloud config set
 
       - name: Run airflow
         run: |

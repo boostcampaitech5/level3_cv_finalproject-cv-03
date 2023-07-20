@@ -61,7 +61,7 @@ jobs:
         name: gcloud
         run: |
           poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-          poetry run gcloud config set
+          poetry run gcloud config set project github-action-ci
 
       - name: Run airflow
         run: |

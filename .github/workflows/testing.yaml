@@ -49,28 +49,23 @@ jobs:
           TRANSLATION: ${{secrets.TRANSLATION}}
 
       # GCP
-      # - id: auth
-      #   name: Authenticate to GCP
-      #   uses: google-github-actions/auth@v0.3.1
-      #   with:
-      #       create_credentials_file: true
-      #       workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
-      #       service_account: 3076028714-compute@developer.gserviceaccount.com
-      # - name: 'Set up Cloud SDK'
-      #   uses: 'google-github-actions/setup-gcloud@v1'
-      # - id: gcloud
-      #   name: gcloud
-      #   run: |
-      #     poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v0.3.1
+        with:
+            create_credentials_file: true
+            workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
+            service_account: 3076028714-compute@developer.gserviceaccount.com
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: Google Cloud Platform
+        run: |
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       # Airflow
       - name: Run airflow
         run: |
-          poetry run airflow config get-value database sql_alchemy_conn
           poetry run airflow db init
-          poetry run airflow config get-value database sql_alchemy_conn
         env:
-          # AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch/airflow.db
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
 

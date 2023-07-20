@@ -26,7 +26,7 @@ from src.scratch.gcp.cloud_storage import GCSUploader
 from src.scratch.gcp.error import ErrorReporter
 from src.scratch.model import AlbumModel
 from src.scratch.utils import load_yaml
-
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
@@ -34,7 +34,19 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 
 # Start fastapi
 app = FastAPI()
+origins = [
+    "http://127.0.0.1:30008",  # Add the Live Server extension's URL
+    "http://localhost:8001",
+    "http://localhost:8000",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 bigquery_logger = BigQueryLogger(gcp_config)
 gcs_uploader = GCSUploader(gcp_config)
 error_reporter = ErrorReporter(gcp_config)
@@ -48,6 +60,13 @@ request_id = str(uuid.uuid4())
 def load_model():
     model = AlbumModel(public_config["model"], public_config["language"], device)
     return model
+
+
+@app.on_event("startup")
+async def startup_event():
+    global model
+    model = load_model()
+    print("Model loaded successfully!")
 
 
 # Album input Schema
@@ -67,7 +86,7 @@ class ReviewInput(BaseModel):
 
 # REST API - Post ~/generate_cover
 @app.post("/generate_cover")
-async def generate_cover(album: AlbumInput, model: AlbumModel = Depends(load_model)):
+async def generate_cover(album: AlbumInput):
     images = []
     urls = []
 

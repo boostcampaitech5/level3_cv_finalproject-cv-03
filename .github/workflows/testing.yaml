@@ -57,13 +57,11 @@ jobs:
       - id: gcloud
         name: gcloud
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-      - name: PWD
-        run: pwd
       - name: Run airflow
         run: |
           poetry run airflow db init
         env:
-          AIRFLOW_HOME: ./src/scratch
+          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
       - name: Run pytest
         run: poetry run python -m pytest

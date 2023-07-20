@@ -68,11 +68,11 @@ jobs:
       # Airflow
       - name: Run airflow
         run: |
-          poetry run airflow db reset -y
           poetry run airflow db init
         env:
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
+          AIRFLOW__CORE__FERNET_KEY: BVT-5JuSqI8hM1E3a39ppMX4VFuemDXrSvslrQlIXpA=
 
       # Pytest
       - name: Run pytest

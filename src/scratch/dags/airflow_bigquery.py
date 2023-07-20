@@ -28,7 +28,6 @@ with DAG(
         dataset_id="online_serving_logs",
         table_id="user_input",
         max_results=100,
-        impersonation_chain="impersonated_account@album-cover-generation-392406.iam.gserviceaccount.com",
     )
 
     # user_review
@@ -37,7 +36,6 @@ with DAG(
         dataset_id="online_serving_logs",
         table_id="user_review",
         max_results=100,
-        impersonation_chain="impersonated_account@album-cover-generation-392406.iam.gserviceaccount.com",
     )
 
     get_user_input >> get_user_review

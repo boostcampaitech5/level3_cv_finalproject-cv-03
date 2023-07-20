@@ -66,6 +66,7 @@ jobs:
         run: |
           poetry run airflow db init
         env:
+          AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: google-cloud-platform://?key_path="${{ steps.auth.outputs.credentials_file_path }}"
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
           TZ: UTC
 

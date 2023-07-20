@@ -32,7 +32,7 @@
             </ul>
 
             <div class="col-md-3 text-end">
-                <img src="images/kakao_login_medium.png" id="kakao-login" alt="카카오 로그인" onclick="kakaoLogin();" />
+                <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" />
                 <button type="button" id="logout" class="btn btn-secondary py-2" onclick="kakaoLogout();">로그아웃</button>
             </div>
         </header>
@@ -44,7 +44,7 @@
                 <h2 class="text-center">앨범커버 생성하기</h2>
                 <form class="needs-validation" novalidate>
                     <div class="row g-5">
-                        <div class="col-md-5 col-lg-5">
+                        <div class="col-lg-5">
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="song_name" class="form-label">🎧 모델</label>
@@ -154,33 +154,29 @@
                                 id="img_create_btn">CREATE</button>
 
                         </div>
-                        <div class="col-md-7 col-lg-7">
-                            <ul class="list-group mb-2 mt-4 align-items-center">
-                                <li class="list-group-item d-flex justify-content-between lh-sm bg-primary-subtle">
-                                    <div class="px-2">
-                                        <img src="images/example1.jpg" id="image1" class="created_image" width="100%"
-                                            height="100%" />
-                                        <p class="water_mark">Do Not Copy</p>
+                        <div class="col-lg-7">
+                            <div class="bg-primary-subtle px-2 py-2 mb-2 mt-4" id="image_container_all">
+                                <div class="row g-0">
+                                    <div class="col" id="image_container">
+                                        <img src="images/example1.jpg" id="image1" width="100%" height="100%" />
+                                        <p class="watermark">Do Not Copy</p>
                                     </div>
-                                    <div class="px-2">
-                                        <img src="images/example1.jpg" id="image2" class="created_image" width="100%"
-                                            height="100%" />
-                                        <p class="water_mark">Do Not Copy</p>
+                                    <div class="col" id="image_container">
+                                        <img src="images/example1.jpg" id="image2" width="100%" height="100%" />
+                                        <p class="watermark">Do Not Copy</p>
                                     </div>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between lh-sm bg-primary-subtle">
-                                    <div class="px-2">
-                                        <img src="images/example1.jpg" id="image3" class="created_image" width="100%"
-                                            height="100%" />
-                                        <p class="water_mark">Do Not Copy</p>
+                                </div>
+                                <div class="row g-0">
+                                    <div class="col" id="image_container">
+                                        <img src="images/example1.jpg" id="image3" width="100%" height="100%" />
+                                        <p class="watermark">Do Not Copy</p>
                                     </div>
-                                    <div class="px-2">
-                                        <img src="images/example1.jpg" id="image4" class="created_image" width="100%"
-                                            height="100%" />
-                                        <p class="water_mark">Do Not Copy</p>
+                                    <div class="col" id="image_container">
+                                        <img src="images/example1.jpg" id="image4" width="100%" height="100%" />
+                                        <p class="watermark">Do Not Copy</p>
                                     </div>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
 
                             <form class="review">
                                 <div class="input-group justify-content-center">

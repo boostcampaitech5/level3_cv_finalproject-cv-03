@@ -66,7 +66,7 @@ jobs:
       - id: gcloud
         name: Google Cloud Platform
         run: |
-          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}" --update-adc
 
       # Airflow
       - name: Run airflow

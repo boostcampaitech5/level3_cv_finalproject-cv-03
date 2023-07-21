@@ -1,3 +1,3 @@
-from bigquery import BigQueryLogger
-from cloud_storage import GCSUploader
-from error import ErrorReporter
+from .bigquery import BigQueryLogger
+from .cloud_storage import GCSUploader
+from .error import ErrorReporter

@@ -51,6 +51,11 @@ jobs:
           TRANSLATION: ${{secrets.TRANSLATION}}
 
       # GCP
+      - id: gcloud
+        name: Google Cloud Platform
+        run: |
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
       - id: auth
         name: Authenticate to GCP
         uses: google-github-actions/auth@v1.1.1
@@ -62,10 +67,6 @@ jobs:
           audience:  //iam.googleapis.com/projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-      - id: gcloud
-        name: Google Cloud Platform
-        run: |
-          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       # Airflow
       - name: Run airflow

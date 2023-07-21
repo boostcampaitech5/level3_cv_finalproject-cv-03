@@ -56,12 +56,14 @@ jobs:
         uses: google-github-actions/auth@v0.3.1
         with:
           token_format: 'access_token'
-          access_token_lifetime: 900s
+          access_token_lifetime: 300s
           create_credentials_file: true
           workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
           service_account: 3076028714-compute@developer.gserviceaccount.com
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+          version: '>= 363.0.0'
       - id: gcloud
         name: Google Cloud Platform
         run: |

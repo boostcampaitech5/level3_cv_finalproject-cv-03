@@ -1,9 +1,15 @@
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector("#show_examples_btn").addEventListener("click", () => {
-        document.getElementById("examples").style.display = "block";
-    })
-})
+function checklogin() {
+    if (!Kakao.Auth.getAccessToken()) {
+        alert('check-로그아웃');
+        document.getElementById("kakao-login").style.display = "block";
+        document.getElementById("logout").style.display = "none";
+    }
+    else {
+        alert('check-로그인');
+        document.getElementById("kakao-login").style.display = "none";
+        document.getElementById("logout").style.display = "block";
+    }
+}
 
 //카카오 로그인
 function kakaoLogin() {
@@ -59,24 +65,40 @@ function kakaoLogout() {
     }
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector("#review_btn").addEventListener("click", () => {
+    // 모달을 열 때 클릭된 버튼 숫자정보(1~4) 가져오기
+    $('#download_modal').on('show.bs.modal', function (event) {
+        button = $(event.relatedTarget);
+        buttonType = button.data('button-type');
+    });
+
+    document.querySelector("#review_send_btn").addEventListener("click", () => {
         user_starpoint = 0
         user_review = document.getElementById("review_comment").value
         for (var i = 1; i <= 10; i++) {
-            cur_review = "starpoint_" + i
+            cur_review = "starpoint_" + i;
             if (document.getElementById(cur_review).checked == true) {
-                user_starpoint = i / 2
+                user_starpoint = i / 2;
+                break;
             }
         }
-        if (user_starpoint == 0) {
-            alert("별점을 매겨주세요")
+        if (user_starpoint == 0 || user_review == "") {
+            alert('리뷰를 작성해주세요.');
+            document.getElementById("review_comment").focus();
         }
         else {
-            alert("별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review)
+            $('#download_modal').modal('hide');
+            //TODO : 리뷰 저장하는 코드 추가
+            alert("소중한 리뷰 감사드립니다!" + "\n" + "별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review);
+            // 리뷰 초기화
+            document.getElementById("review_comment").value = ""
+            document.getElementById(cur_review).checked = false
+            // TODO: 리뷰작성시 바로 다운로드되게 하기
+            console.log(document.getElementById("image" + buttonType).src) // 가져온 링크주소
         }
-
     })
+
 
     const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
     const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"

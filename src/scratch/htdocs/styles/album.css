@@ -7,12 +7,26 @@
     border: 1px;
 }
 
+#download_modal_title {
+    width: 100%;
+    font-size: 5px;
+    text-align: center;
+    font-weight: bold;
+    margin-left: 10%;
+}
+
+
 #image_container_all {
     border-radius: 5px;
 }
 
-#image_container {
+.image_container {
     position: relative;
+}
+
+.image_container:hover .created_image {
+    position: relative;
+    filter: brightness(0.6);
 }
 
 .watermark {
@@ -28,8 +42,27 @@
     color: rgba(128, 128, 128, 0.522);
 }
 
-.created_image:hover {
-    filter: brightness(1.2);
+.download_btn {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    display: none;
+    opacity: 0.5;
+}
+
+.image_container:hover .download_btn {
+    display: block;
+}
+
+.download_btn:hover {
+    opacity: 1;
 }
 
 .starpoint_wrap {

@@ -55,9 +55,8 @@ jobs:
         name: Authenticate to GCP
         uses: google-github-actions/auth@v1.1.1
         with:
-          token_format: access_token
           create_credentials_file: true
-          workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-fianl/providers/github-action-fianl
+          workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-final/providers/github-action-final
           service_account: github-action@album-cover-generation-392406.iam.gserviceaccount.com
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1

@@ -58,10 +58,11 @@ jobs:
           create_credentials_file: true
           workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
           service_account: github-action-ci@album-cover-generation-392406.iam.gserviceaccount.com
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Access gcp token
         run: |
           echo ${{ secrets.GCP_ACCESS_TOKEN }} > ${{ steps.auth-gcloud.outputs.access_token }}
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v1'
       - id: gcloud
         name: Google Cloud Platform
         run: |

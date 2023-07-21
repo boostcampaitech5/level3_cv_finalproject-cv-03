@@ -7,6 +7,10 @@
     border: 1px;
 }
 
+.badge:hover {
+    filter: contrast(1.1)
+}
+
 #download_modal_title {
     width: 100%;
     font-size: 5px;
@@ -39,6 +43,7 @@
     user-select: none;
     font-size: 2vmax;
     white-space: nowrap;
+    font-weight: bold;
     color: rgba(255, 0, 0, 0.5);
 }
 

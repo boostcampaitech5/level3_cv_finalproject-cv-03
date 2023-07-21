@@ -140,12 +140,14 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             select_model = document.getElementById("listGroupRadios2").value
         }
-        for (let i = 1; i <= 13; i++) {
-            cur_genre = "genre" + i
+        genre = document.getElementsByClassName("badge")
+        for (let i = 0; i < genre.length; i++) {
+            cur_genre = genre[i].id;
             if (document.getElementById(cur_genre).className == badge_checked) {
                 select_genre.push(document.getElementById(cur_genre).textContent)
             }
         }
+
         selects = "Model : " + select_model + "\n" + "Song : " + select_song + "\n" + "Artist : " + select_artist + "\n" + "Album : " + select_album + "\n" + "Genre : " + select_genre + "\n" + "Lyrics : " + select_lyrics + "\n"
         // alert(selects)
 
@@ -186,110 +188,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     })
-
-    document.querySelector("#genre1").addEventListener("click", () => {
-        if (document.getElementById("genre1").className == badge_not_checked) {
-            document.getElementById("genre1").className = badge_checked
-        }
-        else {
-            document.getElementById("genre1").className = badge_not_checked
-        }
+    document.querySelectorAll(".badge").forEach(obj => {
+        obj.addEventListener("click", () => {
+            console.log(document.getElementById(obj.id).style.background)
+            if (document.getElementById(obj.id).className == badge_not_checked)
+                document.getElementById(obj.id).className = badge_checked
+            else {
+                document.getElementById(obj.id).className = badge_not_checked
+            }
+        })
     })
-    document.querySelector("#genre2").addEventListener("click", () => {
-        if (document.getElementById("genre2").className == badge_not_checked) {
-            document.getElementById("genre2").className = badge_checked
-        }
-        else {
-            document.getElementById("genre2").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre3").addEventListener("click", () => {
-        if (document.getElementById("genre3").className == badge_not_checked) {
-            document.getElementById("genre3").className = badge_checked
-        }
-        else {
-            document.getElementById("genre3").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre4").addEventListener("click", () => {
-        if (document.getElementById("genre4").className == badge_not_checked) {
-            document.getElementById("genre4").className = badge_checked
-        }
-        else {
-            document.getElementById("genre4").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre5").addEventListener("click", () => {
-        if (document.getElementById("genre5").className == badge_not_checked) {
-            document.getElementById("genre5").className = badge_checked
-        }
-        else {
-            document.getElementById("genre5").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre6").addEventListener("click", () => {
-        if (document.getElementById("genre6").className == badge_not_checked) {
-            document.getElementById("genre6").className = badge_checked
-        }
-        else {
-            document.getElementById("genre6").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre7").addEventListener("click", () => {
-        if (document.getElementById("genre7").className == badge_not_checked) {
-            document.getElementById("genre7").className = badge_checked
-        }
-        else {
-            document.getElementById("genre7").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre8").addEventListener("click", () => {
-        if (document.getElementById("genre8").className == badge_not_checked) {
-            document.getElementById("genre8").className = badge_checked
-        }
-        else {
-            document.getElementById("genre8").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre9").addEventListener("click", () => {
-        if (document.getElementById("genre9").className == badge_not_checked) {
-            document.getElementById("genre9").className = badge_checked
-        }
-        else {
-            document.getElementById("genre9").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre10").addEventListener("click", () => {
-        if (document.getElementById("genre10").className == badge_not_checked) {
-            document.getElementById("genre10").className = badge_checked
-        }
-        else {
-            document.getElementById("genre10").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre11").addEventListener("click", () => {
-        if (document.getElementById("genre11").className == badge_not_checked) {
-            document.getElementById("genre11").className = badge_checked
-        }
-        else {
-            document.getElementById("genre11").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre12").addEventListener("click", () => {
-        if (document.getElementById("genre12").className == badge_not_checked) {
-            document.getElementById("genre12").className = badge_checked
-        }
-        else {
-            document.getElementById("genre12").className = badge_not_checked
-        }
-    })
-    document.querySelector("#genre13").addEventListener("click", () => {
-        if (document.getElementById("genre13").className == badge_not_checked) {
-            document.getElementById("genre13").className = badge_checked
-        }
-        else {
-            document.getElementById("genre13").className = badge_not_checked
-        }
-    })
-
 })

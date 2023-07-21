@@ -58,7 +58,7 @@ jobs:
           create_credentials_file: true
           workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
           service_account: 3076028714-compute@developer.gserviceaccount.com
-          audience: https://sts.googleapis.com/v1/token
+          audience: //iam.googleapis.com/projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
         with:

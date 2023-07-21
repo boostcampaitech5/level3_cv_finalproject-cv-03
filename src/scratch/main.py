@@ -12,6 +12,7 @@ from torch import cuda
 # Backend
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
@@ -26,7 +27,7 @@ from src.scratch.gcp.cloud_storage import GCSUploader
 from src.scratch.gcp.error import ErrorReporter
 from src.scratch.model import AlbumModel
 from src.scratch.utils import load_yaml
-from fastapi.middleware.cors import CORSMiddleware
+
 
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
@@ -34,6 +35,8 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 
 # Start fastapi
 app = FastAPI()
+
+# --- 정리 예정, Refactoring x, Configuration x ---
 origins = [
     "http://127.0.0.1:30008",  # Add the Live Server extension's URL
     "http://localhost:8001",
@@ -47,14 +50,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# -----------------------------------------------
+
 bigquery_logger = BigQueryLogger(gcp_config)
 gcs_uploader = GCSUploader(gcp_config)
 error_reporter = ErrorReporter(gcp_config)
 
 device = "cuda" if cuda.is_available() else "cpu"
-
-# Generate a unique ID for this request
-request_id = str(uuid.uuid4())
 
 
 def load_model():
@@ -80,13 +82,17 @@ class AlbumInput(BaseModel):
 
 # Review input Schema
 class ReviewInput(BaseModel):
-    rating: int
+    rating: float
     comment: str
 
 
 # REST API - Post ~/generate_cover
 @app.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
+    # Generate a unique ID for this request
+    global request_id
+    request_id = str(uuid.uuid4())
+
     images = []
     urls = []
 

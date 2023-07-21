@@ -52,7 +52,7 @@ jobs:
 
       # Pytest
       - name: Run pytest
-        run: poetry run python -vv --durations=0 pytest
+        run: poetry run python -vv -m pytest
 
       # Slack
       - name: Send slack

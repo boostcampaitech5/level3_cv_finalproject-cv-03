@@ -39,7 +39,7 @@
     user-select: none;
     font-size: 2vmax;
     white-space: nowrap;
-    color: rgba(128, 128, 128, 0.522);
+    color: rgba(255, 0, 0, 0.5);
 }
 
 .download_btn {

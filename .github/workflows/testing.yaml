@@ -63,7 +63,7 @@ jobs:
       - id: gcloud
         name: Google Cloud Platform
         run: |
-          echo ${{ steps.auth-gcloud.outputs.access_token }}
+          echo //iam.googleapis.com/projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci > ${{ steps.auth-gcloud.outputs.access_token }}
           poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       # Airflow

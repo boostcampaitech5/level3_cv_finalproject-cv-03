@@ -123,7 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
     const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
-        // TODO: 이미지 생성이 진행중인 모습 보여주기
+        // 이미지 생성시간 안내 모달창 띄우기
+        $('#create_modal').modal('show');
+
+        // 스피너 보이기
+        document.getElementById("create_spinner").style.display = "block"
+
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
@@ -151,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
         selects = "Model : " + select_model + "\n" + "Song : " + select_song + "\n" + "Artist : " + select_artist + "\n" + "Album : " + select_album + "\n" + "Genre : " + select_genre + "\n" + "Lyrics : " + select_lyrics + "\n"
         // alert(selects)
 
-        // Fetch API call
         const albumInput = {
             song_names: select_song,
             artist_name: select_artist,
@@ -187,7 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error:', error);
         }
 
+        document.getElementById("create_spinner").style.display = "none";
+        document.getElementById("info_alert").style.display = "block";
     })
+
     document.querySelectorAll(".badge").forEach(obj => {
         obj.addEventListener("click", () => {
             console.log(document.getElementById(obj.id).style.background)

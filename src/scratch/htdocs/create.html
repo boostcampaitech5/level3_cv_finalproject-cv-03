@@ -39,11 +39,32 @@
         </header>
     </div>
 
+    <div class="container">
+        <div class="modal fade" id="create_modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modal_title">📢 이미지 생성 시간 안내 📢</h1>
+                        <button class="btn-close px-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center" style="font-size: 14px;">저희 서비스를 이용해 주셔서 감사합니다!<br />
+                        이미지 생성에는 조금의 시간이 걸릴 수 있으며, 이 점 양해 부탁드립니다.<br />
+                        완성된 이미지를 받아보시기 전까지 기다려 주시면 감사하겠습니다.</div>
+                    <div class="modal-footer py-0 px-0 border-0">
+                        <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="download_modal" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="download_modal_title">이미지를 다운로드하기 위해<br /><mark>별점과 리뷰</mark>를
+                    <h2 class="modal-title fs-5" id="modal_title">이미지를 다운로드하기 위해<br /><mark>별점과
+                            리뷰</mark>를
                         남겨주세요!</h2>
                     <button class="btn-close px-3" data-bs-dismiss="modal"></button>
                 </div>
@@ -102,6 +123,7 @@
 
             </div>
         </div>
+    </div>
     </div>
 
     <div class="container">
@@ -213,15 +235,17 @@
                                         Please enter lyrics.
                                     </div>
                                 </div>
-
                             </div>
-                            <hr class="my-4">
+
+                            <hr class="my-3">
                             <button class="w-100 btn btn-primary btn-lg" type="submit"
                                 id="img_create_btn">CREATE</button>
-
                         </div>
+
                         <div class="col-lg-7">
-                            <div class="bg-primary-subtle px-2 py-2 mb-2 mt-4" id="image_container_all">
+                            <div class="bg-primary-subtle px-2 py-2 mb-2 mt-4 align-items-center"
+                                id="image_container_all">
+                                <div class="spinner-border" id="create_spinner"></div>
                                 <div class="row g-0">
                                     <div class="col">
                                         <div class="image_container">
@@ -272,64 +296,11 @@
                                 </div>
                             </div>
 
-                            <!-- <form class="review">
-                                <div class="input-group justify-content-center">
-                                    <div class="border text-center" style="width:80%;">
-                                        <label class="form-label">별점 :</label>
-                                        <div class="starpoint_wrap mt-2">
-                                            <div class="starpoint_box">
-                                                <label for="starpoint_1" class="label_star" title="0.5"><span
-                                                        class="blind">0.5점</span></label>
-                                                <label for="starpoint_2" class="label_star" title="1"><span
-                                                        class="blind">1점</span></label>
-                                                <label for="starpoint_3" class="label_star" title="1.5"><span
-                                                        class="blind">1.5점</span></label>
-                                                <label for="starpoint_4" class="label_star" title="2"><span
-                                                        class="blind">2점</span></label>
-                                                <label for="starpoint_5" class="label_star" title="2.5"><span
-                                                        class="blind">2.5점</span></label>
-                                                <label for="starpoint_6" class="label_star" title="3"><span
-                                                        class="blind">3점</span></label>
-                                                <label for="starpoint_7" class="label_star" title="3.5"><span
-                                                        class="blind">3.5점</span></label>
-                                                <label for="starpoint_8" class="label_star" title="4"><span
-                                                        class="blind">4점</span></label>
-                                                <label for="starpoint_9" class="label_star" title="4.5"><span
-                                                        class="blind">4.5점</span></label>
-                                                <label for="starpoint_10" class="label_star" title="5"><span
-                                                        class="blind">5점</span></label>
-                                                <input type="radio" name="starpoint" id="starpoint_1"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_2"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_3"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_4"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_5"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_6"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_7"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_8"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_9"
-                                                    class="star_radio">
-                                                <input type="radio" name="starpoint" id="starpoint_10"
-                                                    class="star_radio">
-                                                <span class="starpoint_bg"></span>
-                                            </div>
-                                        </div>
-
-                                        <input type="text" class="form-control text-center" style="border-radius:0;"
-                                            id="review_comment" placeholder="간단한 리뷰 한줄평을 남겨주세요!">
-                                    </div>
-                                    <button type="submit" class="btn btn-secondary" style="width:20%; font-weight:bold;"
-                                        id="review_btn">리뷰<br>보내기</button>
-                                </div>
-
-                            </form> -->
+                            <div class="alert bg-secondary-subtle alert-dismissible" id="info_alert"
+                                style="display: none;">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <strong>INFO! </strong> 리뷰를 남기시고 이미지를 받아가실 수 있습니다.
+                            </div>
                         </div>
                 </form>
             </div>

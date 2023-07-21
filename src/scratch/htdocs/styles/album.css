@@ -11,7 +11,7 @@
     filter: contrast(1.1)
 }
 
-#download_modal_title {
+#modal_title {
     width: 100%;
     font-size: 5px;
     text-align: center;
@@ -29,8 +29,23 @@
 }
 
 .image_container:hover .created_image {
-    position: relative;
     filter: brightness(0.6);
+}
+
+#image_container_all {
+    position: relative;
+}
+
+#create_spinner {
+    position: absolute;
+    color: rgba(65, 65, 65, 0.9);
+    z-index: 3;
+    top: 41%;
+    left: 41%;
+    width: 8rem;
+    height: 8rem;
+    border-width: 17px;
+    display: none;
 }
 
 .watermark {

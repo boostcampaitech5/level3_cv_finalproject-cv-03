@@ -1,11 +1,17 @@
-from airflow import DAG
-from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOperator
-from datetime import datetime, timedelta
-import pendulum
+# Python built-in modules
 import os
 import csv
+from datetime import datetime, timedelta
 
-data_dir = "./airflow-data"
+# airflow
+from airflow import DAG
+from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOperator
+
+# Other modules
+import pendulum
+
+
+data_dir = os.path.join(os.environ.get("AIRFLOW_HOME"), "./airflow-data")
 os.makedirs(data_dir, exist_ok=True)
 
 default_args = {

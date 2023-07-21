@@ -68,6 +68,7 @@ jobs:
         name: Google Cloud Platform
         run: |
           poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          cat ${{ steps.auth.outputs.credentials_file_path }}
 
       # Airflow
       - name: Run airflow

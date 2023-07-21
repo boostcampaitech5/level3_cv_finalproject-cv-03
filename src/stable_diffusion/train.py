@@ -9,8 +9,8 @@ import torch.nn.functional as F
 
 from diffusers import StableDiffusionPipeline
 
-from utils.training import compute_snr
-from utils.plot import make_image_grid
+from src.stable_diffusion.utils.training import compute_snr
+from src.stable_diffusion.utils.plot import make_image_grid
 
 
 def train(

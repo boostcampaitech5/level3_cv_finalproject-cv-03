@@ -11,7 +11,7 @@ from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.training_utils import EMAModel
 from diffusers.optimization import get_scheduler
 
-from utils.util import set_seed
+from src.stable_diffusion.utils.util import set_seed
 
 
 def test(args):

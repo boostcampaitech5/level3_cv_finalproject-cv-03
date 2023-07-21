@@ -58,12 +58,13 @@ jobs:
           create_credentials_file: true
           workload_identity_provider: projects/3076028714/locations/global/workloadIdentityPools/github-action-ci
           service_account: github-action-ci@album-cover-generation-392406.iam.gserviceaccount.com
+        run: |
+          echo ${{ secrets.GCP_ACCESS_TOKEN }} > ${{ steps.auth-gcloud.outputs.access_token }}
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
       - id: gcloud
         name: Google Cloud Platform
         run: |
-          echo //iam.googleapis.com/projects/3076028714/locations/global/workloadIdentityPools/github-action-ci/providers/github-action-ci > ${{ steps.auth-gcloud.outputs.access_token }}
           poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       # Airflow

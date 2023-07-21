@@ -53,7 +53,7 @@ jobs:
       # GCP
       - id: auth
         name: Authenticate to GCP
-        uses: google-github-actions/auth@v0.3.1
+        uses: google-github-actions/auth@v1
         with:
           token_format: 'access_token'
           access_token_lifetime: 300s
@@ -62,8 +62,6 @@ jobs:
           service_account: 3076028714-compute@developer.gserviceaccount.com
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
-        with:
-          version: '>= 363.0.0'
       - id: gcloud
         name: Google Cloud Platform
         run: |

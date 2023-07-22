@@ -44,12 +44,16 @@ jobs:
 
       - name: Run Black
         run: poetry run black . --check
-      - name: Access to secrets
+      - name: Access to secrets # 추후 통합
         run: |
           echo $GCP | base64 --decode > src/scratch/config/gcp.json
           echo $PUBLIC | base64 --decode > src/scratch/config/public.yaml
           echo $PRIVATE | base64 --decode > src/scratch/config/private.yaml
           echo $TRANSLATION | base64 --decode > src/scratch/config/translation.yaml
+          echo $GCP | base64 --decode > src/redis_celery/config/gcp.json
+          echo $PUBLIC | base64 --decode > src/redis_celery/config/public.yaml
+          echo $PRIVATE | base64 --decode > src/redis_celery/config/private.yaml
+          echo $TRANSLATION | base64 --decode > src/redis_celery/config/translation.yaml
         env:
           GCP: ${{secrets.GCP}}
           PUBLIC: ${{secrets.PUBLIC}}

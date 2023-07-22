@@ -22,6 +22,7 @@ from .gpt3_api import get_description
 from .gcp.cloud_storage import GCSUploader
 from .utils import load_yaml
 
+
 # Load config
 gcp_config = load_yaml(os.path.join("src/redis_celery/config", "private.yaml"), "gcp")
 redis_config = load_yaml(

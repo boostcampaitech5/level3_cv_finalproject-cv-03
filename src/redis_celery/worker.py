@@ -17,10 +17,11 @@ from celery import Celery
 from celery import signals
 
 # User Defined modules
-from src.redis_celery.model import AlbumModel
-from src.redis_celery.gpt3_api import get_description
-from src.redis_celery.gcp.cloud_storage import GCSUploader
-from src.redis_celery.utils import load_yaml
+from .model import AlbumModel
+from .gpt3_api import get_description
+from .gcp.cloud_storage import GCSUploader
+from .utils import load_yaml
+
 
 # Load config
 gcp_config = load_yaml(os.path.join("src/redis_celery/config", "private.yaml"), "gcp")

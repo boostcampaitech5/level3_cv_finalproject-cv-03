@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "final-project"
+version = "0.1.0"
+description = ""
+authors = ["jjjuuuun"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.10.12"
+wandb = "0.15.5"
+xformers = "0.0.20"
+transformers = "4.28.1"
+diffusers = "0.11.0"
+accelerate = "0.15.0"
+streamlit = "1.24.1"
+openai = "0.27.8"
+fastapi = "0.100.0"
+uvicorn = "0.22.0"
+google-cloud-storage = "2.10.0"
+google-cloud-bigquery = "3.11.3"
+google-auth = "2.22.0"
+google-cloud-error-reporting = "1.9.2"
+torch = { url = "https://download.pytorch.org/whl/cu118/torch-2.0.1%2Bcu118-cp310-cp310-linux_x86_64.whl" }
+torchvision = { url = "https://download.pytorch.org/whl/cu118/torchvision-0.15.2%2Bcu118-cp310-cp310-linux_x86_64.whl" }
+httpx = "0.24.1"
+rpds-py = "0.8.10"
+pyyaml = "6.0"
+apache-airflow = "2.6.3"
+apache-airflow-providers-google = "10.3.0"
+apache-airflow-providers-amazon = "8.3.0"
+apache-airflow-providers-apache-beam = "5.1.1"
+apache-airflow-providers-apache-cassandra = "3.2.1"
+apache-airflow-providers-cncf-kubernetes = "7.2.0"
+apache-airflow-providers-common-sql = "1.6.0"
+apache-airflow-providers-facebook = "3.2.1"
+apache-airflow-providers-microsoft-azure = "6.2.0"
+apache-airflow-providers-microsoft-mssql = "3.4.1"
+apache-airflow-providers-mysql = "5.1.1"
+apache-airflow-providers-oracle = "3.7.1"
+apache-airflow-providers-postgres = "5.5.2"
+apache-airflow-providers-presto = "5.1.1"
+apache-airflow-providers-salesforce = "5.4.1"
+redis = "4.6.0"
+celery = "5.3.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "6.2.5"
+black = "23.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -5,7 +5,7 @@ import os
 import openai
 
 # Built-in modules
-from utils import load_yaml
+from .utils import load_yaml
 
 
 def get_description(

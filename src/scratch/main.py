@@ -20,12 +20,12 @@ import numpy as np
 from pytz import timezone
 
 # Built-in modules
-from gpt3_api import get_description
-from gcp.bigquery import BigQueryLogger
-from gcp.cloud_storage import GCSUploader
-from gcp.error import ErrorReporter
-from model import AlbumModel
-from utils import load_yaml
+from .gpt3_api import get_description
+from .gcp.bigquery import BigQueryLogger
+from .gcp.cloud_storage import GCSUploader
+from .gcp.error import ErrorReporter
+from .model import AlbumModel
+from .utils import load_yaml
 
 
 # Load config

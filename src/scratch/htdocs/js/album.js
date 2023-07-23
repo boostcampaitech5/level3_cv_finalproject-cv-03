@@ -193,6 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("create_spinner").style.display = "none";
         document.getElementById("info_alert").style.display = "block";
+        watermark = document.getElementsByClassName("watermark");
+        for (let i = 0; i < watermark.length; i++) {
+            watermark[i].style.display = "block";
+        }
     })
 
     document.querySelectorAll(".badge").forEach(obj => {

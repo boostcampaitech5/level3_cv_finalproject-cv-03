@@ -209,4 +209,10 @@ pyrightconfig.json
 .history
 .ionide
 
+# Ignore dataset stored in local
+src/stable_diffusion/data
+
+# Ignore logging (nohup)
+nohup.out
+
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,visualstudiocode

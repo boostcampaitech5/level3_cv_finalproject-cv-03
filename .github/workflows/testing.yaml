@@ -24,12 +24,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install poetry
-        run: pip install poetry==1.5.1
+        run: |
+        pip install poetry==1.5.1
+        pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org git+https://github.com/huggingface/diffusers.git@feat/sdxl-dreambooth-returns
       - name: Install mysqlclient & redis-server using apt-get
         run: |
           sudo apt-get install -y libmysqlclient-dev
           sudo apt install -y redis-server
-          sudo apt-get install -y ca-certificates
 
       - name: Set up Python 3.10.12 & poetry
         uses: actions/setup-python@v4

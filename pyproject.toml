@@ -12,7 +12,6 @@ xformers = "0.0.20"
 transformers = "4.28.1"
 accelerate = "0.21.0"
 streamlit = "1.24.1"
-dulwich = "^0.20.46"
 openai = "0.27.8"
 fastapi = "0.100.0"
 uvicorn = "0.22.0"
@@ -46,7 +45,6 @@ ftfy = "6.1.1"
 tensorboard = "2.13.0"
 Jinja2 = "3.1.2"
 invisible-watermark = "0.2.0"
-diffusers = {git = "https://github.com/huggingface/diffusers.git", rev = "feat/sdxl-dreambooth-returns"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "6.2.5"

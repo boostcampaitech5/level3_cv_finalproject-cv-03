@@ -29,6 +29,7 @@ jobs:
         run: |
           sudo apt-get install -y libmysqlclient-dev
           sudo apt install -y redis-server
+          sudo apt-get install -y ca-certificates
 
       - name: Set up Python 3.10.12 & poetry
         uses: actions/setup-python@v4

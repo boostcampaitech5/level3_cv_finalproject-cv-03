@@ -10,7 +10,6 @@ python = "3.10.12"
 wandb = "0.15.5"
 xformers = "0.0.20"
 transformers = "4.28.1"
-diffusers = { git = "https://github.com/huggingface/diffusers.git", branch = "feat/sdxl-dreambooth-returns" }
 accelerate = "0.21.0"
 streamlit = "1.24.1"
 openai = "0.27.8"
@@ -46,6 +45,7 @@ ftfy = "6.1.1"
 tensorboard = "2.13.0"
 Jinja2 = "3.1.2"
 invisible-watermark = "0.2.0"
+diffusers = {git = "https://github.com/huggingface/diffusers.git", rev = "feat/sdxl-dreambooth-returns"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "6.2.5"
@@ -54,7 +54,3 @@ black = "23.7.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[certificates]
-[certificates.cp_util]
-cert = false

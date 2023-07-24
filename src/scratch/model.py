@@ -11,15 +11,11 @@ class AlbumModel:
         self.device = device
         self.model_config = model_config
         if lang == "EN":
-            self.text_encoder = (
-                CLIPTextModel.from_pretrained(
-                    "CompVis/stable-diffusion-v1-4", subfolder="text_encoder"
-                ),
+            self.text_encoder = CLIPTextModel.from_pretrained(
+                "CompVis/stable-diffusion-v1-4", subfolder="text_encoder"
             )
-            self.tokenizer = (
-                CLIPTokenizer.from_pretrained(
-                    "CompVis/stable-diffusion-v1-4", subfolder="tokenizer"
-                ),
+            self.tokenizer = CLIPTokenizer.from_pretrained(
+                "CompVis/stable-diffusion-v1-4", subfolder="tokenizer"
             )
         elif lang == "KR":
             self.text_encoder = AutoModel.from_pretrained("klue/roberta-base")

@@ -43,6 +43,7 @@ apache-airflow-providers-salesforce = "5.4.1"
 redis = "4.6.0"
 celery = "5.3.1"
 ftfy = "6.1.1"
+tensorboard = "2.13.0"
 Jinja2 = "3.1.2"
 invisible-watermark = "0.2.0"
 
@@ -53,3 +54,7 @@ black = "23.7.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[certificates]
+[certificates.cp_util]
+cert = false

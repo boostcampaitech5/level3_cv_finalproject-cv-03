@@ -41,13 +41,17 @@ error_reporter = ErrorReporter(gcp_config)
 
 device = "cuda" if cuda.is_available() else "cpu"
 
-# Generate a unique ID for this request
-request_id = str(uuid.uuid4())
-
 
 def load_model():
     model = AlbumModel(public_config["model"], public_config["language"], device)
     return model
+
+
+@app.on_event("startup")
+async def startup_event():
+    global model
+    model = load_model()
+    print("Model loaded successfully!")
 
 
 # Album input Schema
@@ -61,13 +65,17 @@ class AlbumInput(BaseModel):
 
 # Review input Schema
 class ReviewInput(BaseModel):
-    rating: int
+    rating: float
     comment: str
 
 
 # REST API - Post ~/generate_cover
 @app.post("/generate_cover")
-async def generate_cover(album: AlbumInput, model: AlbumModel = Depends(load_model)):
+async def generate_cover(album: AlbumInput):
+    # Generate a unique ID for this request
+    global request_id
+    request_id = str(uuid.uuid4())
+
     images = []
     urls = []
 

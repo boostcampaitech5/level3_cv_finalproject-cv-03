@@ -6,6 +6,6 @@ import pytest
 from src.scratch.main import app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def client():
     return TestClient(app)

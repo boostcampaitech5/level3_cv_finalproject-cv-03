@@ -1,5 +1,24 @@
 # Built-in modules
+import os
 from tests.scratch.conftest import client
+from .scratch.model import AlbumModel
+from .scratch.utils import load_yaml
+
+# Pytorch
+import torch
+from torch import cuda
+
+
+# load model for testing
+public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
+
+device = "cuda" if cuda.is_available() else "cpu"
+
+
+def load_model():
+    global model
+    model = AlbumModel(public_config["model"], public_config["language"], device)
+    return model
 
 
 # src.scratch.main - test to see if generate_cover works well

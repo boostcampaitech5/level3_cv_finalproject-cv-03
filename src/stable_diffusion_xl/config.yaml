@@ -1,0 +1,49 @@
+# Name/Path of the initial model.
+MODEL_NAME: "stabilityai/stable-diffusion-xl-base-0.9"
+# for memory efficient. 
+GRADIENT_CHECKPOINTING: true
+# Train text encoder flag.
+TRAIN_TEXT_ENCODER: true
+# Pretrained VAE model name or path.
+PRETRAINED_VAE_MODEL_NAME_OR_PATH: "madebyollin/sdxl-vae-fp16-fix"
+# With prior preservation flag.
+WITH_PRIOR_PRESERVATION: true
+# Prior loss weight.
+PRIOR_LOSS_WEIGHT: 1.0
+# Mixed precision setting.
+MIXED_PRECISION: "fp16"
+# Learning rate.
+LEARNING_RATE: 1e-4
+# Number of class images.
+NUM_CLASS_IMAGES: 200
+# Sample batch size.
+SAMPLE_BATCH_SIZE: 1
+#--------------------------Don't fix above-----------------------------------------------
+
+# write a token and class name, exp name. and It'll be set your directory.
+TOKEN_NAME: qwer
+CLASS_NAME: woman
+EXP_NAME: num200
+
+# Instance prompt. best is A photo of {TOKEN_NAME} {CLASS_NAME}
+INSTANCE_PROMPT: "A photo of qwer woman"
+# Class prompt. best is A photo of {CLASS_NAME}
+CLASS_PROMPT: "A photo of a woman"
+# Resolution setting.
+RESOLUTION: 512
+# Train batch size.
+TRAIN_BATCH_SIZE: 4
+# Gradient accumulation steps and gradient checkpointing flag.
+GRADIENT_ACCUMULATION_STEPS: 1
+# Learning rate scheduler.
+LR_SCHEDULER: "constant"
+# Learning rate warm-up steps.
+LR_WARMUP_STEPS: 0
+# Maximum training steps.
+MAX_TRAIN_STEPS: 1000
+# Random seed.
+SEED: 1557
+# Push to hub flag.
+PUSH_TO_HUB: false
+# Hub model ID.
+HUB_MODEL_ID: ""

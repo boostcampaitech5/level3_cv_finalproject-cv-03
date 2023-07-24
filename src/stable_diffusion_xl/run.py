@@ -2,17 +2,22 @@ import yaml
 import subprocess
 import argparse
 
+
 def quote_arg(arg):
     # Function to quote arguments with spaces
     return f'"{arg}"' if " " in arg else arg
+
 
 def load_config(config_file):
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
     return config
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run the training script with config.yaml settings.")
+    parser = argparse.ArgumentParser(
+        description="Run the training script with config.yaml settings."
+    )
     parser.add_argument("config_file", type=str, help="Path to the config.yaml file.")
     args = parser.parse_args()
 
@@ -22,13 +27,15 @@ if __name__ == "__main__":
     token = config["TOKEN_NAME"]
     class_name = config["CLASS_NAME"]
     exp_name = config["EXP_NAME"]
-    
+
     # Prepare the command string
     command = "accelerate launch train.py"
     command += f" --pretrained_model_name_or_path={quote_arg(config['MODEL_NAME'])}"
     command += f" --pretrained_vae_model_name_or_path={quote_arg(config['PRETRAINED_VAE_MODEL_NAME_OR_PATH'])}"
     command += f" --instance_data_dir=/opt/ml/stable-diffusion-xl/data/tokens/{token}"
-    command += f" --class_data_dir=/opt/ml/stable-diffusion-xl/data/generated/{class_name}"
+    command += (
+        f" --class_data_dir=/opt/ml/stable-diffusion-xl/data/generated/{class_name}"
+    )
     command += f" --output_dir=/opt/ml/stable-diffusion-xl/weights/{token}/{exp_name}"
     command += " --with_prior_preservation"
     command += f" --prior_loss_weight={config['PRIOR_LOSS_WEIGHT']}"
@@ -51,8 +58,8 @@ if __name__ == "__main__":
         command += f" --hub_model_id={config['HUB_MODEL_ID']}"
     if config["TRAIN_TEXT_ENCODER"]:
         command += " --train_text_encoder"
-        
+
     print(command)
-    
+
     # Execute the generated command
     subprocess.run(command, shell=True)

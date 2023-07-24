@@ -2244,6 +2244,39 @@ wrapt = ">=1.10,<2"
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "sphinx (<2)", "tox"]
 
 [[package]]
+name = "diffusers"
+version = "0.19.0.dev0"
+description = "Diffusers"
+optional = false
+python-versions = ">=3.7.0"
+files = []
+develop = false
+
+[package.dependencies]
+filelock = "*"
+huggingface-hub = ">=0.13.2"
+importlib_metadata = "*"
+numpy = "*"
+Pillow = "*"
+regex = "!=2019.12.17"
+requests = "*"
+
+[package.extras]
+dev = ["Jinja2", "accelerate (>=0.11.0)", "black (>=23.1,<24.0)", "compel (==0.1.8)", "datasets", "flax (>=0.4.1)", "hf-doc-builder (>=0.3.0)", "invisible-watermark (>=0.2.0)", "isort (>=5.5.4)", "jax (>=0.2.8,!=0.3.2)", "jaxlib (>=0.1.65)", "k-diffusion (>=0.0.12)", "librosa", "omegaconf", "parameterized", "protobuf (>=3.20.3,<4)", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "ruff (>=0.0.241)", "safetensors", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "tensorboard", "torch (>=1.4)", "torchvision", "transformers (>=4.25.1)", "urllib3 (<=2.0.0)"]
+docs = ["hf-doc-builder (>=0.3.0)"]
+flax = ["flax (>=0.4.1)", "jax (>=0.2.8,!=0.3.2)", "jaxlib (>=0.1.65)"]
+quality = ["black (>=23.1,<24.0)", "hf-doc-builder (>=0.3.0)", "isort (>=5.5.4)", "ruff (>=0.0.241)", "urllib3 (<=2.0.0)"]
+test = ["Jinja2", "compel (==0.1.8)", "datasets", "invisible-watermark (>=0.2.0)", "k-diffusion (>=0.0.12)", "librosa", "omegaconf", "parameterized", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "safetensors", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "torchvision", "transformers (>=4.25.1)"]
+torch = ["accelerate (>=0.11.0)", "torch (>=1.4)"]
+training = ["Jinja2", "accelerate (>=0.11.0)", "datasets", "protobuf (>=3.20.3,<4)", "tensorboard"]
+
+[package.source]
+type = "git"
+url = "https://github.com/helpmeIamnewbie/diffusers.git"
+reference = "develop"
+resolved_reference = "77921ef2f78dba001f526d880181765720cc57c9"
+
+[[package]]
 name = "dill"
 version = "0.3.1.1"
 description = "serialize all of python"
@@ -8543,4 +8576,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.12"
-content-hash = "f8eae07bda57d7656e435c46998df663faa039d494a6e566753619bc539047d3"
+content-hash = "b5fa8e547238a4253e288c06ed133a3c91f7f3658ca9aa2634328d52c29658ab"

@@ -10,6 +10,7 @@ python = "3.10.12"
 wandb = "0.15.5"
 xformers = "0.0.20"
 transformers = "4.28.1"
+diffusers = { git = "https://github.com/helpmeIamnewbie/diffusers.git", branch = "develop" }
 accelerate = "0.21.0"
 streamlit = "1.24.1"
 openai = "0.27.8"

@@ -26,7 +26,6 @@ jobs:
       - name: Install poetry
         run: |
           pip install poetry==1.5.1
-          pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org git+https://github.com/huggingface/diffusers.git@feat/sdxl-dreambooth-returns
       - name: Install mysqlclient & redis-server using apt-get
         run: |
           sudo apt-get install -y libmysqlclient-dev

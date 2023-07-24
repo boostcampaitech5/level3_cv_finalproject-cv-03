@@ -40,6 +40,9 @@ class MelonDataset(Dataset):
         res = requests.get(img_url)
         img = Image.open(BytesIO(res.content)).convert("RGB")
 
+        # When image is stored in local
+        # img = Image.open(img_url).convert("RGB")
+
         if self.transform:
             img = self.transform(img)
 

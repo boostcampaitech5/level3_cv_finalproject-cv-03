@@ -21,7 +21,6 @@ ipython_config.py
 wandb/
 checkpoints/
 results/
-config/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -209,5 +208,11 @@ pyrightconfig.json
 # Ignore all local history of files
 .history
 .ionide
+
+# Ignore dataset stored in local
+src/stable_diffusion/data
+
+# Ignore logging (nohup)
+nohup.out
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,visualstudiocode

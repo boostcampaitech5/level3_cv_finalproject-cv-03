@@ -19,9 +19,9 @@ import numpy as np
 from pytz import timezone
 
 # User Defined modules
-from src.redis_celery.gcp.bigquery import BigQueryLogger
-from src.redis_celery.gcp.error import ErrorReporter
-from src.redis_celery.utils import load_yaml
+from .gcp.bigquery import BigQueryLogger
+from .gcp.error import ErrorReporter
+from .utils import load_yaml
 
 
 # Load config

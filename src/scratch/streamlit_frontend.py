@@ -12,10 +12,7 @@ import requests
 from PIL import Image
 
 # Built-in modules
-try:
-    from src.scratch.utils import load_yaml
-except:
-    from utils import load_yaml
+from .utils import load_yaml
 
 
 def main():

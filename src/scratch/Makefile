@@ -1,8 +1,8 @@
 run_server:
-	uvicorn src.scratch.main:app --reload
+	uvicorn main:app --reload
 
 run_client:
-	streamlit run src/scratch/streamlit_frontend.py --server.port 30009 --server.fileWatcherType none --browser.gatherUsageStats False
+	streamlit run streamlit_frontend.py --server.port 30009 --server.fileWatcherType none --browser.gatherUsageStats False
 
 run_gateway_server:
 	uvicorn src.redis_celery.main:app --reload

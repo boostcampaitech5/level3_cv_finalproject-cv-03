@@ -12,6 +12,7 @@ from torch import cuda
 # Backend
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
@@ -34,6 +35,22 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 
 # Start fastapi
 app = FastAPI()
+
+# --- 정리 예정, Refactoring x, Configuration x ---
+origins = [
+    "http://127.0.0.1:30008",  # Add the Live Server extension's URL
+    "http://localhost:8001",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# -----------------------------------------------
 
 bigquery_logger = BigQueryLogger(gcp_config)
 gcs_uploader = GCSUploader(gcp_config)

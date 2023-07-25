@@ -13,10 +13,7 @@ import requests
 from PIL import Image
 
 # Built-in modules
-try:
-    from src.redis_celery.utils import load_yaml
-except:
-    from utils import load_yaml
+from .utils import load_yaml
 
 
 def main():

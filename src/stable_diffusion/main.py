@@ -17,9 +17,9 @@ from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from diffusers.training_utils import EMAModel
 from diffusers.optimization import get_scheduler
 
-from dataset import MelonDataset, valid_prompt
-from train import train
-from utils.util import set_seed
+from .dataset import MelonDataset, valid_prompt
+from .train import train
+from .utils.util import set_seed
 
 
 def main(args):

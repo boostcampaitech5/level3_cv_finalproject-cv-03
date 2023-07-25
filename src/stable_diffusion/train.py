@@ -6,11 +6,16 @@ import wandb
 
 import torch
 import torch.nn.functional as F
+from torchmetrics.functional.multimodal import clip_score
 
 from diffusers import StableDiffusionPipeline
 
-from utils.training import compute_snr
-from utils.plot import make_image_grid
+from .utils.training import compute_snr
+from .utils.plot import make_image_grid
+
+from PIL import Image
+import numpy as np
+from functools import partial
 
 
 def train(
@@ -165,6 +170,16 @@ def train(
 
 
 def valid(args, accelerator, tokenizer, text_encoder, vae, unet, weight_dtype, epoch):
+    clip_score_fn = partial(
+        clip_score, model_name_or_path="openai/clip-vit-base-patch16"
+    )
+
+    def calculate_clip_score(image, prompt):
+        clip_score = clip_score_fn(
+            torch.from_numpy(image).unsqueeze(0).permute(0, 3, 1, 2), [prompt]
+        ).detach()
+        return round(float(clip_score), 4)
+
     print("Running validation")
 
     pipeline = StableDiffusionPipeline.from_pretrained(
@@ -187,29 +202,45 @@ def valid(args, accelerator, tokenizer, text_encoder, vae, unet, weight_dtype, e
     generator = torch.Generator(device=accelerator.device).manual_seed(args.seed)
 
     images = []
+    clip_scores = []
+
     for i in range(len(args.valid_prompts)):
         with torch.autocast("cuda"):
             image = pipeline(
                 prompt=args.valid_prompts[i],
                 num_inference_steps=args.num_inference_steps,
                 generator=generator,
+                output_type="numpy",  # This specifies the output type
             ).images[
                 0
             ]  # Default: 50
-        images.append(image)
+
+            # Convert the numpy array to a PIL Image
+            pil_image = Image.fromarray((image * 255).astype(np.uint8))
+
+            # Add the PIL image to the list of images
+            images.append(pil_image)
+
+        # Compute CLIP score for the image
+        sd_clip_score = calculate_clip_score(image, args.valid_prompts[i])
+        print(f"CLIP score for prompt '{args.valid_prompts[i]}': {sd_clip_score}")
+        clip_scores.append(sd_clip_score)
 
     if args.save_img_path is not None:
         make_image_grid(args, epoch, images, args.grid_size[0], args.grid_size[1])
 
     if args.use_wandb:
-        wandb.log(
-            {
-                "Validation": [
-                    wandb.Image(image, caption=f"{i}: {args.valid_prompts[i]}")
-                    for i, image in enumerate(images)
-                ]
-            }
-        )
+        for i, image in enumerate(images):
+            wandb.log(
+                {
+                    f"Validation/{i}": wandb.Image(
+                        image,
+                        caption=f"{args.valid_prompts[i]}, CLIP score: {clip_scores[i]}",
+                    ),
+                    f"CLIP score/{args.valid_prompts[i]}": clip_scores[i],
+                },
+                step=epoch,  # assumes epoch is your x-axis
+            )
 
     # Memory issues
     del pipeline

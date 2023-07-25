@@ -62,6 +62,60 @@ function imageDownload(num) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    select_model = document.querySelectorAll('.select_model')
+    model_contents = document.querySelectorAll('.model_content')
+    select_model.forEach((radio) => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) {
+                model_contents.forEach((content)=> {
+                    if (content.id == radio.id){
+                        content.style.display = 'block';
+                    }
+                    else {
+                        content.style.display = 'none';
+                    }
+                })
+            }
+        })
+    })
+    document.querySelector('#imageUpload').addEventListener('change', function() {
+        const selectedFiles = this.files;
+        const previewContainer = document.querySelector('#imagePreview');
+
+        // 이미지 갯수가 최소 4장 이상인지 확인
+        if (selectedFiles.length < 4) {
+            alert('최소 4장의 이미지를 업로드해주세요.');
+            return;
+        }
+
+        // 이미지 갯수가 최대 10장 이하인지 확인
+        if (selectedFiles.length > 10) {
+            alert('최대 10장까지 이미지를 업로드할 수 있습니다.');
+            return;
+        }
+
+        // 기존의 미리보기 이미지를 모두 삭제
+        while (previewContainer.firstChild) {
+            previewContainer.removeChild(previewContainer.firstChild);
+        }
+
+        // 선택된 파일들의 미리보기 이미지를 생성하여 추가
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const image = document.createElement('img');
+                image.setAttribute('src', event.target.result);
+                image.setAttribute('class', 'preview-image');
+                previewContainer.appendChild(image);
+          };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+
     // 모달을 열 때 클릭된 버튼 숫자정보(1~4) 가져오기
     $('#download_modal').on('show.bs.modal', function (event) {
         button = $(event.relatedTarget);
@@ -80,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         if (user_starpoint == 0 || user_review == "") {
-            alert('리뷰를 작성해주세요.');
+            alert('별점과 리뷰를 모두 작성해주세요.');
             document.getElementById("review_comment").focus();
         }
         else {
@@ -132,64 +186,78 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
-        select_model = ""
-        select_song = document.getElementById("song_name").value
-        select_artist = document.getElementById("artist_name").value
-        select_album = document.getElementById("album_name").value
-        select_genre = []
-        select_lyrics = document.getElementById("lyrics").value
-
-        if (document.getElementById("listGroupRadios1").checked == true) {
-            select_model = document.getElementById("listGroupRadios1").value
+        if (document.getElementById("listGroupRadioGrid1").checked == true) {
+            select_model = document.getElementById("listGroupRadioGrid1").value
         }
         else {
-            select_model = document.getElementById("listGroupRadios2").value
-        }
-        genre = document.getElementsByClassName("badge")
-        for (let i = 0; i < genre.length; i++) {
-            cur_genre = genre[i].id;
-            if (document.getElementById(cur_genre).className == badge_checked) {
-                select_genre.push(document.getElementById(cur_genre).textContent)
-            }
+            select_model = document.getElementById("listGroupRadioGrid2").value
         }
 
-        selects = "Model : " + select_model + "\n" + "Song : " + select_song + "\n" + "Artist : " + select_artist + "\n" + "Album : " + select_album + "\n" + "Genre : " + select_genre + "\n" + "Lyrics : " + select_lyrics + "\n"
-        // alert(selects)
-
-        const albumInput = {
-            song_names: select_song,
-            artist_name: select_artist,
-            genre: select_genre.join(", "),
-            album_name: select_album,
-            lyric: select_lyrics,
-        };
-
-        try {
-            const response = await fetch('http://localhost:8000/generate_cover', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(albumInput),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        if (select_model == "Stable Diffusion") {
+            select_song = document.getElementById("song_name").value
+            select_artist = document.getElementById("artist_name").value
+            select_album = document.getElementById("album_name").value
+            select_genre = []
+            select_lyrics = document.getElementById("lyrics").value
+            genre = document.getElementsByClassName("badge")
+            for (let i = 0; i < genre.length; i++) {
+                cur_genre = genre[i].id;
+                if (document.getElementById(cur_genre).className == badge_checked) {
+                    select_genre.push(document.getElementById(cur_genre).textContent)
+                }
             }
 
-            const data = await response.json();
+            selects = "Model : " + select_model + "\n" + "Song : " + select_song + "\n" + "Artist : " + select_artist + "\n" + "Album : " + select_album + "\n" + "Genre : " + select_genre + "\n" + "Lyrics : " + select_lyrics + "\n"
+            // alert(selects)
 
-            console.log(data.images);  // Log the images data to check if it's correct
-            for (let i = 1; i <= 4; i++) {
-                let imgElement = document.getElementById(`image${i}`);
-                // Log img element
-                // console.log(imgElement);
-                // console.log(data.images[i-1]);
-                imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+            const albumInput = {
+                song_names: select_song,
+                artist_name: select_artist,
+                genre: select_genre.join(", "),
+                album_name: select_album,
+                lyric: select_lyrics,
+            };
+
+            try {
+                const response = await fetch('http://localhost:8000/generate_cover', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(albumInput),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                console.log(data.images);  // Log the images data to check if it's correct
+                for (let i = 1; i <= 4; i++) {
+                    let imgElement = document.getElementById(`image${i}`);
+                    // Log img element
+                    // console.log(imgElement);
+                    // console.log(data.images[i-1]);
+                    imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+                }
+            } catch (error) {
+                console.error('Error:', error);
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
+        else {  // DreamBooth
+            // TODO: 최소4장, 최대10장 이미지가 업로드시에만 이미지생성
+
+            // TODO: DreamBooth 백엔드 연결 구현
+
+            const imagePreview = document.querySelector('#imagePreview');
+            const images = imagePreview.querySelectorAll('img');
+            const imageUrls = Array.from(images).map(img => img.src);
+            console.log(imageUrls.length)
+            console.log('업로드한 이미지 목록들:', imageUrls);
+
+        }
+
 
         document.getElementById("create_spinner").style.display = "none";
         document.getElementById("info_alert").style.display = "block";

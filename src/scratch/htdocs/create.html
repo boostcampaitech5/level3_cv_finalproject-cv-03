@@ -117,7 +117,7 @@
                         당신의 피드백은 우리가 더 나은 기능과 서비스를 개발하는 데에 도움이 됩니다.<br>
                         피드백을 기반으로 서비스를 더욱 개선하는 데에 최선을 다하겠습니다.<br>
                     </p>
-                    <button type="button" id="review_send_btn" class="btn btn-primary">Send</button>
+                    <button type="button" id="review_send_btn" class="btn btn-primary">Download</button>
                 </div>
 
             </div>
@@ -135,105 +135,156 @@
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="song_name" class="form-label">🎧 모델</label>
-                                    <div class="list-group">
-                                        <label class="list-group-item d-flex gap-2">
-                                            <input class="form-check-input flex-shrink-0" type="radio"
-                                                id="listGroupRadios1" name="listGroupRadios" value="First Model"
-                                                checked>
-                                            <span>
-                                                첫번째 모델
-                                                <small class="d-block text-body-secondary">모델 디테일한 정보</small>
-                                            </span>
-                                        </label>
-                                        <label class="list-group-item d-flex gap-2">
-                                            <input class="form-check-input flex-shrink-0" type="radio"
-                                                id="listGroupRadios2" name="listGroupRadios" value="Second Model">
-                                            <span>
-                                                두번째 모델
-                                                <small class="d-block text-body-secondary">모델 디테일한 정보</small>
-                                            </span>
-                                        </label>
+                                    <div class="list-group list-group-radio d-grid gap-2 border-0">
+                                        <div class="position-relative">
+                                            <input
+                                                class="select_model form-check-input position-absolute top-50 end-0 me-3 fs-5"
+                                                type="radio" name="listGroupRadioGrid" id="listGroupRadioGrid1"
+                                                value="Stable Diffusion" checked>
+                                            <label class="list-group-item py-3 pe-5" for="listGroupRadioGrid1">
+                                                <strong class="fw-semibold">Stable Diffusion</strong>
+                                                <span class="d-block small opacity-75">노래 제목, 가수 이름, 앨범명, 장르, 가사 등 정보를
+                                                    통해 앨범커버를 만들어줍니다.</span>
+                                            </label>
+                                        </div>
+                                        <div class="position-relative">
+                                            <input
+                                                class="select_model form-check-input position-absolute top-50 end-0 me-3 fs-5"
+                                                type="radio" name="listGroupRadioGrid" id="listGroupRadioGrid2"
+                                                value="DreamBooth">
+                                            <label class="list-group-item py-3 pe-5" for="listGroupRadioGrid2">
+                                                <strong class="fw-semibold">DreamBooth</strong>
+                                                <span class="d-block small opacity-75">실제 얼굴 이미지(최소 4장에서 최대 10장 필요)를 통해
+                                                    앨범커버를 만들어줍니다.</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <label for="song_name" class="form-label">🎧 노래 제목</label>
-                                    <input type="text" class="form-control" id="song_name" placeholder="노래 제목을 입력해주세요.">
-                                    <div class="invalid-feedback">
-                                        Please enter song name.
+
+                                <div class="model_content" id="listGroupRadioGrid1">
+                                    <div class="col-12 mb-3">
+                                        <label for="song_name" class="form-label">🎧 노래 제목</label>
+                                        <input type="text" class="form-control" id="song_name"
+                                            placeholder="노래 제목을 입력해주세요.">
+                                        <div class="invalid-feedback">
+                                            Please enter song name.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3">
+                                        <label for="artist_name" class="form-label">🎧 가수 이름</label>
+                                        <input type="text" class="form-control" id="artist_name"
+                                            placeholder="가수 이름(혹은 예명)을 입력해주세요.">
+                                        <div class="invalid-feedback">
+                                            Please enter artist name.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3">
+                                        <label for="album_name" class="form-label">🎧 앨범명</label>
+                                        <input type="text" class="form-control" id="album_name"
+                                            placeholder="앨범명을 입력해주세요.">
+                                        <div class="invalid-feedback">
+                                            Please enter album name.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3">
+                                        <label for="genre" class="form-label">🎧 장르</label>
+                                        <span class="text-body-secondary"> (다중선택가능)</span></label>
+                                        <div class="justify-content-center mb-2">
+                                            <span
+                                                class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
+                                                id="genre1" style="font-size: 14px;">발라드</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre2" style="font-size: 14px;">댄스</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre3" style="font-size: 14px;">랩/힙합</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre4" style="font-size: 14px;">알앤비</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre5" style="font-size: 14px;">팝</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre6" style="font-size: 14px;">소울</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre7" style="font-size: 14px;">인디</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre8" style="font-size: 14px;">락</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre9" style="font-size: 14px;">메탈</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre10" style="font-size: 14px;">트로트</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre11" style="font-size: 14px;">포크</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre12" style="font-size: 14px;">블루스</span>
+                                            <span
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+                                                id="genre13" style="font-size: 14px;">재즈</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="lyrics" class="form-label">🎧 가사</label>
+                                        <textarea id="lyrics" class="form-control" placeholder="가사를 입력해주세요."></textarea>
+                                        <div class="invalid-feedback">
+                                            Please enter lyrics.
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <label for="artist_name" class="form-label">🎧 가수 이름</label>
-                                    <input type="text" class="form-control" id="artist_name"
-                                        placeholder="가수 이름(혹은 예명)을 입력해주세요.">
-                                    <div class="invalid-feedback">
-                                        Please enter artist name.
+                                <div class="model_content" id="listGroupRadioGrid2" style="display: none;">
+                                    <div class="col-12">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="imageUpload" class="form-label">🎧 이미지를 업로드해주세요</label>
+                                                <input type="file" class="form-control" id="imageUpload" multiple
+                                                    accept="image/*">
+                                            </div>
+                                            <div class="image-preview mb-2">
+                                                <div class="preview-container" id="imagePreview"></div>
+                                            </div>
+                                        </form>
                                     </div>
+
+                                    <div class="col-12">
+                                        <div class="accordion" id="imageUploadRulesAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="headingOne">
+                                                    <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
+                                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                        📸 이미지 업로드 규칙
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                                    aria-labelledby="headingOne"
+                                                    data-bs-parent="#imageUploadRulesAccordion">
+                                                    <div class="accordion-body px-1">
+                                                        <ul>
+                                                            <li>최소 4장, 최대 10장의 이미지를 선택하세요.</li>
+                                                            <li>이미지 파일 형식은 JPEG, JPG, PNG 등 이미지 파일만 가능합니다.</li>
+                                                            <li><strong style="color: rgb(236, 48, 48);">이미지당 한 사람의 얼굴만 포함되어있어야 합니다.</strong></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <div class="col-12">
-                                    <label for="album_name" class="form-label">🎧 앨범명</label>
-                                    <input type="text" class="form-control" id="album_name" placeholder="앨범명을 입력해주세요.">
-                                    <div class="invalid-feedback">
-                                        Please enter album name.
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="genre" class="form-label">🎧 장르</label>
-                                    <span class="text-body-secondary"> (다중선택가능)</span></label>
-                                    <div class="justify-content-center mb-2">
-                                        <span
-                                            class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
-                                            id="genre1" style="font-size: 14px;">발라드</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre2" style="font-size: 14px;">댄스</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre3" style="font-size: 14px;">랩/힙합</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre4" style="font-size: 14px;">알앤비</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre5" style="font-size: 14px;">팝</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre6" style="font-size: 14px;">소울</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre7" style="font-size: 14px;">인디</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre8" style="font-size: 14px;">락</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre9" style="font-size: 14px;">메탈</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre10" style="font-size: 14px;">트로트</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre11" style="font-size: 14px;">포크</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre12" style="font-size: 14px;">블루스</span>
-                                        <span
-                                            class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                            id="genre13" style="font-size: 14px;">재즈</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="lyrics" class="form-label">🎧 가사</label>
-                                    <textarea id="lyrics" class="form-control" placeholder="가사를 입력해주세요."></textarea>
-                                    <div class="invalid-feedback">
-                                        Please enter lyrics.
-                                    </div>
-                                </div>
                             </div>
 
                             <hr class="my-3">
@@ -248,8 +299,8 @@
                                 <div class="row g-0">
                                     <div class="col">
                                         <div class="image_container">
-                                            <img src="images/empty.jpg" id="image1" class="created_image"
-                                                width="100%" height="100%" oncontextmenu="return false;"
+                                            <img src="images/empty.jpg" id="image1" class="created_image" width="100%"
+                                                height="100%" oncontextmenu="return false;"
                                                 style="-webkit-touch-callout:none" />
                                             <p class="watermark">Do Not Copy</p>
                                             <button type="button" id="download_btn1" class="download_btn"
@@ -259,8 +310,8 @@
                                     </div>
                                     <div class="col">
                                         <div class="image_container">
-                                            <img src="images/empty.jpg" id="image2" class="created_image"
-                                                width="100%" height="100%" oncontextmenu="return false;"
+                                            <img src="images/empty.jpg" id="image2" class="created_image" width="100%"
+                                                height="100%" oncontextmenu="return false;"
                                                 style="-webkit-touch-callout:none" />
                                             <p class="watermark">Do Not Copy</p>
                                             <button type="button" id="download_btn2" class="download_btn"
@@ -272,8 +323,8 @@
                                 <div class="row g-0">
                                     <div class="col">
                                         <div class="image_container">
-                                            <img src="images/empty.jpg" id="image3" class="created_image"
-                                                width="100%" height="100%" oncontextmenu="return false;"
+                                            <img src="images/empty.jpg" id="image3" class="created_image" width="100%"
+                                                height="100%" oncontextmenu="return false;"
                                                 style="-webkit-touch-callout:none" />
                                             <p class="watermark">Do Not Copy</p>
                                             <button type="button" id="download_btn3" class="download_btn"
@@ -283,8 +334,8 @@
                                     </div>
                                     <div class="col">
                                         <div class="image_container">
-                                            <img src="images/empty.jpg" id="image4" class="created_image"
-                                                width="100%" height="100%" oncontextmenu="return false;"
+                                            <img src="images/empty.jpg" id="image4" class="created_image" width="100%"
+                                                height="100%" oncontextmenu="return false;"
                                                 style="-webkit-touch-callout:none" />
                                             <p class="watermark">Do Not Copy</p>
                                             <button type="button" id="download_btn4" class="download_btn"

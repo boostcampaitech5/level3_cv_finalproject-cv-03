@@ -1,3 +1,53 @@
+.image-preview {
+    margin-top: 20px;
+
+}
+
+.preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+}
+
+.preview-image {
+    width: calc(100% / 5 - 10px);
+    object-fit: cover;
+    margin: 5px;
+}
+
+.form-check-input:checked+.form-checked-content {
+    opacity: .5;
+}
+
+.list-group-radio .list-group-item {
+    cursor: pointer;
+    border-radius: .5rem;
+}
+
+.list-group-radio .form-check-input {
+    z-index: 2;
+    margin-top: -.5em;
+}
+
+.list-group-radio .list-group-item:hover,
+.list-group-radio .list-group-item:focus {
+    background-color: var(--bs-secondary-bg);
+}
+
+.list-group-radio .form-check-input:checked+.list-group-item {
+    background-color: var(--bs-body);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 2px var(--bs-primary);
+}
+
+.list-group-radio .form-check-input[disabled]+.list-group-item,
+.list-group-radio .form-check-input:disabled+.list-group-item {
+    pointer-events: none;
+    filter: none;
+    opacity: .5;
+}
+
 #review_btn:hover {
     background-color: rgb(69, 66, 241);
 }

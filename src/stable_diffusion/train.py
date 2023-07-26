@@ -10,12 +10,12 @@ from torchmetrics.functional.multimodal import clip_score
 
 from diffusers import StableDiffusionPipeline
 
-from .utils.training import compute_snr
-from .utils.plot import make_image_grid
-
 from PIL import Image
 import numpy as np
 from functools import partial
+
+from .utils.training import compute_snr
+from .utils.plot import make_image_grid
 
 
 def train(

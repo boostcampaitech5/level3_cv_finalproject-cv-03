@@ -9,7 +9,7 @@ function onImageLoad(image) {
 
 async function fetchAlbumImages() {
     try {
-        const response = await fetch('http://localhost:8000/get_album_images', { method: 'GET' });
+        const response = await fetch('http://127.0.0.1:8000/get_album_images', { method: 'GET' });
         const data = await response.json();
 
         if (response.ok) {

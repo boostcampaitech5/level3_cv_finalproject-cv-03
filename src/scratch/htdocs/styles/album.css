@@ -1,3 +1,8 @@
+.genre{
+    width: calc(100% / 4 - 5px);
+    font-size: 14px;
+}
+
 .preview-container {
     display: flex;
     flex-wrap: wrap;
@@ -121,6 +126,7 @@
     padding: 10px 20px;
     display: none;
     opacity: 0.5;
+    pointer-events: none;
 }
 
 .image_container:hover .download_btn {

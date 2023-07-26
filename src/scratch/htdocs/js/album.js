@@ -70,18 +70,16 @@ function selectGenre(genre) {
 
 document.addEventListener("DOMContentLoaded", () => {
     select_model = document.querySelectorAll('.select_model')
-    model_contents = document.querySelectorAll('.model_content')
+    model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
         radio.addEventListener('change', () => {
             if (radio.checked) {
-                model_contents.forEach((content)=> {
-                    if (content.id == radio.id){
-                        content.style.display = 'block';
-                    }
-                    else {
-                        content.style.display = 'none';
-                    }
-                })
+                if (radio.id == "listGroupRadioGrid2"){
+                    document.getElementById('model2_content').style.display = "block"
+                }
+                else {
+                    document.getElementById('model2_content').style.display = "none"
+                }
             }
         })
     })
@@ -89,15 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const selectedFiles = this.files;
         const previewContainer = document.querySelector('#imagePreview');
 
-        // 이미지 갯수가 최소 4장 이상인지 확인
-        if (selectedFiles.length < 4) {
-            alert('최소 4장의 이미지를 업로드해주세요.');
-            return;
-        }
-
-        // 이미지 갯수가 최대 10장 이하인지 확인
-        if (selectedFiles.length > 10) {
-            alert('최대 10장까지 이미지를 업로드할 수 있습니다.');
+        // 이미지 갯수가 최소 4장, 최대 10장인지 확인
+        if (selectedFiles.length < 4 || selectedFiles.length > 10) {
+            alert('최소 4장에서 최대 10장의 이미지를 업로드해주세요.');
             return;
         }
 
@@ -184,45 +176,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
     const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
-        // 이미지 생성시간 안내 모달창 띄우기
-        $('#create_modal').modal('show');
-
-        // 스피너 보이기
-        document.getElementById("create_spinner").style.display = "block"
-
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
+
+        const required_ids = ["song_name", "artist_name", "album_name"];
+        for (let i of required_ids) {
+            if (document.getElementById(i).value == ""){
+                alert("모든 필수 입력란을 입력해주세요.");
+                document.getElementById(i).focus();
+                return;
+            }
+        }
+        select_song = document.getElementById("song_name").value
+        select_artist = document.getElementById("artist_name").value
+        select_album = document.getElementById("album_name").value
+        select_lyrics = document.getElementById("lyrics").value
+        genre = document.getElementsByClassName("genre")
+        for (let i = 0; i < genre.length; i++) {
+            cur_genre = genre[i].id;
+            if (document.getElementById(cur_genre).className == badge_checked) {
+                select_genre = document.getElementById(cur_genre).textContent
+            }
+        }
+        const albumInput = {
+            song_names: select_song,
+            artist_name: select_artist,
+            genre: select_genre,
+            album_name: select_album,
+            lyric: select_lyrics,
+        };
+
         if (document.getElementById("listGroupRadioGrid1").checked == true) {
             select_model = document.getElementById("listGroupRadioGrid1").value
         }
         else {
             select_model = document.getElementById("listGroupRadioGrid2").value
         }
-
         if (select_model == "Stable Diffusion") {
-            select_song = document.getElementById("song_name").value
-            select_artist = document.getElementById("artist_name").value
-            select_album = document.getElementById("album_name").value
-            select_lyrics = document.getElementById("lyrics").value
-            genre = document.getElementsByClassName("genre")
-            for (let i = 0; i < genre.length; i++) {
-                cur_genre = genre[i].id;
-                if (document.getElementById(cur_genre).className == badge_checked) {
-                    select_genre = document.getElementById(cur_genre).textContent
-                }
-            }
+            // 이미지 생성시간 안내 모달창 띄우기
+            $('#create_modal1').modal('show');
 
-            selects = "Model : " + select_model + "\n" + "Song : " + select_song + "\n" + "Artist : " + select_artist + "\n" + "Album : " + select_album + "\n" + "Genre : " + select_genre + "\n" + "Lyrics : " + select_lyrics + "\n"
-            // alert(selects)
-
-            const albumInput = {
-                song_names: select_song,
-                artist_name: select_artist,
-                genre: select_genre,
-                album_name: select_album,
-                lyric: select_lyrics,
-            };
+            // 스피너 보이기
+            document.getElementById("create_spinner").style.display = "block"
 
             try {
                 const response = await fetch('http://localhost:8000/generate_cover', {
@@ -252,27 +248,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         else {  // DreamBooth
-            // TODO: 최소4장, 최대10장 이미지가 업로드시에만 이미지생성
-
-            // TODO: DreamBooth 백엔드 연결 구현
-
             const imagePreview = document.querySelector('#imagePreview');
             const images = imagePreview.querySelectorAll('img');
             const imageUrls = Array.from(images).map(img => img.src);
             console.log(imageUrls.length)
             console.log('업로드한 이미지 목록들:', imageUrls);
+            if (imageUrls.length == 0){
+                alert('이미지를 업로드해주세요.')
+                document.getElementById("imageUpload").click();
+                return;
+            }
 
             const genderButtons = document.querySelectorAll('.gender');
-
             genderButtons.forEach((button) => {
                 if (button.checked) {
                     const selectedGender = button.value;
-                    console.log(selectedGender)   // 성별: 'male', 'female'
+                    console.log(selectedGender)   // 성별: 'man', 'woman'
                 }
             });
-            input_text = document.getElementById("input_text").value
-            console.log(input_text)  // 사용자가 입력한 텍스트
 
+            // 이미지 생성시간 안내 모달창 띄우기
+            $('#create_modal2').modal('show');
+
+            // TODO: DreamBooth 백엔드 연결 구현
         }
 
 
@@ -281,6 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
         watermark = document.getElementsByClassName("watermark");
         for (let i = 0; i < watermark.length; i++) {
             watermark[i].style.display = "block";
+        }
+        download_btn = document.getElementsByClassName("download_btn");
+        for (let i = 0; i < download_btn.length; i++) {
+            download_btn[i].style.pointerEvents = "auto";
         }
     })
 

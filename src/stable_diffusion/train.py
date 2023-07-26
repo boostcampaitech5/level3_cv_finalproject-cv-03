@@ -121,7 +121,7 @@ def train(
 
             # EMA(Exponential Moving Average) : Better results and more reliable training
             if args.use_ema:
-                ema_unet.step(unet)
+                ema_unet.step(unet.parameters())
             progress_bar.update(1)
             global_step += 1
             train_loss = 0.0
@@ -210,7 +210,7 @@ def valid(args, accelerator, tokenizer, text_encoder, vae, unet, weight_dtype, e
                 prompt=args.valid_prompts[i],
                 num_inference_steps=args.num_inference_steps,
                 generator=generator,
-                output_type="numpy",  # This specifies the output type
+                output_type="np",  # This specifies the output type
             ).images[
                 0
             ]  # Default: 50

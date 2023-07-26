@@ -61,6 +61,13 @@ function imageDownload(num) {
     document.body.removeChild(new_a);
 }
 
+function selectGenre(genre) {
+    genreItems.forEach(item => {
+      item.classList.remove('selected');
+    });
+    genre.classList.add('selected');
+  }
+
 document.addEventListener("DOMContentLoaded", () => {
     select_model = document.querySelectorAll('.select_model')
     model_contents = document.querySelectorAll('.model_content')
@@ -174,8 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
-    const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
+    const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
+    const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
         // 이미지 생성시간 안내 모달창 띄우기
         $('#create_modal').modal('show');
@@ -197,13 +204,12 @@ document.addEventListener("DOMContentLoaded", () => {
             select_song = document.getElementById("song_name").value
             select_artist = document.getElementById("artist_name").value
             select_album = document.getElementById("album_name").value
-            select_genre = []
             select_lyrics = document.getElementById("lyrics").value
-            genre = document.getElementsByClassName("badge")
+            genre = document.getElementsByClassName("genre")
             for (let i = 0; i < genre.length; i++) {
                 cur_genre = genre[i].id;
                 if (document.getElementById(cur_genre).className == badge_checked) {
-                    select_genre.push(document.getElementById(cur_genre).textContent)
+                    select_genre = document.getElementById(cur_genre).textContent
                 }
             }
 
@@ -213,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const albumInput = {
                 song_names: select_song,
                 artist_name: select_artist,
-                genre: select_genre.join(", "),
+                genre: select_genre,
                 album_name: select_album,
                 lyric: select_lyrics,
             };
@@ -278,14 +284,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    document.querySelectorAll(".badge").forEach(obj => {
+    document.querySelectorAll(".genre").forEach(obj => {
         obj.addEventListener("click", () => {
-            console.log(document.getElementById(obj.id).style.background)
-            if (document.getElementById(obj.id).className == badge_not_checked)
-                document.getElementById(obj.id).className = badge_checked
-            else {
-                document.getElementById(obj.id).className = badge_not_checked
-            }
+            document.querySelectorAll(".genre").forEach(obj2 => {
+                document.getElementById(obj2.id).className = badge_not_checked
+            })
+            document.getElementById(obj.id).className = badge_checked
         })
     })
 })

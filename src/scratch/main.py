@@ -230,15 +230,15 @@ async def get_album_images():
     album_images = []
     for row in results:
         album_image = AlbumImage(
-            url=row[
-                "image_url"
-            ],  # We use 'image_url' here because that's the name in the 'user_review' table
+            url=row["image_url"],
             artist_name=row["artist_name"],
             song_names=row["song_names"],
             genre=row["genre"],
             album_name=row["album_name"],
         )
         album_images.append(album_image)
+    # logging
+    print("Retrieved album images:", album_images)
 
     return {"album_images": album_images}
 

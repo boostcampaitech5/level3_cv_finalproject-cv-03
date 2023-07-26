@@ -10,7 +10,7 @@ import torch
 from torch import cuda
 
 # Backend
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -37,19 +37,9 @@ bigquery_config = gcp_config["bigquery"]
 
 # Start fastapi
 app = FastAPI()
+api_router = APIRouter(prefix="/api")
 
 # --- 정리 예정, Refactoring x, Configuration x ---
-origins = [
-    "http://127.0.0.1:30008",
-    "http://localhost:8001",
-    "http://localhost:8000",
-    "http://49.50.167.24:8000",
-    "http://49.50.167.24:30008",
-    "http://49.50.167.24:30009",
-    "http://localhost:30009",
-    "http://127.0.0.1:30009",
-    "http://127.0.0.1:8000",
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,6 +48,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # -----------------------------------------------
 
 bigquery_logger = BigQueryLogger(gcp_config)
@@ -109,7 +100,8 @@ class AlbumImage(BaseModel):
 
 
 # REST API - Post ~/generate_cover
-@app.post("/generate_cover")
+# @app.post("/generate_cover")
+@api_router.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
     # Generate a unique ID for this request
     global request_id
@@ -184,7 +176,8 @@ async def generate_cover(album: AlbumInput):
 
 
 # REST API - Post ~/review
-@app.post("/review")
+# @app.post("/review")
+@api_router.post("/review")
 async def review(review: ReviewInput):
     # Log to BigQuery
     review_log = {
@@ -207,7 +200,8 @@ async def review(review: ReviewInput):
     return review
 
 
-@app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
+@api_router.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
+# @app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
 async def get_album_images():
     # Query to retrieve latest and best-rated images from BigQuery
 
@@ -240,6 +234,9 @@ async def get_album_images():
     print("Retrieved album images:", album_images)
 
     return {"album_images": album_images}
+
+
+app.include_router(api_router)
 
 
 # Exception handling using google cloud

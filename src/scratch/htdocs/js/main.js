@@ -9,7 +9,14 @@ function onImageLoad(image) {
 
 async function fetchAlbumImages() {
     try {
-        const response = await fetch('http://127.0.0.1:8000/get_album_images', { method: 'GET' });
+        const response = await fetch('http://49.50.167.24:30008/api/get_album_images', { method: 'GET',
+        mode: "cors",
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },});
+
         const data = await response.json();
 
         if (response.ok) {

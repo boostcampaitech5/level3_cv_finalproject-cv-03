@@ -1,5 +1,5 @@
 run_server:
-	uvicorn src.scratch.main:app --reload
+	uvicorn src.scratch.main:app --host 0.0.0.0 --reload
 
 run_client:
 	streamlit run streamlit_frontend.py --server.port 30009 --server.fileWatcherType none --browser.gatherUsageStats False

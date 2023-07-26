@@ -164,8 +164,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 console.log("Review data being sent:", reviewData);
-                const response = await fetch('http://127.0.0.1:8000/review', {
+                const response = await fetch('http://49.50.167.24:30008/api/review', {
                     method: 'POST',
+                    mode: "cors",
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -244,8 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/generate_cover', {
+                const response = await fetch('http://49.50.167.24:30008/api/generate_cover', {
                     method: 'POST',
+                    mode: "cors",
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },

@@ -11,7 +11,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOpe
 import pendulum
 
 
-data_dir = os.path.join(os.environ.get("AIRFLOW_HOME"), "airflow-data")
+data_dir = os.path.join(os.environ.get("AIRFLOW_HOME"), "./airflow-data")
 os.makedirs(data_dir, exist_ok=True)
 
 default_args = {

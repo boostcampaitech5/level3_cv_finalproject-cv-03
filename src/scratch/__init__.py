@@ -5,4 +5,4 @@ from .streamlit_frontend import main
 from .utils import load_yaml
 from .gcp import bigquery, cloud_storage, error
 
-# from .dags import airflow_bigquery
+from .dags import airflow_bigquery

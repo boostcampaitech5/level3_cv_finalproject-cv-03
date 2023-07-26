@@ -256,6 +256,17 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(imageUrls.length)
             console.log('업로드한 이미지 목록들:', imageUrls);
 
+            const genderButtons = document.querySelectorAll('.gender');
+
+            genderButtons.forEach((button) => {
+                if (button.checked) {
+                    const selectedGender = button.value;
+                    console.log(selectedGender)   // 성별: 'male', 'female'
+                }
+            });
+            input_text = document.getElementById("input_text").value
+            console.log(input_text)  // 사용자가 입력한 텍스트
+
         }
 
 

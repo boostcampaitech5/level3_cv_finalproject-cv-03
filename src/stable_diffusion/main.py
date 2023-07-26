@@ -81,7 +81,11 @@ def main(args):
         ema_unet = UNet2DConditionModel.from_pretrained(
             args.pretrained_model, subfolder="unet"
         )
-        ema_unet = EMAModel(ema_unet)
+        ema_unet = EMAModel(
+            ema_unet.parameters(),
+            model_cls=UNet2DConditionModel,
+            model_config=ema_unet.config,
+        )
     else:
         ema_unet = None
 
@@ -139,9 +143,7 @@ def main(args):
 
     def save_model_hook(models, weights, output_dir):
         if args.use_ema:
-            ema_unet.averaged_model.save_pretrained(
-                os.path.join(output_dir, "unet_ema")
-            )
+            ema_unet.save_pretrained(os.path.join(output_dir, "unet_ema"))
 
         for i, model in enumerate(models):
             model.save_pretrained(os.path.join(output_dir, "unet"))
@@ -151,11 +153,11 @@ def main(args):
 
     def load_model_hook(models, input_dir):
         if args.use_ema:
-            load_model = UNet2DConditionModel.from_pretrained(
-                os.path.join(input_dir, "unet_ema")
+            load_model = EMAModel.from_pretrained(
+                os.path.join(input_dir, "unet_ema"), UNet2DConditionModel
             )
-            ema_unet = EMAModel(load_model)
-            ema_unet.averaged_model.to(accelerator.device)
+            ema_unet.load_state_dict(load_model.state_dict())
+            ema_unet.to(accelerator.device)
             del load_model
 
         for i in range(len(models)):
@@ -175,7 +177,7 @@ def main(args):
     accelerator.register_load_state_pre_hook(load_model_hook)
 
     if args.use_ema:
-        ema_unet.averaged_model.to(accelerator.device)
+        ema_unet.to(accelerator.device)
 
     text_encoder.to(accelerator.device, dtype=weight_dtype)  # Cast to weight_dtype
     vae.to(accelerator.device, dtype=weight_dtype)  # Cast to weight_dtype
@@ -240,7 +242,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--base-path",
         type=str,
-        default="/opt/ml/input/code/level3_cv_finalproject-cv-03/stable_diffusion",
+        default="/opt/ml/input/code/level3_cv_finalproject-cv-03/src/stable_diffusion",
         help="Set base path",
     )
     parser.add_argument(

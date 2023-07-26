@@ -14,4 +14,6 @@ repos:
     rev: stable
     hooks:
       - id: black
-        exclude: ^src/scratch/htdocs|\.github/workflows/testing\.yaml$
+        exclude: |
+          src/scratch/htdocs
+          .github/workflows/testing.yaml

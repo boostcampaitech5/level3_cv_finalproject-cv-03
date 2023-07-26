@@ -1,3 +1,10 @@
+// 페이지 로드 시 로그인 상태 확인
+window.onload = function () {
+    updateLoginState();
+};
+
+let user_nickname;
+let user_email;
 //카카오 로그인
 function kakaoLogin() {
     if (!Kakao.Auth.getAccessToken()) {
@@ -6,12 +13,16 @@ function kakaoLogin() {
                 Kakao.API.request({
                     url: '/v2/user/me',
                     success: function (response) {
-                        alert('사용자 닉네임: ' + response.kakao_account.profile.nickname + '\n'
-                            + '사용자 성별: ' + response.kakao_account.gender + '\n'
-                            + '사용자 연령대: ' + response.kakao_account.age_range + '\n'
-                            + '사용자 이메일: ' + response.kakao_account.email);
-                        // document.getElementById("kakao-login").style.display = "none";
-                        // document.getElementById("logout").style.display = "block";
+                        // alert('사용자 닉네임: ' + response.kakao_account.profile.nickname + '\n'
+                        //     + '사용자 성별: ' + response.kakao_account.gender + '\n'
+                        //     + '사용자 연령대: ' + response.kakao_account.age_range + '\n'
+                        //     + '사용자 이메일: ' + response.kakao_account.email);
+                        user_nickname = response.kakao_account.profile.nickname
+                        user_email = response.kakao_account.email
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('user_nickname', user_nickname);
+                        sessionStorage.setItem('user_email', user_email);
+                        updateLoginState();
                     },
                     fail: function (error) {
                         alert(
@@ -38,8 +49,10 @@ function kakaoLogout() {
             url: '/v1/user/unlink',
             success: function (response) {
                 alert('로그아웃되었습니다.')
-                // document.getElementById("kakao-login").style.display = "block";
-                // document.getElementById("logout").style.display = "none";
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('user_nickname');
+                sessionStorage.removeItem('user_email');
+                updateLoginState();
             },
             fail: function (error) {
                 alert('fail: ' + JSON.stringify(error))
@@ -51,6 +64,24 @@ function kakaoLogout() {
         alert('로그인 상태가 아닙니다.')
     }
 }
+// 로그인 상태에 따라 화면 갱신
+function updateLoginState() {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    // alert(isLoggedIn)
+    if (isLoggedIn === 'true') {
+      // 로그인 상태
+      document.getElementById('kakao_login').style.display = 'none';
+      document.getElementById('mypage_login').style.display = 'block';
+      document.getElementById('kakao_logout').style.display = 'block';
+      document.getElementById('text_login').innerText = sessionStorage.getItem('user_nickname')+'님'
+    } else {
+      // 로그아웃 상태
+      document.getElementById('kakao_login').style.display = 'block';
+      document.getElementById('mypage_login').style.display = 'none';
+      document.getElementById('kakao_logout').style.display = 'none';
+      document.getElementById('text_login').innerText = '';
+    }
+  }
 
 function imageDownload(num) {
     new_a = document.createElement("a");
@@ -69,6 +100,7 @@ function selectGenre(genre) {
   }
 
 document.addEventListener("DOMContentLoaded", () => {
+    // loginUser()
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -82,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         })
+    })
+
+    document.querySelector('#kakao_login').addEventListener('click', () => {
+        kakaoLogin();
     })
     document.querySelector('#imageUpload').addEventListener('change', function() {
         const selectedFiles = this.files;

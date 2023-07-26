@@ -117,19 +117,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 모달을 열 때 클릭된 버튼 숫자정보(1~4) 가져오기
+    // bring the number of the clicked button of the modal
+
+    let imageUrl;
     $('#download_modal').on('show.bs.modal', function (event) {
-        button = $(event.relatedTarget);
-        buttonType = button.data('button-type');
+        let button = $(event.relatedTarget);
+        let buttonType = button.data('button-type');
+        console.log(buttonType); // check the value of buttonType
+
+        // Determine the id of the image to be reviewed
+        let imageId = 'image' + buttonType;
+
+        // Get the image element
+        let imageElement = document.getElementById(imageId);
+
+        // Get the image url
+        console.log(imageElement.src);
+        imageUrl = imageElement.src;
     });
 
     document.querySelector("#review_send_btn").addEventListener("click", async (e) => {
-        // e.preventDefault()
+        e.preventDefault()
         user_starpoint = 0
         user_review = document.getElementById("review_comment").value
         for (let i = 1; i <= 10; i++) {
             cur_review = "starpoint_" + i
             if (document.getElementById(cur_review).checked == true) {
-                user_starpoint = i / 2;
+                user_starpoint = Math.round(i / 2);
                 break;
             }
         }
@@ -140,11 +154,17 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             const reviewData = {
                 rating: user_starpoint,
-                comment: user_review
+                comment: user_review,
+                image_url: imageUrl,
+                artist_name: select_artist,
+                song_names: select_song,
+                genre: select_genre.join(", "),
+                album_name: select_album
             };
 
             try {
-                const response = await fetch('http://localhost:8000/review', {
+                console.log("Review data being sent:", reviewData);
+                const response = await fetch('http://127.0.0.1:8000/review', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -173,6 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     })
+
+    let select_artist = '';
+    let select_song = '';
+    let select_genre = '';
+    let select_album = '';
 
     const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
     const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
@@ -219,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             try {
-                const response = await fetch('http://localhost:8000/generate_cover', {
+                const response = await fetch('http://127.0.0.1:8000/generate_cover', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -239,7 +264,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Log img element
                     // console.log(imgElement);
                     // console.log(data.images[i-1]);
-                    imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+                    // imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+                    imgElement.src = data.images[i - 1];
                 }
             } catch (error) {
                 console.error('Error:', error);

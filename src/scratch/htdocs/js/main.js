@@ -9,7 +9,7 @@ function onImageLoad(image) {
 
 async function fetchAlbumImages() {
     try {
-        const response = await fetch('http://49.50.167.24:30008/api/get_album_images', { method: 'GET',
+        const response = await fetch('http://localhost:30010//api/get_album_images', { method: 'GET',
         mode: "cors",
         credentials: 'include',
         headers: {

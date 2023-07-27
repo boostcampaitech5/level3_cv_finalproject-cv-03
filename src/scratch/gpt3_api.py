@@ -72,8 +72,7 @@ def get_dreambooth_prompt(
     lyrics = lyrics.replace("\n", " ")
 
     message = [
-        f"read a \n\n'{lyrics}', \n\n'{song_names}'. \n and, give a just one good prompt for generate album cover images that matching with above texts.\
-                prompt should start with 'A image of {gender} ~' and should not over 75 tokens."
+        f"read a \n\n {lyrics} and give me three English keywords which express atmosphere."
     ]
 
     # Set up the API call

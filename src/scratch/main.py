@@ -265,9 +265,6 @@ async def get_album_images():
     return {"album_images": album_images}
 
 
-app.include_router(api_router)
-
-
 # Exception handling using google cloud
 @app.exception_handler(Exception)
 async def handle_exceptions(request: Request, exc: Exception):
@@ -276,7 +273,7 @@ async def handle_exceptions(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
 
 
-@app.post("/upload_image")
+@api_router.post("/upload_image")
 async def upload_image(image: UploadFile = File(...)):
     global request_id
     request_id = str(uuid.uuid4())
@@ -300,7 +297,7 @@ async def upload_image(image: UploadFile = File(...)):
     return {"image_url": str(image_dir / destination_filename)}
 
 
-@app.post("/train")
+@api_router.post("/train")
 async def train(user: UserInput):
     try:
         global model
@@ -340,17 +337,20 @@ async def train(user: UserInput):
     return {"status": "Train started", "message": command}
 
 
-@app.post("/inference")
+@api_router.post("/inference")
 async def inference(album: AlbumInput, user: UserInput):
-    class_name = user.gender
     summarization = get_dreambooth_prompt(
         album.lyric,
         album.album_name,
         album.song_names,
-        class_name,
+        user.gender,
         album.genre,
         album.artist_name,
     )
+
+    prompt = f"A image of {summarization} music album cover with song title {album.song_names} by {album.artist_name}.\
+        a {token} {user.gender} is in album cover."
+
     # Run the train.py script as a separate process
     process = subprocess.Popen(
         [
@@ -359,9 +359,9 @@ async def inference(album: AlbumInput, user: UserInput):
             "--token",
             token,
             "--prompt",
-            summarization,
+            prompt,
             "--user-gender",
-            class_name,
+            user.gender,
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -391,9 +391,27 @@ async def inference(album: AlbumInput, user: UserInput):
             urls.append((byte_arr, blob_name))
 
     # Upload the images to GCS and get their URLs
-    image_urls = gcs_uploader.save_image_to_gcs(
-        urls, bucket_name="generated-dreambooth-images"
-    )
-    prompt = stdout.decode()
+    image_urls = gcs_uploader.save_image_to_gcs(urls)
 
-    return {"status": "your images are created and saved!", "prompt": prompt}
+    # Log to BigQuery
+    album_log = {
+        "request_id": request_id,
+        "request_time": datetime.utcnow()
+        .astimezone(timezone("Asia/Seoul"))
+        .isoformat(),
+        "song_names": album.song_names,
+        "artist_name": album.artist_name,
+        "genre": album.genre,
+        "album_name": album.album_name,
+        "lyric": album.lyric,
+        "summarization": summarization,
+        "image_urls": image_urls,
+        "language": public_config["language"],
+    }
+    bigquery_logger.log(album_log, "user_album")
+
+    # return {"images": images}
+    return {"images": image_urls}
+
+
+app.include_router(api_router)

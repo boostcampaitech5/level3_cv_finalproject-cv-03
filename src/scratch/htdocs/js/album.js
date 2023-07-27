@@ -78,6 +78,15 @@ function updateLoginState() {
     }
 }
 
+// 경과 시간을 갱신하는 함수
+function updateElapsedTime(startTimestamp) {
+    const now = new Date();
+    const elapsedSeconds = Math.floor((now - startTimestamp) / 1000);
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
+    document.getElementById('elapsed-time').textContent = `경과 시간: ${minutes}분 ${seconds}초`;
+}
+
 function imageDownload(num) {
     new_a = document.createElement("a");
     new_a.href = document.getElementById("image" + num).src;
@@ -95,7 +104,6 @@ function selectGenre(genre) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // loginUser()
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -194,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 console.log("Review data being sent:", reviewData);
-                const response = await fetch('http://49.50.167.24:30008/api/review', {
+                const response = await fetch('http://118.67.129.85:30010/api/review', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -238,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
+        const startTimestamp = new Date();
 
         const required_ids = ["song_name", "artist_name", "album_name"];
         for (let i of required_ids) {
@@ -278,9 +287,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 스피너 보이기
             document.getElementById("create_spinner").style.display = "block"
+            // 1초마다 경과 시간을 갱신
+            timerId = setInterval(() => {
+                updateElapsedTime(startTimestamp);
+            }, 1000);
 
             try {
-                const response = await fetch('http://49.50.167.24:30008/api/generate_cover', {
+                const response = await fetch('http://118.67.129.85:30010/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -320,22 +333,109 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("imageUpload").click();
                 return;
             }
-
+        
             const genderButtons = document.querySelectorAll('.gender');
+            let selectedGender = '';
             genderButtons.forEach((button) => {
                 if (button.checked) {
-                    const selectedGender = button.value;
+                    selectedGender = button.value;
                     console.log(selectedGender)   // 성별: 'man', 'woman'
                 }
             });
-
+        
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
+            document.getElementById("create_spinner").style.display = "block"
+            // 1초마다 경과 시간을 갱신
+            timerId = setInterval(() => {
+                updateElapsedTime(startTimestamp);
+            }, 1000);
+        
+            // TODO: DreamBooth back-end connect
+            // Uploading each image
+            for (let i = 0; i < imageUrls.length; i++) {
+                const imageUrl = imageUrls[i];
+            
+                try {
+                    // Fetch the image data from the URL
+                    const response = await fetch(imageUrl);
+                    const imageBlob = await response.blob();
+            
+                    // Create a FormData object and append the image blob to it
+                    const formData = new FormData();
+                    formData.append('image', imageBlob, `image${i}.jpg`);
+            
+                    // Send the image data to the server
+                    const uploadResponse = await fetch('http://118.67.129.85:30010/api/upload_image', {
+                        method: 'POST',
+                        body: formData
+                    });
+            
+                    if (!uploadResponse.ok) {
+                        throw new Error(`HTTP error! status: ${uploadResponse.status}`);
+                    }
+            
+                    // Parse the JSON response
+                    const data = await uploadResponse.json();
+                    console.log(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+            
+            // Training the model
+            try {
+                const response = await fetch('http://118.67.129.85:30010/api/train', {
+                    method: 'POST',
+                    mode: "cors",
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ gender: selectedGender }),
+                });
+            
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+            
+            // Inference to get the generated images
+            try {
+                const user = { gender: selectedGender };
+                const response = await fetch('http://118.67.129.85:30010/api/inference', {
+                    method: 'POST',
+                    mode: "cors",
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ album: albumInput, user: user }),
+                });
+            
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            
+                const data = await response.json();
+                console.log(data.images);
 
-            // TODO: DreamBooth 백엔드 연결 구현
+                for (let i = 1; i <= 4; i++){
+                    let imgElement = document.getElementById(`image${i}`);
+                    imgElement.src = data.images[i - 1];
+            }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
 
 
+        clearInterval(timerId)
         document.getElementById("create_spinner").style.display = "none";
         document.getElementById("info_alert").style.display = "block";
         watermark = document.getElementsByClassName("watermark");

@@ -24,6 +24,7 @@ from pathlib import Path
 import subprocess
 import random
 import string
+import urllib3
 
 
 # Built-in modules
@@ -34,6 +35,7 @@ from .gcp.error import ErrorReporter
 from .model import AlbumModel
 from .utils import load_yaml
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
@@ -300,6 +302,13 @@ async def upload_image(image: UploadFile = File(...)):
 
 @app.post("/train")
 async def train(user: UserInput):
+    try:
+        global model
+        del model
+    except:
+        pass
+    torch.cuda.empty_cache()
+
     seeds = np.random.randint(100000)
     # Run the train.py script as a separate process
     process = subprocess.Popen(
@@ -307,7 +316,7 @@ async def train(user: UserInput):
             "python",
             "src/scratch/dreambooth/run.py",
             "--config-file",
-            "src/scratch/config/dreambooth.yaml",
+            "src/scratch/dreambooth/dreambooth.yaml",
             "--token",
             token,
             "--user-gender",
@@ -325,8 +334,9 @@ async def train(user: UserInput):
         return {"status": "error", "message": stderr.decode()}
     command = stdout.decode()
 
+    os.chdir("src/scratch")
     subprocess.run(command, shell=True)
-
+    os.chdir("/opt/ml/level3_cv_finalproject-cv-03")
     return {"status": "Train started", "message": command}
 
 
@@ -346,7 +356,7 @@ async def inference(album: AlbumInput, user: UserInput):
         [
             "python",
             "src/scratch/dreambooth/inference.py",
-            "--user-id",
+            "--token",
             token,
             "--prompt",
             summarization,

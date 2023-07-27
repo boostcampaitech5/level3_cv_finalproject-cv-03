@@ -2264,7 +2264,7 @@ training = ["Jinja2", "accelerate (>=0.11.0)", "datasets", "protobuf (>=3.20.3,<
 type = "git"
 url = "https://github.com/huggingface/diffusers.git"
 reference = "main"
-resolved_reference = "b37dc3b3cdda401ee370a5e2a8d2e27a016078ac"
+resolved_reference = "16049caf7926e0d3a3cae9c08179a8db9a22246f"
 
 [[package]]
 name = "dill"
@@ -8607,4 +8607,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.12"
-content-hash = "9973bdcd3e0d30592d4eb55ca79b67dde2874a6711aef5c00a32fee7b1a20b9c"
+content-hash = "af630a20a7388e244e707f56fae965a71c71119cf38a057896bb47a16a8db4f4"

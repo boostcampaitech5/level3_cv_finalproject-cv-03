@@ -8,11 +8,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryGetDataOperator
-from airflow.utils.dates import days_ago
 
 # Slack
 from slack_sdk import WebClient
-
 
 data_dir = os.path.join(os.environ.get("AIRFLOW_HOME"), "./airflow-data")
 os.makedirs(data_dir, exist_ok=True)

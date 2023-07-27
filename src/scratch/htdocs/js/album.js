@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 버튼 동작 체크
         console.log("Button Clicked!");
         const startTimestamp = new Date();
+
         const required_ids = ["song_name", "artist_name", "album_name"];
         for (let i of required_ids) {
             if (document.getElementById(i).value == "") {
@@ -314,7 +315,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Log img element
                     // console.log(imgElement);
                     // console.log(data.images[i-1]);
-                    imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+                    // imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
+                    imgElement.src = data.images[i - 1];
                 }
             } catch (error) {
                 console.error('Error:', error);

@@ -87,7 +87,9 @@ jobs:
 
       # Pytest
       - name: Run pytest
-        run: poetry run python -m pytest
+        run: |
+          pip install python-multipart
+          poetry run python -m pytest
         env:
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
 

@@ -1535,17 +1535,17 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.28.11"
+version = "1.28.12"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.11-py3-none-any.whl", hash = "sha256:e24460d50001b517c6734dcf1c879feb43aa2062d88d9bdbb8703c986cb05941"},
-    {file = "boto3-1.28.11.tar.gz", hash = "sha256:0fe7a35cf0041145c8eefebd3ae2ddf41baed62d7c963e5042b8ed8c297f648f"},
+    {file = "boto3-1.28.12-py3-none-any.whl", hash = "sha256:cfcb20d5784428f31d89889e68b26efeda90f231c3119eef4af8b25ad405c55f"},
+    {file = "boto3-1.28.12.tar.gz", hash = "sha256:d5ac6599951fdd519ed26c6fe15c41a7aa4021cb9adce33167344f8ce5cdb07b"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.11,<1.32.0"
+botocore = ">=1.31.12,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -1554,13 +1554,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.11"
+version = "1.31.12"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.11-py3-none-any.whl", hash = "sha256:d3cbffe554c9a1ba2ac6973734c43c21b8e7985a2ac4a4c31a09811b8029445c"},
-    {file = "botocore-1.31.11.tar.gz", hash = "sha256:b17ff973bb70b02b227928c2abe4992f1cfc46d13aee0228516c8f32572b88c6"},
+    {file = "botocore-1.31.12-py3-none-any.whl", hash = "sha256:86380672151866b5e425636e3ebad74f2b83e7163e36ef5d38d11a04b9cba33b"},
+    {file = "botocore-1.31.12.tar.gz", hash = "sha256:7e5db466c762a071bb58c9a39d070f1333ce4f4ba6fdf9820ba21e87bd4c7e29"},
 ]
 
 [package.dependencies]
@@ -2234,7 +2234,7 @@ dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "sphinx (<2)", "tox"]
 
 [[package]]
 name = "diffusers"
-version = "0.19.0.dev0"
+version = "0.20.0.dev0"
 description = "Diffusers"
 optional = false
 python-versions = ">=3.7.0"
@@ -2264,7 +2264,7 @@ training = ["Jinja2", "accelerate (>=0.11.0)", "datasets", "protobuf (>=3.20.3,<
 type = "git"
 url = "https://github.com/huggingface/diffusers.git"
 reference = "main"
-resolved_reference = "b37dc3b3cdda401ee370a5e2a8d2e27a016078ac"
+resolved_reference = "20e92586c1fda968ea3343ba0f44f2b21f3c09d2"
 
 [[package]]
 name = "dill"
@@ -5185,13 +5185,13 @@ files = [
 
 [[package]]
 name = "mypy-boto3-appflow"
-version = "1.28.0"
-description = "Type annotations for boto3.Appflow 1.28.0 service generated with mypy-boto3-builder 7.14.5"
+version = "1.28.12"
+description = "Type annotations for boto3.Appflow 1.28.12 service generated with mypy-boto3-builder 7.15.2"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mypy-boto3-appflow-1.28.0.tar.gz", hash = "sha256:75c2398544019f306bf04b33f674308eb6bda4de63f94d6307cf6c231616fcd5"},
-    {file = "mypy_boto3_appflow-1.28.0-py3-none-any.whl", hash = "sha256:ec67c248312ffb5534006be53b9baddb9cbb354a2c4f95349b1c3db2f02da72b"},
+    {file = "mypy-boto3-appflow-1.28.12.tar.gz", hash = "sha256:6b6aa97c154ff98dece67b0d4baf7bf8091a8b70e45ad7f89460fb27fafa59de"},
+    {file = "mypy_boto3_appflow-1.28.12-py3-none-any.whl", hash = "sha256:366bfbe29eb68c2661345abb051e803c9b7b5f19f3801490f98717af7268ca3e"},
 ]
 
 [[package]]
@@ -8607,4 +8607,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.12"
-content-hash = "9973bdcd3e0d30592d4eb55ca79b67dde2874a6711aef5c00a32fee7b1a20b9c"
+content-hash = "af630a20a7388e244e707f56fae965a71c71119cf38a057896bb47a16a8db4f4"

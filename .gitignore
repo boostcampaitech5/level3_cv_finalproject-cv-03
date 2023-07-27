@@ -21,6 +21,8 @@ ipython_config.py
 wandb/
 checkpoints/
 results/
+data/
+weights/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

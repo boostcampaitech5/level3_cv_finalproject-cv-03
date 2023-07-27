@@ -10,7 +10,7 @@ import torch
 from torch import cuda
 
 # Backend
-from fastapi import FastAPI, Request, Depends, APIRouter
+from fastapi import FastAPI, Request, Depends, APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,9 +20,15 @@ from pydantic import BaseModel
 import numpy as np
 from pytz import timezone
 from typing import List, Dict
+from pathlib import Path
+import subprocess
+import random
+import string
+from huggingface_hub import login
+
 
 # Built-in modules
-from .gpt3_api import get_description
+from .gpt3_api import get_description, get_dreambooth_prompt
 from .gcp.bigquery import BigQueryLogger
 from .gcp.cloud_storage import GCSUploader
 from .gcp.error import ErrorReporter
@@ -33,11 +39,14 @@ from .utils import load_yaml
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
+huggingface_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "huggingface")
+train_config = load_yaml(os.path.join("src/scratch/config", "dreambooth.yaml"))
 bigquery_config = gcp_config["bigquery"]
 
 # Start fastapi
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
+login(token=huggingface_config["token"], add_to_git_credential=True)
 
 # --- 정리 예정, Refactoring x, Configuration x ---
 
@@ -68,6 +77,14 @@ async def startup_event():
     global model
     model = load_model()
     print("Model loaded successfully!")
+    
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = "".join(random.choice(letters) for i in range(length))
+    return result_str
+
+token = get_random_string(5)
 
 
 # Album input Schema
@@ -97,6 +114,15 @@ class AlbumImage(BaseModel):
     song_names: str
     genre: str
     album_name: str
+    
+class UserInput(BaseModel):
+    gender: str
+    
+class ImageInput(BaseModel):
+    file_path: str  # 이미지 url(upload를 통해 gcs에 들어가면 생기는 url)
+    width: int  # 이미지 너비
+    height: int  # 이미지 높이
+    format: str  # 이미지 포맷 (e.g., JPEG, PNG )
 
 
 # REST API - Post ~/generate_cover
@@ -245,3 +271,119 @@ async def handle_exceptions(request: Request, exc: Exception):
     error_reporter.python_error()
 
     return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
+
+@app.post("/upload_image")
+async def upload_image(image: UploadFile = File(...)):
+    global request_id
+    request_id = str(uuid.uuid4())
+
+    # Read the image file
+    image_bytes = await image.read()
+
+    # Generate a unique name for the image based on the request_id and original filename
+    destination_filename = f"{image.filename}"
+
+    # Define the directory where to save the image
+    image_dir = (
+        Path("src/scratch/dreambooth/data/users") / token
+    )
+
+    # Create the directory if it does not exist
+    image_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save the image locally
+    with open(image_dir / destination_filename, "wb") as buffer:
+        buffer.write(image_bytes)
+
+    return {"image_url": str(image_dir / destination_filename)}
+
+
+@app.post("/train")
+async def train(user: UserInput):
+    seeds = np.random.randint(100000)
+    # Run the train.py script as a separate process
+    process = subprocess.Popen(
+        [
+            "python",
+            "src/scratch/dreambooth/run.py",
+            "--config-file",
+            "src/scratch/config/dreambooth.yaml",
+            "--token",
+            token,
+            "--user-gender",
+            user.gender,
+            "--seed",
+            str(seeds),
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    stdout, stderr = process.communicate()
+
+    if process.returncode != 0:
+        return {"status": "error", "message": stderr.decode()}
+    command = stdout.decode()
+
+    subprocess.run(command, shell=True)
+
+    return {"status": "Train started", "message": command}
+
+
+@app.post("/inference")
+async def inference(album: AlbumInput, user: UserInput):
+    class_name = user.gender
+    summarization = get_dreambooth_prompt(
+        album.lyric,
+        album.album_name,
+        album.song_names,
+        class_name,
+        album.genre,
+        album.artist_name,
+    )
+    # Run the train.py script as a separate process
+    process = subprocess.Popen(
+        [
+            "python",
+            "src/scratch/dreambooth/inference.py",
+            "--user-id",
+            token,
+            "--prompt",
+            summarization,
+            "--user-gender",
+            class_name,
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    # Get the output and error messages from the process
+    stdout, stderr = process.communicate()
+
+    # Check if the process completed successfully
+    if process.returncode != 0:
+        return {"status": "error", "message": stderr.decode()}
+
+    saved_dir = f"src/scratch/dreambooth/data/results/{token}"
+
+    files = os.listdir(saved_dir)
+    urls = []
+
+    for file in files:
+        # Only process image files (png, jpg, etc.)
+        if file.endswith((".png", ".jpg", ".jpeg")):
+            # Open image file in binary mode and read it
+            with open(os.path.join(saved_dir, file), "rb") as image_file:
+                byte_arr = image_file.read()
+
+            blob_name = f"{token}/{file}"
+            # Append the tuple (byte_arr, desired_blob_name) to urls
+            urls.append((byte_arr, blob_name))
+
+    # Upload the images to GCS and get their URLs
+    image_urls = gcs_uploader.save_image_to_gcs(
+        urls, bucket_name="generated-dreambooth-images"
+    )
+    prompt = stdout.decode()
+
+    return {"status": "your images are created and saved!", "prompt": prompt}

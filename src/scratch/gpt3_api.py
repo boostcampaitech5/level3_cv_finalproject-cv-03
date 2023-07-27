@@ -11,7 +11,12 @@ from utils import load_yaml
 def get_description(
     lyrics: str, artist_name: str, album_name: str, song_names: str
 ) -> str:
-    gpt_config = load_yaml(os.path.join("/opt/ml/level3_cv_finalproject-cv-03/src/scratch/config", "private.yaml"), "gpt")
+    gpt_config = load_yaml(
+        os.path.join(
+            "/opt/ml/level3_cv_finalproject-cv-03/src/scratch/config", "private.yaml"
+        ),
+        "gpt",
+    )
 
     # OpenAI API key
     # https://platform.openai.com/
@@ -54,18 +59,30 @@ def get_description(
 
 
 def get_dreambooth_prompt(
-    lyrics: str, album_name: str, song_names: str, gender: str, genre: str, artist_name: str,
+    lyrics: str,
+    album_name: str,
+    song_names: str,
+    gender: str,
+    genre: str,
+    artist_name: str,
 ) -> str:
-    gpt_config = load_yaml(os.path.join("/opt/ml/level3_cv_finalproject-cv-03/src/scratch/config", "private.yaml"), "gpt")
+    gpt_config = load_yaml(
+        os.path.join(
+            "/opt/ml/level3_cv_finalproject-cv-03/src/scratch/config", "private.yaml"
+        ),
+        "gpt",
+    )
     openai.api_key = gpt_config["api_key"]
-    
+
     lyrics = lyrics.strip()
     lyrics = lyrics.replace("\n\n", " ")
     lyrics = lyrics.replace("\n", " ")
-    
-    message = [f"read a \n\n'{lyrics}', \n\n'{song_names}'. \n and, give a just one good prompt for generate album cover images that matching with above texts.\
-                prompt should start with 'A image of {gender} ~' and should not over 75 tokens."]
-    
+
+    message = [
+        f"read a \n\n'{lyrics}', \n\n'{song_names}'. \n and, give a just one good prompt for generate album cover images that matching with above texts.\
+                prompt should start with 'A image of {gender} ~' and should not over 75 tokens."
+    ]
+
     # Set up the API call
     responses = []
     for idx in range(len(message)):

@@ -16,7 +16,12 @@ class GCSUploader:
         )
         self.client = storage.Client(credentials=credentials)
 
-    def upload_blob(self, source_file_data: bytes, destination_blob_name: str, bucket_name: str = None) -> str:
+    def upload_blob(
+        self,
+        source_file_data: bytes,
+        destination_blob_name: str,
+        bucket_name: str = None,
+    ) -> str:
         bucket_name = bucket_name if bucket_name else self.default_bucket_name
         bucket = self.client.get_bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)

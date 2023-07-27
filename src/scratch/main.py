@@ -38,7 +38,7 @@ from .utils import load_yaml
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
-train_config = load_yaml(os.path.join("src/scratch/config", "dreambooth.yaml"))
+train_config = load_yaml(os.path.join("src/scratch/dreambooth", "dreambooth.yaml"))
 bigquery_config = gcp_config["bigquery"]
 
 # Start fastapi

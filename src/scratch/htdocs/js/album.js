@@ -78,6 +78,15 @@ function updateLoginState() {
     }
 }
 
+// 경과 시간을 갱신하는 함수
+function updateElapsedTime(startTimestamp) {
+    const now = new Date();
+    const elapsedSeconds = Math.floor((now - startTimestamp) / 1000);
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
+    document.getElementById('elapsed-time').textContent = `경과 시간: ${minutes}분 ${seconds}초`;
+}
+
 function imageDownload(num) {
     new_a = document.createElement("a");
     new_a.href = document.getElementById("image" + num).src;
@@ -95,7 +104,6 @@ function selectGenre(genre) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // loginUser()
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -238,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
+        const startTimestamp = new Date();
 
         const required_ids = ["song_name", "artist_name", "album_name"];
         for (let i of required_ids) {
@@ -278,6 +287,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 스피너 보이기
             document.getElementById("create_spinner").style.display = "block"
+            // 1초마다 경과 시간을 갱신
+            timerId = setInterval(() => {
+                updateElapsedTime(startTimestamp);
+            }, 1000);
 
             try {
                 const response = await fetch('http://49.50.167.24:30008/api/generate_cover', {
@@ -331,11 +344,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
+            // 스피너 보이기
+            document.getElementById("create_spinner").style.display = "block"
+            // 1초마다 경과 시간을 갱신
+            timerId = setInterval(() => {
+                updateElapsedTime(startTimestamp);
+            }, 1000);
 
             // TODO: DreamBooth 백엔드 연결 구현
         }
 
 
+        clearInterval(timerId)
         document.getElementById("create_spinner").style.display = "none";
         document.getElementById("info_alert").style.display = "block";
         watermark = document.getElementsByClassName("watermark");

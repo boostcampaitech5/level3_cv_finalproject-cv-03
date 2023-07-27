@@ -103,12 +103,47 @@ function selectGenre(genre) {
     genre.classList.add('selected');
 }
 
+const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
+const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+function resetInput() {
+    document.getElementById("song_name").value = ''
+    document.getElementById("artist_name").value = ''
+    document.getElementById("album_name").value = ''
+    document.getElementById("lyrics").value = ''
+    genre = document.getElementsByClassName("genre")
+    genre[0].className = badge_checked;
+    for (let i = 1; i < genre.length; i++) {
+        genre[i].className = badge_not_checked
+    }
+    const previewContainer = document.querySelector('#imagePreview');
+    while (previewContainer.firstChild) {
+        previewContainer.removeChild(previewContainer.firstChild);
+    }
+    document.getElementById("imageUpload").value = null
+    document.querySelectorAll('.gender')[0].checked = true
+    document.querySelectorAll('.gender')[1].checked = false
+    document.getElementById('elapsed-time').textContent = '경과 시간: 0분 0초'
+    image = document.getElementsByClassName("created_image")
+    for (let i = 0; i < image.length; i++) {
+        image[i].src = "images/empty.jpg"
+    }
+    watermark = document.getElementsByClassName("watermark");
+    for (let i = 0; i < watermark.length; i++) {
+        watermark[i].style.display = "none";
+    }
+    download_btn = document.getElementsByClassName("download_btn");
+    for (let i = 0; i < download_btn.length; i++) {
+        download_btn[i].style.pointerEvents = "none";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
         radio.addEventListener('change', () => {
             if (radio.checked) {
+                resetInput()
                 if (radio.id == "listGroupRadioGrid2") {
                     document.getElementById('model2_content').style.display = "block"
                 }
@@ -129,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 이미지 갯수가 최소 4장, 최대 10장인지 확인
         if (selectedFiles.length < 4 || selectedFiles.length > 10) {
             alert('최소 4장에서 최대 10장의 이미지를 업로드해주세요.');
+            document.getElementById("imageUpload").value = null
             return;
         }
 
@@ -240,8 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let select_genre = '';
     let select_album = '';
 
-    const badge_checked = "badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
-    const badge_not_checked = "badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
         e.preventDefault()
         // 버튼 동작 체크

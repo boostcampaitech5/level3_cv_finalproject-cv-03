@@ -20,7 +20,8 @@
     <div class="container">
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-            <div class="col-md-3 mb-2 mb-md-0">
+
+            <div class="col-md-4 mb-2 mb-md-0">
                 <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
                     <img src="images/album_logo.png">
                 </a>
@@ -29,17 +30,20 @@
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="index.html" class="nav-link px-2 link-secondary">HOME</a></li>
                 <li><a href="create.html" class="nav-link px-2">CREATE</a></li>
+                <li><a href="mypage.html" class="nav-link px-2 link-secondary" id="mypage_login" style="display: none;">MYPAGE</a></li>
             </ul>
 
-            <div class="col-md-3 text-end">
-                <!-- <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" />
-                <button type="button" id="logout" class="btn btn-secondary py-2" onclick="kakaoLogout();">로그아웃</button> -->
+
+            <div class="col-md-4 d-flex justify-content-end">
+                <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
+                <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
+                <button type="button" id="kakao_logout" class="btn btn-dark py-2" onclick="kakaoLogout();" style="display: none">로그아웃</button>
             </div>
         </header>
     </div>
 
-    <div class="container">
-        <div class="modal fade" id="create_modal">
+    <div class="container modal_list">
+        <div class="modal fade" id="create_modal1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -47,8 +51,8 @@
                         <button class="btn-close px-3" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body text-center" style="font-size: 14px;">저희 서비스를 이용해 주셔서 감사합니다!<br />
-                        이미지 생성에는 조금의 시간이 걸릴 수 있으며, 이 점 양해 부탁드립니다.<br />
-                        완성된 이미지를 받아보시기 전까지 기다려 주시면 감사하겠습니다.</div>
+                        해당 모델은 평균적으로 <strong>약 20~30초</strong> 시간이 소요될 수 있습니다.<br />
+                        완성된 이미지를 받아보시기 전까지 잠시만 기다려 주세요.</div>
                     <div class="modal-footer py-0 px-0 border-0">
                         <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
                     </div>
@@ -56,85 +60,100 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="download_modal" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="modal_title">이미지를 다운로드하기 위해<br /><mark>별점과
-                            리뷰</mark>를
-                        남겨주세요!</h2>
-                    <button class="btn-close px-3" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body flex-wrap text-center">
-                    <p class="mb-2" style="font-weight: bold;">🎵 선택하신 이미지에 얼마나 만족하시나요? 🎵</p>
-                    <div class="border text-center">
-                        <label class="form-label">별점 :</label>
-                        <div class="starpoint_wrap mt-2">
-                            <div class="starpoint_box">
-                                <label for="starpoint_1" class="label_star" title="0.5"><span
-                                        class="blind">0.5점</span></label>
-                                <label for="starpoint_2" class="label_star" title="1"><span
-                                        class="blind">1점</span></label>
-                                <label for="starpoint_3" class="label_star" title="1.5"><span
-                                        class="blind">1.5점</span></label>
-                                <label for="starpoint_4" class="label_star" title="2"><span
-                                        class="blind">2점</span></label>
-                                <label for="starpoint_5" class="label_star" title="2.5"><span
-                                        class="blind">2.5점</span></label>
-                                <label for="starpoint_6" class="label_star" title="3"><span
-                                        class="blind">3점</span></label>
-                                <label for="starpoint_7" class="label_star" title="3.5"><span
-                                        class="blind">3.5점</span></label>
-                                <label for="starpoint_8" class="label_star" title="4"><span
-                                        class="blind">4점</span></label>
-                                <label for="starpoint_9" class="label_star" title="4.5"><span
-                                        class="blind">4.5점</span></label>
-                                <label for="starpoint_10" class="label_star" title="5"><span
-                                        class="blind">5점</span></label>
-                                <input type="radio" name="starpoint" id="starpoint_1" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_2" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_3" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_4" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_5" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_6" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_7" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_8" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_9" class="star_radio">
-                                <input type="radio" name="starpoint" id="starpoint_10" class="star_radio">
-                                <span class="starpoint_bg"></span>
-                            </div>
-                        </div>
-
-                        <input type="text" class="form-control text-center" style="border-radius:0;" id="review_comment"
-                            placeholder="간단한 리뷰 한줄평을 남겨주세요!">
+        <div class="modal fade" id="create_modal2">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modal_title">📢 이미지 생성 시간 안내 📢</h1>
+                        <button class="btn-close px-3" data-bs-dismiss="modal"></button>
                     </div>
-                </div>
-                <div class="modal-footer bg-secondary-subtle justify-content-center">
-                    <p style="font-size:2px; text-align: center;">
-                        이미지를 다운로드하기 위해 별점과 리뷰를 남겨주시는 데에 감사드립니다.<br>
-                        당신의 피드백은 우리가 더 나은 기능과 서비스를 개발하는 데에 도움이 됩니다.<br>
-                        피드백을 기반으로 서비스를 더욱 개선하는 데에 최선을 다하겠습니다.<br>
-                    </p>
-                    <button type="button" id="review_send_btn" class="btn btn-primary">Download</button>
-                </div>
+                    <div class="modal-body text-center" style="font-size: 14px;" id="modal_model2">저희 서비스를 이용해 주셔서 감사합니다!<br />
+                            해당 모델은 고객님께서 업로드한 이미지로 학습 중입니다.<br />
+                            평균적으로 <strong>약 30~35분</strong> 시간이 소요될 수 있습니다.<br />
+                            완성된 이미지를 받아보시기 전까지 잠시만 기다려 주세요.</div>
+                    <div class="modal-footer py-0 px-0 border-0">
+                        <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="modal fade" id="download_modal" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header py-3">
+                        <h2 class="modal-title" id="modal_title" style="font-size: 18px;">❓ 선택하신 이미지에 얼마나 만족하시나요 ❓</h2>
+                        <button class="btn-close px-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body flex-wrap text-center p-0">
+                        <p class="mb-2" style="font-weight: bold;"></p>
+                        <div class="text-center">
+                            <label class="form-label">별점 :</label>
+                            <div class="starpoint_wrap mt-2">
+                                <div class="starpoint_box">
+                                    <label for="starpoint_1" class="label_star" title="0.5"><span
+                                            class="blind">0.5점</span></label>
+                                    <label for="starpoint_2" class="label_star" title="1"><span
+                                            class="blind">1점</span></label>
+                                    <label for="starpoint_3" class="label_star" title="1.5"><span
+                                            class="blind">1.5점</span></label>
+                                    <label for="starpoint_4" class="label_star" title="2"><span
+                                            class="blind">2점</span></label>
+                                    <label for="starpoint_5" class="label_star" title="2.5"><span
+                                            class="blind">2.5점</span></label>
+                                    <label for="starpoint_6" class="label_star" title="3"><span
+                                            class="blind">3점</span></label>
+                                    <label for="starpoint_7" class="label_star" title="3.5"><span
+                                            class="blind">3.5점</span></label>
+                                    <label for="starpoint_8" class="label_star" title="4"><span
+                                            class="blind">4점</span></label>
+                                    <label for="starpoint_9" class="label_star" title="4.5"><span
+                                            class="blind">4.5점</span></label>
+                                    <label for="starpoint_10" class="label_star" title="5"><span
+                                            class="blind">5점</span></label>
+                                    <input type="radio" name="starpoint" id="starpoint_1" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_2" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_3" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_4" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_5" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_6" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_7" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_8" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_9" class="star_radio">
+                                    <input type="radio" name="starpoint" id="starpoint_10" class="star_radio">
+                                    <span class="starpoint_bg"></span>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control text-center p-5" style="border-radius:0;" id="review_comment"
+                                placeholder="간단한 리뷰 한줄평을 남겨주세요!">
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-secondary-subtle justify-content-center">
+                        <p style="font-size:2px; text-align: right;">
+                            이미지를 다운로드하기 전에 별점과 리뷰를 남겨주세요.<br>
+                            당신의 피드백은 우리가 더 나은 기능과 서비스를 개발하는 데에 도움이 됩니다.<br>
+                            피드백을 기반으로 서비스를 더욱 개선하는 데에 최선을 다하겠습니다.<br>
+                        </p>
+                        <button type="button" id="review_send_btn" class="btn btn-primary">Download</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="container">
         <main>
             <div class="align-items-center">
-                <h2 class="text-center">앨범커버 생성하기</h2>
                 <form class="needs-validation" novalidate>
-                    <div class="row g-5">
+                    <div class="row g-3">
                         <div class="col-lg-5">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label for="song_name" class="form-label">🎧 모델</label>
+                                    <label for="song_name" class="form-label">🎧 모델<span class="text-danger"> *</span></label>
                                     <div class="list-group list-group-radio d-grid gap-2 border-0">
                                         <div class="position-relative">
                                             <input
@@ -164,7 +183,7 @@
 
                                 <div class="model_content" id="listGroupRadioGrid1">
                                     <div class="col-12 mb-3">
-                                        <label for="song_name" class="form-label">🎧 노래 제목</label>
+                                        <label for="song_name" class="form-label">🎧 노래 제목<span class="text-danger"> *</span></label>
                                         <input type="text" class="form-control" id="song_name"
                                             placeholder="노래 제목을 입력해주세요.">
                                         <div class="invalid-feedback">
@@ -173,7 +192,7 @@
                                     </div>
 
                                     <div class="col-12 mb-3">
-                                        <label for="artist_name" class="form-label">🎧 가수 이름</label>
+                                        <label for="artist_name" class="form-label">🎧 가수 이름<span class="text-danger"> *</span></label>
                                         <input type="text" class="form-control" id="artist_name"
                                             placeholder="가수 이름(혹은 예명)을 입력해주세요.">
                                         <div class="invalid-feedback">
@@ -182,7 +201,7 @@
                                     </div>
 
                                     <div class="col-12 mb-3">
-                                        <label for="album_name" class="form-label">🎧 앨범명</label>
+                                        <label for="album_name" class="form-label">🎧 앨범명<span class="text-danger"> *</span></label>
                                         <input type="text" class="form-control" id="album_name"
                                             placeholder="앨범명을 입력해주세요.">
                                         <div class="invalid-feedback">
@@ -191,100 +210,97 @@
                                     </div>
 
                                     <div class="col-12 mb-3">
-                                        <label for="genre" class="form-label">🎧 장르</label>
-                                        <span class="text-body-secondary"> (다중선택가능)</span></label>
+                                        <label for="genre" class="form-label">🎧 장르<span class="text-danger"> *</span></label>
                                         <div class="justify-content-center mb-2">
                                             <span
-                                                class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1"
-                                                id="genre1" style="font-size: 14px;">발라드</span>
+                                                class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
+                                                id="genre1">발라드</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre2" style="font-size: 14px;">댄스</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre2">댄스</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre3" style="font-size: 14px;">랩/힙합</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre3">랩/힙합</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre4" style="font-size: 14px;">알앤비</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre4">R&B/Soul</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre5" style="font-size: 14px;">팝</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre5">인디음악</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre6" style="font-size: 14px;">소울</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre6">록/메탈</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre7" style="font-size: 14px;">인디</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre7">트로트</span>
                                             <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre8" style="font-size: 14px;">락</span>
-                                            <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre9" style="font-size: 14px;">메탈</span>
-                                            <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre10" style="font-size: 14px;">트로트</span>
-                                            <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre11" style="font-size: 14px;">포크</span>
-                                            <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre12" style="font-size: 14px;">블루스</span>
-                                            <span
-                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1"
-                                                id="genre13" style="font-size: 14px;">재즈</span>
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
+                                                id="genre8">포크/블루스</span>
                                         </div>
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="lyrics" class="form-label">🎧 가사</label>
+                                        <label for="lyrics" class="form-label">🎧 가사<small class="text-secondary"> (선택)</small></label>
                                         <textarea id="lyrics" class="form-control" placeholder="가사를 입력해주세요."></textarea>
                                         <div class="invalid-feedback">
                                             Please enter lyrics.
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="model_content" id="listGroupRadioGrid2" style="display: none;">
-                                    <div class="col-12">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="imageUpload" class="form-label">🎧 이미지를 업로드해주세요</label>
-                                                <input type="file" class="form-control" id="imageUpload" multiple
-                                                    accept="image/*">
-                                            </div>
-                                            <div class="image-preview mb-2">
-                                                <div class="preview-container" id="imagePreview"></div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    <div class="model_content mt-3" id="model2_content" style="display: none;">
+                                        <div class="col-12">
+                                            <form>
+                                                <div>
+                                                    <label for="imageUpload" class="form-label">🎧 이미지를 업로드해주세요<span class="text-danger"> *</span></label>
+                                                    <input type="file" class="form-control" id="imageUpload" multiple
+                                                        accept=".jpg, .jpeg, .png">
+                                                </div>
+                                                <div class="image-preview mb-2">
+                                                    <div class="preview-container" id="imagePreview"></div>
+                                                </div>
+                                            </form>
+                                        </div>
 
-                                    <div class="col-12">
-                                        <div class="accordion" id="imageUploadRulesAccordion">
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
-                                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                        📸 이미지 업로드 규칙
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                                    aria-labelledby="headingOne"
-                                                    data-bs-parent="#imageUploadRulesAccordion">
-                                                    <div class="accordion-body px-1">
-                                                        <ul>
-                                                            <li>최소 4장, 최대 10장의 이미지를 선택하세요.</li>
-                                                            <li>이미지 파일 형식은 JPEG, JPG, PNG 등 이미지 파일만 가능합니다.</li>
-                                                            <li><strong style="color: rgb(236, 48, 48);">이미지당 한 사람의 얼굴만 포함되어있어야 합니다.</strong></li>
-                                                        </ul>
+                                        <div class="col-12 mb-3">
+                                            <div class="accordion" id="imageUploadRulesAccordion">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                            📸 이미지 업로드 안내
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                                        aria-labelledby="headingOne"
+                                                        data-bs-parent="#imageUploadRulesAccordion">
+                                                        <div class="accordion-body px-2">
+                                                            <ul>
+                                                                <li><ins>최소 4장, 최대 10장</ins>의 이미지를 <strong>한번에 선택하여</strong> 업로드하세요.</li>
+                                                                <li>이미지 파일 형식은 JPEG, JPG, PNG 등 파일만 가능합니다.</li>
+                                                                <li><strong style="color: rgb(236, 48, 48);">이미지당 한 사람의 얼굴만 포함되어있어야 합니다.</strong></li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-12">
+                                            <label for="gender" class="form-label">🎧 업로드한 이미지의 성별<span class="text-danger"> *</span></label>
+                                            <div class="container px-4">
+                                                <div class="form-check form-check-inline">
+                                                  <input class="gender form-check-input" type="radio" name="gender" id="man" value="man" checked>
+                                                  <label class="form-check-label" for="man">남성</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                  <input class="gender form-check-input" type="radio" name="gender" id="woman" value="woman">
+                                                  <label class="form-check-label" for="woman">여성</label>
+                                                </div>
+                                              </div>
+
+                                        </div>
+
                                     </div>
-
                                 </div>
-
                             </div>
 
                             <hr class="my-3">

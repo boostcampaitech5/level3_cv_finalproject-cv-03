@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 image_url: imageUrl,
                 artist_name: select_artist,
                 song_names: select_song,
-                genre: select_genre.join(", "),
+                genre: select_genre,
                 album_name: select_album
             };
 

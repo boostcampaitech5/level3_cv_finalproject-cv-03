@@ -24,9 +24,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install poetry
-        run: |
-          sudo apt install -y curl
-          curl -sSL https://install.python-poetry.org | python3 -
+        run: pip install poetry==1.5.1
       - name: Install mysqlclient & redis-server using apt-get
         run: |
           sudo apt-get install -y libmysqlclient-dev
@@ -89,6 +87,7 @@ jobs:
       - name: Run pytest
         run: poetry run python -m pytest
         env:
+          SLACK_TOKEN: ${{secrets.SLACK_TOKEN}}
           AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
 
       # Slack

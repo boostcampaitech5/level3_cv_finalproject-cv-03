@@ -6492,6 +6492,19 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-multipart"
+version = "0.0.5"
+description = "A streaming multipart parser for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-multipart-0.0.5.tar.gz", hash = "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"},
+]
+
+[package.dependencies]
+six = ">=1.4.0"
+
+[[package]]
 name = "python-nvd3"
 version = "0.15.0"
 description = "Python NVD3 - Chart Library for d3.js"
@@ -8607,4 +8620,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.12"
-content-hash = "af630a20a7388e244e707f56fae965a71c71119cf38a057896bb47a16a8db4f4"
+content-hash = "04b24c4948cc41325247ba6ed3abe029bd4da9e1ded210d728ce8211c8ec4e1f"

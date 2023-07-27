@@ -24,7 +24,6 @@ from pathlib import Path
 import subprocess
 import random
 import string
-from huggingface_hub import login
 
 
 # Built-in modules
@@ -39,16 +38,12 @@ from .utils import load_yaml
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
-huggingface_config = load_yaml(
-    os.path.join("src/scratch/config", "private.yaml"), "huggingface"
-)
 train_config = load_yaml(os.path.join("src/scratch/config", "dreambooth.yaml"))
 bigquery_config = gcp_config["bigquery"]
 
 # Start fastapi
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
-login(token=huggingface_config["token"], add_to_git_credential=True)
 
 # --- 정리 예정, Refactoring x, Configuration x ---
 

@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
-
+        const startTimestamp = new Date();
         const required_ids = ["song_name", "artist_name", "album_name"];
         for (let i of required_ids) {
             if (document.getElementById(i).value == "") {

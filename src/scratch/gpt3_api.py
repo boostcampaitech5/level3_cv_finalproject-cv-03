@@ -62,9 +62,7 @@ def get_dreambooth_prompt(
     artist_name: str,
 ) -> str:
     gpt_config = load_yaml(
-        os.path.join(
-            "src/scratch/config", "private.yaml"
-        ),
+        os.path.join("src/scratch/config", "private.yaml"),
         "gpt",
     )
     openai.api_key = gpt_config["api_key"]

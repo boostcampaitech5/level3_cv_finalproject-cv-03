@@ -39,7 +39,9 @@ from .utils import load_yaml
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
-huggingface_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "huggingface")
+huggingface_config = load_yaml(
+    os.path.join("src/scratch/config", "private.yaml"), "huggingface"
+)
 train_config = load_yaml(os.path.join("src/scratch/config", "dreambooth.yaml"))
 bigquery_config = gcp_config["bigquery"]
 
@@ -77,12 +79,14 @@ async def startup_event():
     global model
     model = load_model()
     print("Model loaded successfully!")
-    
+
+
 def get_random_string(length):
     # choose from all lowercase letter
     letters = string.ascii_lowercase
     result_str = "".join(random.choice(letters) for i in range(length))
     return result_str
+
 
 token = get_random_string(5)
 
@@ -114,10 +118,12 @@ class AlbumImage(BaseModel):
     song_names: str
     genre: str
     album_name: str
-    
+
+
 class UserInput(BaseModel):
     gender: str
-    
+
+
 class ImageInput(BaseModel):
     file_path: str  # 이미지 url(upload를 통해 gcs에 들어가면 생기는 url)
     width: int  # 이미지 너비
@@ -272,6 +278,7 @@ async def handle_exceptions(request: Request, exc: Exception):
 
     return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
 
+
 @app.post("/upload_image")
 async def upload_image(image: UploadFile = File(...)):
     global request_id
@@ -284,9 +291,7 @@ async def upload_image(image: UploadFile = File(...)):
     destination_filename = f"{image.filename}"
 
     # Define the directory where to save the image
-    image_dir = (
-        Path("src/scratch/dreambooth/data/users") / token
-    )
+    image_dir = Path("src/scratch/dreambooth/data/users") / token
 
     # Create the directory if it does not exist
     image_dir.mkdir(parents=True, exist_ok=True)

@@ -35,9 +35,7 @@ if __name__ == "__main__":
     command += f" --pretrained_model_name_or_path={quote_arg(config['MODEL_NAME'])}"
     command += f" --pretrained_vae_model_name_or_path={quote_arg(config['PRETRAINED_VAE_MODEL_NAME_OR_PATH'])}"
     command += f" --instance_data_dir=src/dreambooth/data/users/{token}"
-    command += (
-        f" --output_dir=src/dreambooth/weights/{token}"
-    )
+    command += f" --output_dir=src/dreambooth/weights/{token}"
     command += f" --mixed_precision={config['MIXED_PRECISION']}"
     command += f" --instance_prompt='A photo of a {token} {class_name}'"
     command += f" --resolution={config['RESOLUTION']}"

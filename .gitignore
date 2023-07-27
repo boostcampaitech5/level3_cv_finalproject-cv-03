@@ -215,4 +215,8 @@ src/stable_diffusion/data
 # Ignore logging (nohup)
 nohup.out
 
+# Ignore config
+src/redis-celery/config
+src/scratch/config
+
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,visualstudiocode

@@ -32,11 +32,21 @@ class GCSUploader:
         file_obj = io.BytesIO(source_file_data)
         blob.upload_from_file(file_obj)
 
-        print(f"File uploaded to {destination_blob_name} in {bucket_name}.")
-        return blob.public_url
+        # permanent_url = f"https://storage.cloud.google.com/{self.bucket_name}/{destination_blob_name}"
+
+        user_expiration_time = datetime.now() + timedelta(days=30)
+        user_url = blob.generate_signed_url(expiration=user_expiration_time)
+
+        print(f"File uploaded to {destination_blob_name}.")
+
+        return user_url
 
     # Uploads image to GCS and returns the URL
-    def save_image_to_gcs(self, urls: list, bucket_name: str = None) -> str:
+    def save_image_to_gcs(
+        self,
+        urls: list,
+        bucket_name: str = None,
+    ) -> str:
         image_urls = []
         for i, (byte_arr, url_name) in enumerate(urls):
             url = self.upload_blob(byte_arr, url_name, bucket_name)

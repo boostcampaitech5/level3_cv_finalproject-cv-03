@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault()
         // 버튼 동작 체크
         console.log("Button Clicked!");
-        const startTimestamp = new Date();
+        const startTimestamp = Date.now();
 
         const required_ids = ["song_name", "artist_name", "album_name"];
         for (let i of required_ids) {
@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timerId = setInterval(() => {
                 updateElapsedTime(startTimestamp);
             }, 1000);
-        
+
             // TODO: DreamBooth back-end connect
             // Uploading each image
             for (let i = 0; i < imageUrls.length; i++) {
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error('Error:', error);
                 }
             }
-            
+
             // Training the model
             try {
                 const response = await fetch('http://118.67.129.85:30010/api/train', {
@@ -401,6 +401,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
                 const data = await response.json();
                 console.log(data);
+
+                $('#create_modal3').modal('show');
             } catch (error) {
                 console.error('Error:', error);
             }

@@ -72,7 +72,7 @@ def get_dreambooth_prompt(
     lyrics = lyrics.replace("\n", " ")
 
     message = [
-        f"read a \n\n {lyrics} and give me three English keywords which express atmosphere."
+        f"read a \n\n {lyrics} \n and give me three English keywords which express atmosphere."
     ]
 
     # Set up the API call

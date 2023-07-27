@@ -349,7 +349,7 @@ async def inference(album: AlbumInput, user: UserInput):
     )
 
     prompt = f"A image of {summarization} music album cover with song title {album.song_names} by {album.artist_name}.\
-        a {token} {user.gender} is in album cover."
+        a {token} {user.gender} is in image."
 
     # Run the train.py script as a separate process
     process = subprocess.Popen(

@@ -23,13 +23,13 @@ if __name__ == "__main__":
 
     trained_model = str(
         os.path.join(
-            "src/dreambooth/weights",
+            "src/scratch/dreambooth/weights",
             token,
             "pytorch_lora_weights.bin",
         )
     )
 
-    save_dir = f"src/dreambooth/data/results/{token}"
+    save_dir = f"src/scratch/dreambooth/data/results/{token}"
 
     save_dir = Path(save_dir)
     if not save_dir.exists():

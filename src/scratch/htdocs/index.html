@@ -11,6 +11,7 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles/album.css" />
     <script src="js/album.js"></script>
+    <script src="js/main.js"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script>Kakao.init('24c6ad39029213044f93f8006b5d33b3');</script>
     <script src="https://code.jquery.com/jquery-latest.js"></script>
@@ -20,20 +21,25 @@
     <div class="container">
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-            <div class="col-md-3 mb-2 mb-md-0">
-                <a href="main.html" class="d-inline-flex link-body-emphasis text-decoration-none">
+
+            <div class="col-md-4 mb-2 mb-md-0">
+                <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
                     <img src="images/album_logo.png">
                 </a>
             </div>
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="main.html" class="nav-link px-2">HOME</a></li>
+                <li><a href="index.html" class="nav-link px-2">HOME</a></li>
                 <li><a href="create.html" class="nav-link px-2 link-secondary">CREATE</a></li>
+
+                <li><a href="mypage.html" class="nav-link px-2 link-secondary" id="mypage_login" style="display: none;">MYPAGE</a></li>
             </ul>
 
-            <div class="col-md-3 text-end">
-                <!-- <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" />
-                <button type="button" id="logout" class="btn btn-secondary py-2" onclick="kakaoLogout();">로그아웃</button> -->
+
+            <div class="col-md-4 d-flex justify-content-end">
+                <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
+                <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
+                <button type="button" id="kakao_logout" class="btn btn-dark py-2" onclick="kakaoLogout();" style="display: none">로그아웃</button>
             </div>
         </header>
     </div>
@@ -53,10 +59,10 @@
 
     <div class="container">
         <div class="album py-5">
-            <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 justify-content-center">
+            <div id="album-images-container" class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 justify-content-center">
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example1.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-1" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -66,7 +72,7 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example2.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-2" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -76,38 +82,7 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example3.jpg" width="100%" height="100%" />
-                        <div class="card-body">
-                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="images/example1.jpg" width="100%" height="100%" />
-                        <div class="card-body">
-                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="images/example2.jpg" width="100%" height="100%" />
-                        <div class="card-body">
-                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="images/example3.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-3" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -118,7 +93,7 @@
 
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example1.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-4" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -128,7 +103,7 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example2.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-5" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -138,7 +113,7 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example3.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-6" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -149,7 +124,7 @@
 
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example1.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-7" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -159,7 +134,7 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example2.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-8" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -169,7 +144,38 @@
                 </div>
                 <div class="col">
                     <div class="card shadow-sm">
-                        <img src="images/example3.jpg" width="100%" height="100%" />
+                        <img src="images/example1.jpg" id="album-image-9" class="default-img"/>
+                        <div class="card-body">
+                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/example1.jpg" id="album-image-10" class="default-img"/>
+                        <div class="card-body">
+                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/example1.jpg" id="album-image-11" class="default-img"/>
+                        <div class="card-body">
+                            <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/example1.jpg" id="album-image-12" class="default-img"/>
                         <div class="card-body">
                             <p class="card-text">생성된 앨범 이미지 프롬프트 요약 등</p>
                             <div class="d-flex justify-content-between align-items-center">

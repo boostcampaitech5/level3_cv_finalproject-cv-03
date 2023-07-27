@@ -10,7 +10,7 @@ import torch
 from torch import cuda
 
 # Backend
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,6 +19,7 @@ from pydantic import BaseModel
 # Other modules
 import numpy as np
 from pytz import timezone
+from typing import List, Dict
 
 # Built-in modules
 from .gpt3_api import get_description
@@ -32,24 +33,22 @@ from .utils import load_yaml
 # Load config
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
+bigquery_config = gcp_config["bigquery"]
 
 # Start fastapi
 app = FastAPI()
+api_router = APIRouter(prefix="/api")
 
 # --- 정리 예정, Refactoring x, Configuration x ---
-origins = [
-    "http://127.0.0.1:30008",  # Add the Live Server extension's URL
-    "http://localhost:8001",
-    "http://localhost:8000",
-]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # -----------------------------------------------
 
 bigquery_logger = BigQueryLogger(gcp_config)
@@ -82,12 +81,27 @@ class AlbumInput(BaseModel):
 
 # Review input Schema
 class ReviewInput(BaseModel):
-    rating: float
+    rating: int
     comment: str
+    image_url: str
+    artist_name: str
+    song_names: str
+    genre: str
+    album_name: str
+
+
+# Schema for get_album_images
+class AlbumImage(BaseModel):
+    url: str
+    artist_name: str
+    song_names: str
+    genre: str
+    album_name: str
 
 
 # REST API - Post ~/generate_cover
-@app.post("/generate_cover")
+# @app.post("/generate_cover")
+@api_router.post("/generate_cover")
 async def generate_cover(album: AlbumInput):
     # Generate a unique ID for this request
     global request_id
@@ -126,7 +140,7 @@ async def generate_cover(album: AlbumInput):
         byte_arr = io.BytesIO()
         image.save(byte_arr, format=public_config["generate"]["save_format"])
         byte_arr = byte_arr.getvalue()
-        base64_str = base64.b64encode(byte_arr).decode()
+        # base64_str = base64.b64encode(byte_arr).decode()
 
         urls.append(
             [
@@ -135,7 +149,7 @@ async def generate_cover(album: AlbumInput):
             ]
         )
 
-        images.append(base64_str)
+        images.append(byte_arr)
 
     # Upload to GCS
     image_urls = gcs_uploader.save_image_to_gcs(urls)
@@ -157,11 +171,13 @@ async def generate_cover(album: AlbumInput):
     }
     bigquery_logger.log(album_log, "user_album")
 
-    return {"images": images}
+    # return {"images": images}
+    return {"images": image_urls}
 
 
 # REST API - Post ~/review
-@app.post("/review")
+# @app.post("/review")
+@api_router.post("/review")
 async def review(review: ReviewInput):
     # Log to BigQuery
     review_log = {
@@ -172,11 +188,55 @@ async def review(review: ReviewInput):
         "rating": review.rating,
         "comment": review.comment,
         "language": public_config["language"],
+        "image_url": review.image_url,
+        "artist_name": review.artist_name,
+        "song_names": review.song_names,
+        "genre": review.genre,
+        "album_name": review.album_name,
     }
 
     bigquery_logger.log(review_log, "user_review")
 
     return review
+
+
+@api_router.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
+# @app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
+async def get_album_images():
+    # Query to retrieve latest and best-rated images from BigQuery
+
+    dataset_id = gcp_config["bigquery"]["dataset_id"]
+    user_review_table_id = gcp_config["bigquery"]["table_id"]["user_review"]
+
+    query = f"""
+        SELECT *
+        FROM {dataset_id}.{user_review_table_id} AS reviews
+        ORDER BY reviews.rating DESC, reviews.request_time DESC
+        LIMIT 12
+    """
+
+    # Execute the query
+    query_job = bigquery_logger.client.query(query)
+    results = query_job.result()
+
+    # Process the results and create a list of AlbumImage objects
+    album_images = []
+    for row in results:
+        album_image = AlbumImage(
+            url=row["image_url"],
+            artist_name=row["artist_name"],
+            song_names=row["song_names"],
+            genre=row["genre"],
+            album_name=row["album_name"],
+        )
+        album_images.append(album_image)
+    # logging
+    print("Retrieved album images:", album_images)
+
+    return {"album_images": album_images}
+
+
+app.include_router(api_router)
 
 
 # Exception handling using google cloud

@@ -11,10 +11,10 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles/album.css" />
     <script src="js/album.js"></script>
+    <script src="js/mypage.js"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <script>Kakao.init('24c6ad39029213044f93f8006b5d33b3');</script>
     <script src="https://code.jquery.com/jquery-latest.js"></script>
-    <script>loginUser()</script>
 </head>
 
 <body oncontextmenu="return false;" ondragstart="return false;">
@@ -40,6 +40,33 @@
                 <button type="button" id="kakao_logout" class="btn btn-dark py-2" onclick="kakaoLogout();">로그아웃</button>
             </div>
         </header>
+    </div>
+
+      <div class="modal fade" id="imageModal">
+        <div class="modal-dialog modal-dialog-centered w-50">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal_title">입력한 정보</h1>
+                    <button class="btn-close px-3" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="album-info">
+                        <p><strong>생성 날짜:</strong> <span id="request_time"></span></p>
+                        <p><strong>노래 제목:</strong> <span id="song_names"></span></p>
+                        <p><strong>아티스트명:</strong> <span id="artist_name"></span></p>
+                        <p><strong>장르:</strong> <span id="genre"></span></p>
+                        <p><strong>앨범명:</strong> <span id="album_name"></span></p>
+                        <p><strong>가사:</strong> <span id="lyric"></span></p>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fw-light text-center mb-4"><strong>🎨<u>My Artworks</u>🖌</strong></h2>
+
+    <div id="imageContainer" class="container-fluid mx-auto">
+        <div class="image-grid"></div>
     </div>
 
 </body>

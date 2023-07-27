@@ -20,7 +20,6 @@
     <div class="container">
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-
             <div class="col-md-4 mb-2 mb-md-0">
                 <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
                     <img src="images/album_logo.png">
@@ -33,7 +32,7 @@
                 <li><a href="mypage.html" class="nav-link px-2 link-secondary" id="mypage_login" style="display: none;">MYPAGE</a></li>
             </ul>
 
-
+            
             <div class="col-md-4 d-flex justify-content-end">
                 <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
                 <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
@@ -84,7 +83,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header py-3">
-                        <h2 class="modal-title" id="modal_title" style="font-size: 18px;">❓ 선택하신 이미지에 얼마나 만족하시나요 ❓</h2>
+                        <h2 class="modal-title" id="modal_title" style="font-size: 18px;">❓선택하신 이미지에 얼마나 만족하시나요❓</h2>
                         <button class="btn-close px-3" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body flex-wrap text-center p-0">
@@ -131,13 +130,13 @@
                                 placeholder="간단한 리뷰 한줄평을 남겨주세요!">
                         </div>
                     </div>
-                    <div class="modal-footer bg-secondary-subtle justify-content-center">
+                    <div class="modal-footer bg-secondary-subtle">
                         <p style="font-size:2px; text-align: right;">
                             이미지를 다운로드하기 전에 별점과 리뷰를 남겨주세요.<br>
                             당신의 피드백은 우리가 더 나은 기능과 서비스를 개발하는 데에 도움이 됩니다.<br>
-                            피드백을 기반으로 서비스를 더욱 개선하는 데에 최선을 다하겠습니다.<br>
+                            피드백을 기반으로 서비스를 더욱 개선하는 데에 최선을 다하겠습니다!<br>
                         </p>
-                        <button type="button" id="review_send_btn" class="btn btn-primary">Download</button>
+                        <button type="button" id="review_send_btn" class="btn btn-primary px-1">Download</button>
                     </div>
 
                 </div>
@@ -260,7 +259,7 @@
                                                 </div>
                                             </form>
                                         </div>
-
+    
                                         <div class="col-12 mb-3">
                                             <div class="accordion" id="imageUploadRulesAccordion">
                                                 <div class="accordion-item">
@@ -296,9 +295,9 @@
                                                   <label class="form-check-label" for="woman">여성</label>
                                                 </div>
                                               </div>
-
+    
                                         </div>
-
+    
                                     </div>
                                 </div>
                             </div>
@@ -312,6 +311,7 @@
                             <div class="bg-primary-subtle px-2 py-2 mb-2 mt-4 align-items-center"
                                 id="image_container_all">
                                 <div class="spinner-border justify-content-between" id="create_spinner"></div>
+                                <div class="fs-5 fw-light" id="elapsed-time">경과 시간: 0분 0초</div>
                                 <div class="row g-0">
                                     <div class="col">
                                         <div class="image_container">

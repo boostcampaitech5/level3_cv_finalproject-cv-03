@@ -14,7 +14,7 @@
     </div>
 </p>
 
-# <p align="center">💽 앨범 표지 맞춤 제작 서비스 💽</p>
+# <br/><p align="center">💽 앨범 표지 맞춤 제작 서비스 💽</p>
 # ✨ 팀 소개
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -107,7 +107,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 # 🗒️ 프로젝트 결과
 ## 데이터셋
-데이터 수집이 편리하고 국내/국외 노래 데이터 골고루 수집가능한 멜론 [멜론 음원사이트](https://www.melon.com/) 선택
+데이터 수집이 편리하고 국내/국외 노래 데이터 골고루 수집가능한 [멜론 음원사이트](https://www.melon.com/) 선택
 
 ## 모델
 
@@ -124,6 +124,7 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 ## 시연영상
 
 
+<br/>
 
 # 🔄️ Directory
 디렉토리는 추후 변경예정
@@ -165,9 +166,9 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 
 
 # 🤔 Wrap-Up Report
-[Wrap-Up Report]()⭐
+- [Wrap-Up Report]()⭐
 
 
 # ⚠️저작권 표기
-[멜론 음원사이트](https://www.melon.com/)
-<a href="https://www.flaticon.com/kr/free-icons/" title="앨범 아이콘">앨범 아이콘  제작자: Freepik - Flaticon</a>
+- [멜론 음원사이트](https://www.melon.com/) <br/>
+- <a href="https://www.flaticon.com/kr/free-icons/" title="앨범 아이콘">앨범 아이콘  제작자: Freepik - Flaticon</a>

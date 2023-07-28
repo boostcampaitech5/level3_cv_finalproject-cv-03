@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Generate Image</title>
+    <title>[CV-03] Aibum</title>
+    <link rel="icon" href="images/album_logo.png">
     <meta charset="utf-8" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
@@ -22,17 +23,17 @@
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <div class="col-md-4 mb-2 mb-md-0">
                 <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
-                    <img src="images/album_logo.png">
+                    <img src="images/album_logo.png" style="width:2rem;">
                 </a>
             </div>
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="index.html" class="nav-link px-2 link-secondary">HOME</a></li>
                 <li><a href="create.html" class="nav-link px-2">CREATE</a></li>
-                <li><a href="mypage.html" class="nav-link px-2 link-secondary" id="mypage_login" style="display: none;">MYPAGE</a></li>
+                <li><a href="mypage.html" class="nav-link px-2 link-secondary" id="mypage_login" style="display: none">MYPAGE</a></li>
             </ul>
 
-            
+
             <div class="col-md-4 d-flex justify-content-end">
                 <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
                 <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
@@ -50,7 +51,7 @@
                         <button class="btn-close px-3" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body text-center" style="font-size: 14px;">저희 서비스를 이용해 주셔서 감사합니다!<br />
-                        해당 모델은 평균적으로 <strong>약 20~30초</strong> 시간이 소요될 수 있습니다.<br />
+                        해당 모델은 평균적으로 <strong>3분 내외</strong>의 시간이 소요될 수 있습니다.<br />
                         완성된 이미지를 받아보시기 전까지 잠시만 기다려 주세요.</div>
                     <div class="modal-footer py-0 px-0 border-0">
                         <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
@@ -189,7 +190,7 @@
                                                 class="select_model form-check-input position-absolute top-50 end-0 me-3 fs-5"
                                                 type="radio" name="listGroupRadioGrid" id="listGroupRadioGrid2"
                                                 value="DreamBooth">
-                                            <label class="list-group-item py-3 pe-5" for="listGroupRadioGrid2">
+                                            <label class="list-group-item pe-5" for="listGroupRadioGrid2">
                                                 <strong class="fw-semibold">DreamBooth</strong>
                                                 <span class="d-block small opacity-75">실제 얼굴 이미지(최소 4장에서 최대 10장 필요)를 통해
                                                     앨범커버를 만들어줍니다.</span>
@@ -200,6 +201,59 @@
 
 
                                 <div class="model_content" id="listGroupRadioGrid1">
+                                    <div class="model_content" id="model2_content" style="display: none;">
+                                        <div class="col-12">
+                                            <form>
+                                                <div>
+                                                    <label for="imageUpload" class="form-label">🎧 이미지를 업로드해주세요<span class="text-danger"> *</span></label>
+                                                    <input type="file" class="form-control" id="imageUpload" multiple
+                                                        accept=".jpg, .jpeg, .png">
+                                                </div>
+                                                <div class="image-preview mb-2">
+                                                    <div class="preview-container" id="imagePreview"></div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-12 mb-2">
+                                            <div class="accordion" id="imageUploadRulesAccordion">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                            📸 이미지 업로드 안내
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                                        aria-labelledby="headingOne"
+                                                        data-bs-parent="#imageUploadRulesAccordion">
+                                                        <div class="accordion-body px-2">
+                                                            <ul>
+                                                                <li><ins>최소 4장, 최대 10장</ins>의 이미지를 <strong>한번에 선택하여</strong> 업로드하세요.</li>
+                                                                <li>이미지 파일 형식은 JPEG, JPG, PNG 등 파일만 가능합니다.</li>
+                                                                <li><strong style="color: rgb(236, 48, 48);">이미지당 한 사람의 얼굴만 포함되어있어야 합니다.</strong></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <label for="gender" class="form-label">🎧 업로드한 이미지의 성별<span class="text-danger"> *</span></label>
+                                            <div class="container px-4">
+                                                <div class="form-check form-check-inline">
+                                                  <input class="gender form-check-input" type="radio" name="gender" id="man" value="man" checked>
+                                                  <label class="form-check-label" for="man">남성</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                  <input class="gender form-check-input" type="radio" name="gender" id="woman" value="woman">
+                                                  <label class="form-check-label" for="woman">여성</label>
+                                                </div>
+                                              </div>
+
+                                        </div>
+
+                                    </div>
                                     <div class="col-12 mb-3">
                                         <label for="song_name" class="form-label">🎧 노래 제목<span class="text-danger"> *</span></label>
                                         <input type="text" class="form-control" id="song_name"
@@ -219,7 +273,7 @@
                                     </div>
 
                                     <div class="col-12 mb-3">
-                                        <label for="album_name" class="form-label">🎧 앨범명<span class="text-danger"> *</span></label>
+                                        <label for="album_name" class="form-label">🎧 앨범명<small class="text-secondary"> (선택)</small></label>
                                         <input type="text" class="form-control" id="album_name"
                                             placeholder="앨범명을 입력해주세요.">
                                         <div class="invalid-feedback">
@@ -228,10 +282,10 @@
                                     </div>
 
                                     <div class="col-12 mb-3">
-                                        <label for="genre" class="form-label">🎧 장르<span class="text-danger"> *</span></label>
+                                        <label for="genre" class="form-label">🎧 장르<small class="text-secondary"> (선택)</small></label>
                                         <div class="justify-content-center mb-2">
                                             <span
-                                                class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis rounded-pill mb-1 genre"
+                                                class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
                                                 id="genre1">발라드</span>
                                             <span
                                                 class="badge bg-secondary-subtle border border-secondary-subtle text-secondary-emphasis rounded-pill mb-1 genre"
@@ -265,59 +319,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="model_content mt-3" id="model2_content" style="display: none;">
-                                        <div class="col-12">
-                                            <form>
-                                                <div>
-                                                    <label for="imageUpload" class="form-label">🎧 이미지를 업로드해주세요<span class="text-danger"> *</span></label>
-                                                    <input type="file" class="form-control" id="imageUpload" multiple
-                                                        accept=".jpg, .jpeg, .png">
-                                                </div>
-                                                <div class="image-preview mb-2">
-                                                    <div class="preview-container" id="imagePreview"></div>
-                                                </div>
-                                            </form>
-                                        </div>
-    
-                                        <div class="col-12 mb-3">
-                                            <div class="accordion" id="imageUploadRulesAccordion">
-                                                <div class="accordion-item">
-                                                    <h2 class="accordion-header" id="headingOne">
-                                                        <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
-                                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                            📸 이미지 업로드 안내
-                                                        </button>
-                                                    </h2>
-                                                    <div id="collapseOne" class="accordion-collapse collapse show"
-                                                        aria-labelledby="headingOne"
-                                                        data-bs-parent="#imageUploadRulesAccordion">
-                                                        <div class="accordion-body px-2">
-                                                            <ul>
-                                                                <li><ins>최소 4장, 최대 10장</ins>의 이미지를 <strong>한번에 선택하여</strong> 업로드하세요.</li>
-                                                                <li>이미지 파일 형식은 JPEG, JPG, PNG 등 파일만 가능합니다.</li>
-                                                                <li><strong style="color: rgb(236, 48, 48);">이미지당 한 사람의 얼굴만 포함되어있어야 합니다.</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <label for="gender" class="form-label">🎧 업로드한 이미지의 성별<span class="text-danger"> *</span></label>
-                                            <div class="container px-4">
-                                                <div class="form-check form-check-inline">
-                                                  <input class="gender form-check-input" type="radio" name="gender" id="man" value="man" checked>
-                                                  <label class="form-check-label" for="man">남성</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                  <input class="gender form-check-input" type="radio" name="gender" id="woman" value="woman">
-                                                  <label class="form-check-label" for="woman">여성</label>
-                                                </div>
-                                              </div>
-    
-                                        </div>
-    
-                                    </div>
+
                                 </div>
                             </div>
 

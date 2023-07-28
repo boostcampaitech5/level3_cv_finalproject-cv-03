@@ -24,7 +24,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
         <td align="center"><a href="https://github.com/seungki1011"><img src="https://avatars.githubusercontent.com/u/120040458?v=4?s=100" width="100px;" alt=""/><br /><sub><b>김승기</b></sub><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=seungki1011" title="Code">💻</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=seungki1011" title="Code">💻</a>        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=seungki1011" title="Code">💻</a>        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=seungki1011" title="Code">💻</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Infra">🚇</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=" title="Review">👀</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/issues" title="Question">💬</a>
         </td>
         <td align="center"><a href="https://github.com/jjjuuuun"><img src="https://avatars.githubusercontent.com/u/86290308?v=4?s=100" width="100px;" alt=""/><br /><sub><b>김준영</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=jjjuuuun" title="Code">💻</a>
@@ -35,7 +37,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
         <td align="center"><a href="https://github.com/helpmeIamnewbie"><img src="https://avatars.githubusercontent.com/u/102274521?v=4?s=100" width="100px;" alt=""/><br /><sub><b>전형우</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=helpmeIamnewbie" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/tree/develop/src/scratch/dreambooth" title="Infra">🚇</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=is%3Apr+is%3Aclosed" title="Research">🔬</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=" title="Research">🔬</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Test">⚠️</a>
         </td>
         <td align="center"><a href="https://github.com/CheonJiEun"><img src="https://avatars.githubusercontent.com/u/53997172?v=4?s=100" width="100px;" alt=""/><br /><sub><b>천지은</b></sub></a><br />
@@ -47,7 +49,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
         <td align="center"><a href="https://github.com/Eyecaramba"><img src="https://avatars.githubusercontent.com/u/86091292?v=4?s=100" width="100px;" alt=""/><br /><sub><b>신우진</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=Eyecaramba" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Ideas">🤔</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=is%3Apr+is%3Aclosed" title="Research">🔬</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=" title="Research">🔬</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Infra">🚇</a>
     </td>
   </tr>
@@ -101,6 +103,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 4. [Scratch](https://www.notion.so/Scratch-548c2eb084e84209968b5494742f7811)✔️
 5. [Experiments](https://www.notion.so/Experiments-2f2a4e824cd04168b3ed006d530a787b)✔️
 6. [발표자료]()⭐
+7. [발표영상]()⭐
 
 # 🗒️ 프로젝트 결과
 ## 데이터셋
@@ -108,16 +111,18 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## 모델
 
-### Stable Diffusion
+### - Stable Diffusion
 Stable Diffusion은 높은 품질의 이미지를 생성하고, Text-To-Image 작업을 가능하게 해주는 모델입니다. 사용자로부터 입력 받은 노래 정보를 ChatGPT API를 통해 Prompt로 생성한 후, 이를 Stable Diffusion 모델에 입력하여 앨범 커버를 생성합니다.
 <img align="center" src="imgs/stablediffusion.jpeg">
 
-### Dreambooth
+### - Dreambooth
 Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 가수의 사진을 입력 받고 이를 통해 Fine-Tuning하여 가수 사진이 포함된 앨범 커버를 생성해줍니다.
 <img align="center" src="imgs/dreambooth.jpeg">
 
-### 시연영상
-<img align="center" src="imgs/video.gif">
+<br/>
+
+## 시연영상
+
 
 
 # 🔄️ Directory

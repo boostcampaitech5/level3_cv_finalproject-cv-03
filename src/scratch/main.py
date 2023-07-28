@@ -244,7 +244,7 @@ async def get_album_images(user: Optional[str] = None):
             SELECT *
             FROM {dataset_id}.{user_review_table_id} AS reviews
             WHERE reviews.user_email = '{user}'
-            ORDER BY reviews.rating DESC, reviews.request_time DESC
+            ORDER BY reviews.request_time DESC LIMIT 20
         """
     else:
         query = f"""

@@ -60,7 +60,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <p align="center">
     <picture>
-        <img src="imgs/aibum.png">
+        <img src="imgs/aibum.png" height="400">
     </picture>
 </p>
 
@@ -149,11 +149,11 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
     ├── stable_diffusion
     │    └── experiments
     │         └── [tag]ExpName
-	│			    ├── albums.csv
-	│			    ├── prompts.txt
-	│			    ├── checkpoints
-	│			    └── results
-	│			     
+    │			    ├── albums.csv
+    │			    ├── prompts.txt
+    │			    ├── checkpoints
+    │			    └── results
+    │			     
     └── stable_diffusion_xl
 ```
 

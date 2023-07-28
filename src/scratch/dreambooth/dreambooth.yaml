@@ -15,7 +15,7 @@ MIXED_PRECISION: "fp16"
 # Learning rate.
 LEARNING_RATE: 1e-4
 # Number of class images.
-NUM_CLASS_IMAGES: 0
+NUM_CLASS_IMAGES: 200
 # Sample batch size.
 SAMPLE_BATCH_SIZE: 1
 #--------------------------Don't fix above-----------------------------------------------

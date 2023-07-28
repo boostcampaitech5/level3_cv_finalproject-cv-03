@@ -25,7 +25,7 @@ import subprocess
 import random
 import string
 import urllib3
-
+from typing import Optional
 
 # Built-in modules
 from .gpt3_api import get_description, get_dreambooth_prompt
@@ -233,18 +233,26 @@ async def review(review: ReviewInput):
 
 @api_router.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
 # @app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
-async def get_album_images():
+async def get_album_images(user: Optional[str] = None):
     # Query to retrieve latest and best-rated images from BigQuery
 
     dataset_id = gcp_config["bigquery"]["dataset_id"]
     user_review_table_id = gcp_config["bigquery"]["table_id"]["user_review"]
 
-    query = f"""
-        SELECT *
-        FROM {dataset_id}.{user_review_table_id} AS reviews
-        ORDER BY reviews.rating DESC, reviews.request_time DESC
-        LIMIT 12
-    """
+    if user:
+        query = f"""
+            SELECT *
+            FROM {dataset_id}.{user_review_table_id} AS reviews
+            WHERE reviews.user_email = '{user}'
+            ORDER BY reviews.rating DESC, reviews.request_time DESC
+        """
+    else:
+        query = f"""
+            SELECT *
+            FROM {dataset_id}.{user_review_table_id} AS reviews
+            ORDER BY reviews.rating DESC, reviews.request_time DESC
+            LIMIT 12
+        """
 
     # Execute the query
     query_job = bigquery_logger.client.query(query)

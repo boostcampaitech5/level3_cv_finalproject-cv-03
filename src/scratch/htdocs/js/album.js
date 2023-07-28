@@ -88,6 +88,7 @@ function updateElapsedTime(startTimestamp) {
 }
 
 function imageDownload(num) {
+    console.log('image download ', num)
     new_a = document.createElement("a");
     new_a.href = document.getElementById("image" + num).src;
     new_a.download = "album_image_" + num + ".jpeg";
@@ -111,8 +112,7 @@ function resetInput() {
     document.getElementById("album_name").value = ''
     document.getElementById("lyrics").value = ''
     genre = document.getElementsByClassName("genre")
-    genre[0].className = badge_checked;
-    for (let i = 1; i < genre.length; i++) {
+    for (let i = 0; i < genre.length; i++) {
         genre[i].className = badge_not_checked
     }
     const previewContainer = document.querySelector('#imagePreview');
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Button Clicked!");
         const startTimestamp = new Date();
 
-        const required_ids = ["song_name", "artist_name", "album_name"];
+        const required_ids = ["song_name", "artist_name"];
         for (let i of required_ids) {
             if (document.getElementById(i).value == "") {
                 alert("모든 필수 입력란을 입력해주세요.");

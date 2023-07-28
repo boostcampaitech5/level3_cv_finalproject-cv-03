@@ -53,7 +53,6 @@ if __name__ == "__main__":
 
     n_steps = 75
     prompt = args.prompt
-    prompt = prompt.replace(class_name, f"{token} {class_name}")
 
     latent_image = pipe(
         prompt=prompt, num_inference_steps=n_steps, num_images_per_prompt=4

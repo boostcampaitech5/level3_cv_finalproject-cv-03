@@ -194,9 +194,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // bring the number of the clicked button of the modal
 
     let imageUrl;
+    let buttonType;
     $('#download_modal').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget);
-        let buttonType = button.data('button-type');
+        buttonType = button.data('button-type');
         console.log(buttonType); // check the value of buttonType
 
         // Determine the id of the image to be reviewed

@@ -106,6 +106,7 @@ class ReviewInput(BaseModel):
     song_names: str
     genre: str
     album_name: str
+    user_email: str
 
 
 # Schema for get_album_images
@@ -222,6 +223,7 @@ async def review(review: ReviewInput):
         "song_names": review.song_names,
         "genre": review.genre,
         "album_name": review.album_name,
+        "user_email": review.user_email,
     }
 
     bigquery_logger.log(review_log, "user_review")

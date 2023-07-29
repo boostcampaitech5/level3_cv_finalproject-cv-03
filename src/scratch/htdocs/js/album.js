@@ -324,7 +324,8 @@ document.addEventListener("DOMContentLoaded", () => {
         select_song = document.getElementById("song_name").value
         select_artist = document.getElementById("artist_name").value
         select_album = document.getElementById("album_name").value
-        select_lyrics = document.getElementById("lyrics").value
+        select_lyric = document.getElementById("lyrics").value
+        select_genre = ''
         genre = document.getElementsByClassName("genre")
         for (let i = 0; i < genre.length; i++) {
             cur_genre = genre[i].id;
@@ -337,15 +338,28 @@ document.addEventListener("DOMContentLoaded", () => {
             artist_name: select_artist,
             genre: select_genre,
             album_name: select_album,
-            lyric: select_lyrics,
+            lyric: select_lyric,
         };
-
+        console.log(sessionStorage.getItem('user_id'))
         if (document.getElementById("listGroupRadioGrid1").checked == true) {
             select_model = document.getElementById("listGroupRadioGrid1").value
         }
         else {
             select_model = document.getElementById("listGroupRadioGrid2").value
         }
+
+        UserAlbumInput = {
+            user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
+            model: select_model,
+            song_name: select_song,
+            artist_name: select_artist,
+            album_name: select_album,
+            genre: select_genre,
+            lyric: select_lyric,
+            gender: '',
+            image_urls: '',
+        };
+
         if (select_model == "Stable Diffusion") {
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal1').modal('show');
@@ -365,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(albumInput),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {
@@ -407,6 +421,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log(selectedGender)   // 성별: 'man', 'woman'
                 }
             });
+            UserAlbumInput.gender = selectedGender
+            UserAlbumInput.image_urls = imageUrls
 
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
@@ -482,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ album: albumInput, user: user }),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {

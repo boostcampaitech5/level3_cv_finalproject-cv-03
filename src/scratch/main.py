@@ -88,15 +88,6 @@ def get_random_string(length):
 token = get_random_string(5)
 
 
-# Album input Schema
-class AlbumInput(BaseModel):
-    song_names: str
-    artist_name: str
-    genre: str
-    album_name: str
-    lyric: str
-
-
 # Review input Schema
 class ReviewInput(BaseModel):
     rating: int
@@ -135,6 +126,18 @@ class UserInfo(BaseModel):
     email: str
 
 
+class UserAlbumInput(BaseModel):
+    user_id: str
+    model: str
+    song_name: str
+    artist_name: str
+    album_name: str
+    genre: str
+    lyric: str
+    gender: str
+    image_urls: str
+
+
 # 개인정보 보호를 위해 이메일 도메인주소 마스킹하기
 def mask_email_domain(email):
     username, domain = email.split("@", 1)
@@ -158,7 +161,6 @@ async def user_login(userinfo: UserInfo):
     query_job = bigquery_logger.client.query(query)
     result = list(query_job)
 
-    # TODO : 이메일 정보는 마스킹하는게 필요해보임
     if len(result) == 0:  # 새로운 유저 정보 저장
         print("New User Login!")
         user_id = str(uuid.uuid4())
@@ -186,11 +188,8 @@ async def user_login(userinfo: UserInfo):
         return {"user_id": result[0]["user_id"]}
 
 
-# REST API - Post ~/generate_cover
-# @app.post("/generate_cover")
 @api_router.post("/generate_cover")
-async def generate_cover(album: AlbumInput):
-    # Generate a unique ID for this request
+async def generate_cover2(input: UserAlbumInput):
     global request_id
     request_id = str(uuid.uuid4())
 
@@ -198,10 +197,10 @@ async def generate_cover(album: AlbumInput):
     urls = []
 
     summarization = get_description(
-        album.lyric,
-        album.artist_name,
-        album.album_name,
-        album.song_names,
+        input.lyric,
+        input.artist_name,
+        input.album_name,
+        input.song_name,
     )
 
     seeds = np.random.randint(
@@ -214,7 +213,7 @@ async def generate_cover(album: AlbumInput):
         # Generate Images
         with torch.no_grad():
             image = model.pipeline(
-                prompt=f"A photo of a {album.genre} album cover with a {summarization} atmosphere visualized.",
+                prompt=f"A photo of a {input.genre} album cover with a {summarization} atmosphere visualized.",
                 num_inference_steps=public_config["generate"]["inference_step"],
                 generator=generator,
             ).images[0]
@@ -242,21 +241,20 @@ async def generate_cover(album: AlbumInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
-    album_log = {
-        "request_id": request_id,
-        "request_time": datetime.utcnow()
-        .astimezone(timezone("Asia/Seoul"))
-        .isoformat(),
-        "song_names": album.song_names,
-        "artist_name": album.artist_name,
-        "genre": album.genre,
-        "album_name": album.album_name,
-        "lyric": album.lyric,
-        "summarization": summarization,
+    input_log = {
+        "input_id": request_id,
+        "user_id": input.user_id,
+        "model": input.model,
+        "song_name": input.song_name,
+        "artist_name": input.artist_name,
+        "album_name": input.album_name,
+        "genre": input.genre,
+        "lyric": input.lyric,
+        "gender": input.gender,
         "image_urls": image_urls,
-        "language": public_config["language"],
+        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
-    bigquery_logger.log(album_log, "user_album")
+    bigquery_logger.log(input_log, "input")
 
     # return {"images": images}
     return {"images": image_urls}
@@ -405,18 +403,18 @@ async def train(user: UserInput):
 
 
 @api_router.post("/inference")
-async def inference(album: AlbumInput, user: UserInput):
+async def inference(input: UserAlbumInput):
     summarization = get_dreambooth_prompt(
-        album.lyric,
-        album.album_name,
-        album.song_names,
-        user.gender,
-        album.genre,
-        album.artist_name,
+        input.lyric,
+        input.album_name,
+        input.song_name,
+        input.gender,
+        input.genre,
+        input.artist_name,
     )
 
-    prompt = f"A image of {summarization} music album cover with song title {album.song_names} by {album.artist_name}.\
-        a {token} {user.gender} is in image."
+    prompt = f"A image of {summarization} music album cover with song title {input.song_name} by {input.artist_name}.\
+        a {token} {input.gender} is in image."
 
     # Run the train.py script as a separate process
     process = subprocess.Popen(
@@ -428,7 +426,7 @@ async def inference(album: AlbumInput, user: UserInput):
             "--prompt",
             prompt,
             "--user-gender",
-            user.gender,
+            input.gender,
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -461,21 +459,20 @@ async def inference(album: AlbumInput, user: UserInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
-    album_log = {
-        "request_id": request_id,
-        "request_time": datetime.utcnow()
-        .astimezone(timezone("Asia/Seoul"))
-        .isoformat(),
-        "song_names": album.song_names,
-        "artist_name": album.artist_name,
-        "genre": album.genre,
-        "album_name": album.album_name,
-        "lyric": album.lyric,
-        "summarization": summarization,
+    input_log = {
+        "input_id": request_id,
+        "user_id": input.user_id,
+        "model": input.model,
+        "song_name": input.song_name,
+        "artist_name": input.artist_name,
+        "album_name": input.album_name,
+        "genre": input.genre,
+        "lyric": input.lyric,
+        "gender": input.gender,
         "image_urls": image_urls,
-        "language": public_config["language"],
+        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
-    bigquery_logger.log(album_log, "user_album")
+    bigquery_logger.log(input_log, "input")
 
     # return {"images": images}
     return {"images": image_urls}

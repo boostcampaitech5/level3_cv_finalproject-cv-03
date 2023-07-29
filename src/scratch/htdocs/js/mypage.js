@@ -1,3 +1,35 @@
+async function fetchAlbumImages(user_email) {
+    try {
+        const response = await fetch('http://49.50.167.24:30008/api/get_album_images?user='+user_email, { method: 'GET',
+
+        mode: "cors",
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },});
+
+        const data = await response.json();
+
+        if (response.ok) {
+            for (let i = 0; i < data.album_images.length; i++) {
+                const albumImage = data.album_images[i];
+                const imgElement = document.createElement('img');
+                imgElement.src = albumImage.url;
+                imgElement.addEventListener('click', () => {
+                    showImageModal(albumImage);
+                });
+
+                imageContainer.querySelector('.image-grid').appendChild(imgElement);
+            };
+        } else {
+            console.error('Error fetching album images:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching album images:', error);
+    }
+}
+
 // 이미지를 동적으로 추가하는 함수
 function addImagesToContainer(userImages) {
     userImages.forEach((image) => {
@@ -16,12 +48,12 @@ function addImagesToContainer(userImages) {
 function showImageModal(image) {
     const modalBody = document.querySelector('.modal-body');
     // 이미지 클릭 시 모달의 내용을 새로운 정보로 업데이트
-    document.getElementById('request_time').innerText = image.request_time;
+    // document.getElementById('request_time').innerText = image.request_time;
     document.getElementById('song_names').innerText = image.song_names;
     document.getElementById('artist_name').innerText = image.artist_name;
     document.getElementById('genre').innerText = image.genre;
     document.getElementById('album_name').innerText = image.album_name;
-    document.getElementById('lyric').innerText = image.lyric;
+    // document.getElementById('lyric').innerText = image.lyric;
 
     // 모달 띄우기
     const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
@@ -43,6 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // TODO: 현재 사용자의 기록들 보여주기
     user_email = sessionStorage.getItem('user_email')  // 식별자 - 현재 사용자의 이메일
     const userImages = new Array(16).fill(albumInput)  // [albumInput, albumInput, ...] 와 같음
-    addImagesToContainer(userImages)
-
+    // addImagesToContainer(userImages)
+    fetchAlbumImages(user_email)
 })

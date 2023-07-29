@@ -48,6 +48,8 @@ function kakaoLogout() {
                 sessionStorage.removeItem('user_nickname');
                 sessionStorage.removeItem('user_email');
                 updateLoginState();
+                window.location.href = 'index.html';
+                window.onload()
             },
             fail: function (error) {
                 alert('fail: ' + JSON.stringify(error))
@@ -227,6 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("review_comment").focus();
         }
         else {
+            console.log('review login user email:', sessionStorage.getItem('user_email'));
+            user_email = sessionStorage.getItem('user_email')
+            if (user_email == null){
+                user_email = '';
+            }
             const reviewData = {
                 rating: user_starpoint,
                 comment: user_review,
@@ -234,7 +241,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 artist_name: select_artist,
                 song_names: select_song,
                 genre: select_genre,
-                album_name: select_album
+                album_name: select_album,
+                user_email: user_email,
             };
 
             try {
@@ -368,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("imageUpload").click();
                 return;
             }
-        
+
             const genderButtons = document.querySelectorAll('.gender');
             let selectedGender = '';
             genderButtons.forEach((button) => {
@@ -377,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log(selectedGender)   // 성별: 'man', 'woman'
                 }
             });
-        
+
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
             document.getElementById("create_spinner").style.display = "block"
@@ -390,26 +398,26 @@ document.addEventListener("DOMContentLoaded", () => {
             // Uploading each image
             for (let i = 0; i < imageUrls.length; i++) {
                 const imageUrl = imageUrls[i];
-            
+
                 try {
                     // Fetch the image data from the URL
                     const response = await fetch(imageUrl);
                     const imageBlob = await response.blob();
-            
+
                     // Create a FormData object and append the image blob to it
                     const formData = new FormData();
                     formData.append('image', imageBlob, `image${i}.jpg`);
-            
+
                     // Send the image data to the server
                     const uploadResponse = await fetch('http://118.67.129.85:30010/api/upload_image', {
                         method: 'POST',
                         body: formData
                     });
-            
+
                     if (!uploadResponse.ok) {
                         throw new Error(`HTTP error! status: ${uploadResponse.status}`);
                     }
-            
+
                     // Parse the JSON response
                     const data = await uploadResponse.json();
                     console.log(data);
@@ -429,11 +437,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify({ gender: selectedGender }),
                 });
-            
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            
+
                 const data = await response.json();
                 console.log(data);
 
@@ -441,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error('Error:', error);
             }
-            
+
             // Inference to get the generated images
             try {
                 const user = { gender: selectedGender };
@@ -454,11 +462,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify({ album: albumInput, user: user }),
                 });
-            
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            
+
                 const data = await response.json();
                 console.log(data.images);
 

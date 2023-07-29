@@ -86,9 +86,9 @@ function kakaoLogout() {
 }
 // 로그인 상태에 따라 화면 갱신
 function updateLoginState() {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    user_id = sessionStorage.getItem('user_id');
     // alert(isLoggedIn)
-    if (isLoggedIn === 'true') {
+    if (user_id !== null) {
         // 로그인 상태
         document.getElementById('kakao_login').style.display = 'none';
         document.getElementById('kakao_logout').style.display = 'block';
@@ -260,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             console.log('review login user id:', sessionStorage.getItem('user_id'));
             user_id = sessionStorage.getItem('user_id')
-            console.log(user_id)
 
             const UserReviewInput = {
                 output_id: output_id,
@@ -343,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
             album_name: select_album,
             lyric: select_lyric,
         };
-        console.log(sessionStorage.getItem('user_id'))
         if (document.getElementById("listGroupRadioGrid1").checked == true) {
             select_model = document.getElementById("listGroupRadioGrid1").value
         }

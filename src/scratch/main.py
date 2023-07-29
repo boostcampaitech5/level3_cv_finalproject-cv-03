@@ -26,6 +26,7 @@ import random
 import string
 import urllib3
 from typing import Optional
+from typing import List
 
 # Built-in modules
 from .gpt3_api import get_description, get_dreambooth_prompt
@@ -135,7 +136,7 @@ class UserAlbumInput(BaseModel):
     genre: str
     lyric: str
     gender: str
-    image_urls: str
+    image_urls: List[str]
 
 
 # 개인정보 보호를 위해 이메일 도메인주소 마스킹하기
@@ -189,9 +190,24 @@ async def user_login(userinfo: UserInfo):
 
 
 @api_router.post("/generate_cover")
-async def generate_cover2(input: UserAlbumInput):
+async def generate_cover(input: UserAlbumInput):
     global request_id
     request_id = str(uuid.uuid4())
+
+    input_log = {
+        "input_id": request_id,
+        "user_id": input.user_id,
+        "model": input.model,
+        "song_name": input.song_name,
+        "artist_name": input.artist_name,
+        "album_name": input.album_name,
+        "genre": input.genre,
+        "lyric": input.lyric,
+        "gender": input.gender,
+        "image_urls": input.image_urls,
+        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
+    }
+    bigquery_logger.log(input_log, "input")
 
     images = []
     urls = []
@@ -206,14 +222,14 @@ async def generate_cover2(input: UserAlbumInput):
     seeds = np.random.randint(
         public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
     )
-
+    prompt = f"A photo of a {input.genre} album cover with a {summarization} atmosphere visualized."
     for i, seed in enumerate(seeds):
         generator = torch.Generator(device=device).manual_seed(int(seed))
 
         # Generate Images
         with torch.no_grad():
             image = model.pipeline(
-                prompt=f"A photo of a {input.genre} album cover with a {summarization} atmosphere visualized.",
+                prompt=prompt,
                 num_inference_steps=public_config["generate"]["inference_step"],
                 generator=generator,
             ).images[0]
@@ -241,22 +257,16 @@ async def generate_cover2(input: UserAlbumInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
-    input_log = {
+    output_log = {
+        "output_id": str(uuid.uuid4()),
         "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
+        "image_urls": image_urls,
+        "seeds": [int(seed) for seed in seeds],
+        "prompt": prompt,
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
-    bigquery_logger.log(input_log, "input")
+    bigquery_logger.log(output_log, "output")
 
-    # return {"images": images}
     return {"images": image_urls}
 
 
@@ -363,13 +373,29 @@ async def upload_image(image: UploadFile = File(...)):
 
 
 @api_router.post("/train")
-async def train(user: UserInput):
+async def train(input: UserAlbumInput):
     try:
         global model
         del model
     except:
         pass
     torch.cuda.empty_cache()
+
+    # Log to BigQuery
+    input_log = {
+        "input_id": request_id,
+        "user_id": input.user_id,
+        "model": input.model,
+        "song_name": input.song_name,
+        "artist_name": input.artist_name,
+        "album_name": input.album_name,
+        "genre": input.genre,
+        "lyric": input.lyric,
+        "gender": input.gender,
+        "image_urls": input.image_urls,
+        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
+    }
+    bigquery_logger.log(input_log, "input")
 
     seeds = np.random.randint(100000)
     # Run the train.py script as a separate process
@@ -382,7 +408,7 @@ async def train(user: UserInput):
             "--token",
             token,
             "--user-gender",
-            user.gender,
+            input.gender,
             "--seed",
             str(seeds),
         ],
@@ -459,20 +485,15 @@ async def inference(input: UserAlbumInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
-    input_log = {
+    output_log = {
+        "output_id": str(uuid.uuid4()),
         "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
+        "image_urls": image_urls,
+        "seeds": [],  # TODO: 드림부스는 inference할때 시드값이 없나요?
+        "prompt": prompt,
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
-    bigquery_logger.log(input_log, "input")
+    bigquery_logger.log(output_log, "output")
 
     # return {"images": images}
     return {"images": image_urls}

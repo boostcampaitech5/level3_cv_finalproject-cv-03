@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
             genre: select_genre,
             lyric: select_lyric,
             gender: '',
-            image_urls: '',
+            image_urls: [],
         };
 
         if (select_model == "Stable Diffusion") {
@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
             UserAlbumInput.gender = selectedGender
-            UserAlbumInput.image_urls = imageUrls
+            UserAlbumInput.image_urls = imageUrls // TODO: 스토리지 주소로 바꿔야할까?
 
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
@@ -473,7 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ gender: selectedGender }),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {

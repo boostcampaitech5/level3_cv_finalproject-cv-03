@@ -129,6 +129,63 @@ class ImageInput(BaseModel):
     format: str  # 이미지 포맷 (e.g., JPEG, PNG )
 
 
+class UserInfo(BaseModel):
+    nickname: str
+    age_range: str
+    email: str
+
+
+# 개인정보 보호를 위해 이메일 도메인주소 마스킹하기
+def mask_email_domain(email):
+    username, domain = email.split("@", 1)
+    masked_domain = domain[:2] + "*" * (len(domain) - 2)
+    masked_email = f"{username}@{masked_domain}"
+    return masked_email
+
+
+@api_router.post("/user")
+async def user_login(userinfo: UserInfo):
+    # Log to BigQuery
+
+    dataset_id = gcp_config["bigquery"]["dataset_id"]
+    user_table = gcp_config["bigquery"]["table_id"]["user"]
+    login_log_table = gcp_config["bigquery"]["table_id"]["login_log"]
+    masked_email = mask_email_domain(userinfo.email)
+    query = f"""
+           SELECT user_id FROM `{dataset_id}.{user_table}`
+           WHERE email = '{masked_email}';
+        """
+    query_job = bigquery_logger.client.query(query)
+    result = list(query_job)
+
+    # TODO : 이메일 정보는 마스킹하는게 필요해보임
+    if len(result) == 0:  # 새로운 유저 정보 저장
+        print("New User Login!")
+        user_id = str(uuid.uuid4())
+        User = {
+            "user_id": user_id,
+            "nickname": userinfo.nickname,
+            "age_range": userinfo.age_range,
+            "email": masked_email,
+            "create_date": datetime.utcnow()
+            .astimezone(timezone("Asia/Seoul"))
+            .isoformat(),
+        }
+        bigquery_logger.log(User, "user")
+        return {"user_id": user_id}
+    else:  # 기존 유저는 로그인로그만 저장
+        print("Existing User Login!")
+        LoginLog = {
+            "login_log_id": str(uuid.uuid4()),
+            "user_id": result[0]["user_id"],
+            "login_date": datetime.utcnow()
+            .astimezone(timezone("Asia/Seoul"))
+            .isoformat(),
+        }
+        bigquery_logger.log(LoginLog, "login_log")
+        return {"user_id": result[0]["user_id"]}
+
+
 # REST API - Post ~/generate_cover
 # @app.post("/generate_cover")
 @api_router.post("/generate_cover")
@@ -270,7 +327,7 @@ async def get_album_images(user: Optional[str] = None):
         )
         album_images.append(album_image)
     # logging
-    print("Retrieved album images:", album_images)
+    # print("Retrieved album images:", album_images)
 
     return {"album_images": album_images}
 

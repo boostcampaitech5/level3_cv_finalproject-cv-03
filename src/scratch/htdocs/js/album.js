@@ -2,9 +2,33 @@
 window.onload = function () {
     updateLoginState();
 };
+// 임시 서버주소
+const server_domain = 'http://101.101.219.22:30011'
+async function LoginInfo(user) {
+    try {
+        const response = await fetch(server_domain+'/api/user', {
+            method: 'POST',
+            mode: "cors",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        });
 
-let user_nickname;
-let user_email;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+        sessionStorage.setItem('user_id', data.user_id);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 //카카오 로그인
 function kakaoLogin() {
     Kakao.Auth.login({
@@ -12,15 +36,14 @@ function kakaoLogin() {
             Kakao.API.request({
                 url: '/v2/user/me',
                 success: function (response) {
-                    // alert('사용자 닉네임: ' + response.kakao_account.profile.nickname + '\n'
-                    //     + '사용자 성별: ' + response.kakao_account.gender + '\n'
-                    //     + '사용자 연령대: ' + response.kakao_account.age_range + '\n'
-                    //     + '사용자 이메일: ' + response.kakao_account.email);
-                    user_nickname = response.kakao_account.profile.nickname
-                    user_email = response.kakao_account.email
+                    const user = {
+                        nickname: response.kakao_account.profile.nickname,
+                        age_range: response.kakao_account.age_range,
+                        email: response.kakao_account.email
+                    }
                     sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('user_nickname', user_nickname);
-                    sessionStorage.setItem('user_email', user_email);   // 테이블에서 사용자 식별할때는 이메일로 해야할 듯
+                    sessionStorage.setItem('user_nickname', user.nickname);
+                    LoginInfo(user);
                     updateLoginState();
                 },
                 fail: function (error) {
@@ -45,8 +68,8 @@ function kakaoLogout() {
             success: function (response) {
                 alert('로그아웃되었습니다.')
                 sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('user_id');
                 sessionStorage.removeItem('user_nickname');
-                sessionStorage.removeItem('user_email');
                 updateLoginState();
                 window.location.href = 'index.html';
                 window.onload()
@@ -229,11 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("review_comment").focus();
         }
         else {
-            console.log('review login user email:', sessionStorage.getItem('user_email'));
-            user_email = sessionStorage.getItem('user_email')
-            if (user_email == null){
-                user_email = '';
-            }
+            console.log('review login user id:', sessionStorage.getItem('user_id'));
+            user_id = sessionStorage.getItem('user_id')
+            console.log(user_id)
+            // TODO: 추후 테이블 개선예정
+
             const reviewData = {
                 rating: user_starpoint,
                 comment: user_review,
@@ -242,12 +265,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 song_names: select_song,
                 genre: select_genre,
                 album_name: select_album,
-                user_email: user_email,
+                user_email: user_id,
             };
 
             try {
                 console.log("Review data being sent:", reviewData);
-                const response = await fetch('http://118.67.129.85:30010/api/review', {
+                const response = await fetch(server_domain+'/api/review', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -278,7 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     })
-
 
     let select_artist = '';
     let select_song = '';
@@ -336,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 1000);
 
             try {
-                const response = await fetch('http://118.67.129.85:30010/api/generate_cover', {
+                const response = await fetch(server_domain+'/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -409,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append('image', imageBlob, `image${i}.jpg`);
 
                     // Send the image data to the server
-                    const uploadResponse = await fetch('http://118.67.129.85:30010/api/upload_image', {
+                    const uploadResponse = await fetch(server_domain+'/api/upload_image', {
                         method: 'POST',
                         body: formData
                     });
@@ -428,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Training the model
             try {
-                const response = await fetch('http://118.67.129.85:30010/api/train', {
+                const response = await fetch(server_domain+'/api/train', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -453,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Inference to get the generated images
             try {
                 const user = { gender: selectedGender };
-                const response = await fetch('http://118.67.129.85:30010/api/inference', {
+                const response = await fetch(server_domain+'/api/inference', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -473,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (let i = 1; i <= 4; i++){
                     let imgElement = document.getElementById(`image${i}`);
                     imgElement.src = data.images[i - 1];
-            }
+                }
             } catch (error) {
                 console.error('Error:', error);
             }

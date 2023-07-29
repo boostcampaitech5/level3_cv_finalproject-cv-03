@@ -91,13 +91,11 @@ function updateLoginState() {
     if (isLoggedIn === 'true') {
         // 로그인 상태
         document.getElementById('kakao_login').style.display = 'none';
-        document.getElementById('mypage_login').style.display = 'block';
         document.getElementById('kakao_logout').style.display = 'block';
         document.getElementById('text_login').innerText = sessionStorage.getItem('user_nickname') + '님'
     } else {
         // 로그아웃 상태
         document.getElementById('kakao_login').style.display = 'block';
-        document.getElementById('mypage_login').style.display = 'none';
         document.getElementById('kakao_logout').style.display = 'none';
         document.getElementById('text_login').innerText = '';
     }
@@ -163,6 +161,16 @@ function resetInput() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector('#mypage_login').addEventListener('click', () => {
+        user_id = sessionStorage.getItem('user_id')
+        if (user_id == null) {
+            alert("로그인 후 사용가능합니다.");
+        }
+        else {
+            document.querySelector('#mypage_login').href = 'mypage.html'
+        }
+    })
+
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -179,9 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    document.querySelector('#kakao_login').addEventListener('click', () => {
-        kakaoLogin();
-    })
     document.querySelector('#imageUpload').addEventListener('change', function () {
         const selectedFiles = this.files;
         const previewContainer = document.querySelector('#imagePreview');
@@ -255,21 +260,17 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log('review login user id:', sessionStorage.getItem('user_id'));
             user_id = sessionStorage.getItem('user_id')
             console.log(user_id)
-            // TODO: 추후 테이블 개선예정
 
-            const reviewData = {
+            const UserReviewInput = {
+                output_id: output_id,
+                url_id: buttonType,
+                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
                 rating: user_starpoint,
-                comment: user_review,
-                image_url: imageUrl,
-                artist_name: select_artist,
-                song_names: select_song,
-                genre: select_genre,
-                album_name: select_album,
-                user_email: user_id,
-            };
+                comment: user_review
+            }
 
             try {
-                console.log("Review data being sent:", reviewData);
+                console.log("Review data being sent:", UserReviewInput);
                 const response = await fetch(server_domain+'/api/review', {
                     method: 'POST',
                     mode: "cors",
@@ -277,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(reviewData),
+                    body: JSON.stringify(UserReviewInput),
                 });
 
                 if (!response.ok) {
@@ -307,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let select_genre = '';
     let select_album = '';
 
+    let output_id;
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
         e.preventDefault()
         // 버튼 동작 체크
@@ -387,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await response.json();
-
+                output_id = data.output_id;
                 console.log(data.images);  // Log the images data to check if it's correct
                 for (let i = 1; i <= 4; i++) {
                     let imgElement = document.getElementById(`image${i}`);
@@ -506,6 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await response.json();
+                output_id = data.output_id;
                 console.log(data.images);
 
                 for (let i = 1; i <= 4; i++){

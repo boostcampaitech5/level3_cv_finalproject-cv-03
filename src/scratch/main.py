@@ -89,29 +89,16 @@ def get_random_string(length):
 token = get_random_string(5)
 
 
-# Review input Schema
-class ReviewInput(BaseModel):
-    rating: int
-    comment: str
-    image_url: str
-    artist_name: str
-    song_names: str
-    genre: str
-    album_name: str
-    user_email: str
-
-
 # Schema for get_album_images
 class AlbumImage(BaseModel):
-    url: str
+    song_name: str
     artist_name: str
-    song_names: str
-    genre: str
     album_name: str
-
-
-class UserInput(BaseModel):
+    genre: str
+    lyric: str
     gender: str
+    create_date: str
+    url: str
 
 
 class ImageInput(BaseModel):
@@ -137,6 +124,14 @@ class UserAlbumInput(BaseModel):
     lyric: str
     gender: str
     image_urls: List[str]
+
+
+class UserReviewInput(BaseModel):
+    output_id: str
+    url_id: int
+    user_id: str
+    rating: int
+    comment: str
 
 
 # 개인정보 보호를 위해 이메일 도메인주소 마스킹하기
@@ -257,8 +252,9 @@ async def generate_cover(input: UserAlbumInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
+    output_id = str(uuid.uuid4())
     output_log = {
-        "output_id": str(uuid.uuid4()),
+        "output_id": output_id,
         "input_id": request_id,
         "image_urls": image_urls,
         "seeds": [int(seed) for seed in seeds],
@@ -267,32 +263,26 @@ async def generate_cover(input: UserAlbumInput):
     }
     bigquery_logger.log(output_log, "output")
 
-    return {"images": image_urls}
+    return {"images": image_urls, "output_id": output_id}
 
 
 # REST API - Post ~/review
 # @app.post("/review")
 @api_router.post("/review")
-async def review(review: ReviewInput):
+async def review(review: UserReviewInput):
     # Log to BigQuery
+    review_id = str(uuid.uuid4())
     review_log = {
-        "request_id": request_id,
-        "request_time": datetime.utcnow()
-        .astimezone(timezone("Asia/Seoul"))
-        .isoformat(),
+        "review_id": review_id,
+        "output_id": review.output_id,
+        "url_id": review.url_id,
+        "user_id": review.user_id,
         "rating": review.rating,
         "comment": review.comment,
-        "language": public_config["language"],
-        "image_url": review.image_url,
-        "artist_name": review.artist_name,
-        "song_names": review.song_names,
-        "genre": review.genre,
-        "album_name": review.album_name,
-        "user_email": review.user_email,
+        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
 
-    bigquery_logger.log(review_log, "user_review")
-
+    bigquery_logger.log(review_log, "review")
     return review
 
 
@@ -302,20 +292,35 @@ async def get_album_images(user: Optional[str] = None):
     # Query to retrieve latest and best-rated images from BigQuery
 
     dataset_id = gcp_config["bigquery"]["dataset_id"]
-    user_review_table_id = gcp_config["bigquery"]["table_id"]["user_review"]
+    review_table = gcp_config["bigquery"]["table_id"]["review"]
+    output_table = gcp_config["bigquery"]["table_id"]["output"]
+    input_table = gcp_config["bigquery"]["table_id"]["input"]
 
     if user:
+        print("login")
         query = f"""
-            SELECT *
-            FROM {dataset_id}.{user_review_table_id} AS reviews
-            WHERE reviews.user_email = '{user}'
-            ORDER BY reviews.request_time DESC LIMIT 20
+            SELECT input.song_name, input.artist_name, input.album_name, input.genre, input.lyric,
+            input.gender, input.create_date, output.image_urls[review.url_id-1] AS image_url
+            FROM {dataset_id}.{review_table} AS review
+            JOIN {dataset_id}.{output_table} AS output
+            ON review.output_id = output.output_id
+            JOIN {dataset_id}.{input_table} AS input
+            ON output.input_id = input.input_id
+            WHERE review.user_id = '{user}'
+            ORDER BY review.create_date DESC
+            LIMIT 20
         """
     else:
+        print("not login")
         query = f"""
-            SELECT *
-            FROM {dataset_id}.{user_review_table_id} AS reviews
-            ORDER BY reviews.rating DESC, reviews.request_time DESC
+            SELECT input.song_name, input.artist_name, input.album_name, input.genre, input.lyric,
+            input.gender, input.create_date, output.image_urls[review.url_id-1] AS image_url
+            FROM {dataset_id}.{review_table} AS review
+            JOIN {dataset_id}.{output_table} AS output
+            ON review.output_id = output.output_id
+            JOIN {dataset_id}.{input_table} AS input
+            ON output.input_id = input.input_id
+            ORDER BY review.rating DESC, review.create_date DESC
             LIMIT 12
         """
 
@@ -327,11 +332,14 @@ async def get_album_images(user: Optional[str] = None):
     album_images = []
     for row in results:
         album_image = AlbumImage(
-            url=row["image_url"],
+            song_name=row["song_name"],
             artist_name=row["artist_name"],
-            song_names=row["song_names"],
-            genre=row["genre"],
             album_name=row["album_name"],
+            genre=row["genre"],
+            lyric=row["lyric"],
+            gender=row["gender"],
+            create_date=str(row["create_date"]),
+            url=row["image_url"],
         )
         album_images.append(album_image)
     # logging
@@ -485,8 +493,9 @@ async def inference(input: UserAlbumInput):
     image_urls = gcs_uploader.save_image_to_gcs(urls)
 
     # Log to BigQuery
+    output_id = str(uuid.uuid4())
     output_log = {
-        "output_id": str(uuid.uuid4()),
+        "output_id": output_id,
         "input_id": request_id,
         "image_urls": image_urls,
         "seeds": [],  # TODO: 드림부스는 inference할때 시드값이 없나요?
@@ -496,7 +505,7 @@ async def inference(input: UserAlbumInput):
     bigquery_logger.log(output_log, "output")
 
     # return {"images": images}
-    return {"images": image_urls}
+    return {"images": image_urls, "output_id": output_id}
 
 
 app.include_router(api_router)

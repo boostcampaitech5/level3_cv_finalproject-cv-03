@@ -17,7 +17,7 @@ async function fetchAlbumImages() {
                 const albumImage = data.album_images[i];
                 document.getElementById('album-image-'+(i+1)).src = albumImage.url;
                 document.getElementById('album-prompt-'+(i+1)).innerHTML =
-                    `<strong>Song:</strong> ${albumImage.song_names}</br>
+                    `<strong>Song:</strong> ${albumImage.song_name}</br>
                     <strong>Artist:</strong> ${albumImage.artist_name}<br/>
                     <strong>Album:</strong> ${albumImage.album_name}</br>
                     <strong>Genre:</strong> ${albumImage.genre}`;

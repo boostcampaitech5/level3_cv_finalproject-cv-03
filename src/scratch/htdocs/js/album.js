@@ -48,6 +48,8 @@ function kakaoLogout() {
                 sessionStorage.removeItem('user_nickname');
                 sessionStorage.removeItem('user_email');
                 updateLoginState();
+                window.location.href = 'index.html';
+                window.onload()
             },
             fail: function (error) {
                 alert('fail: ' + JSON.stringify(error))

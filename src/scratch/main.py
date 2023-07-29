@@ -251,7 +251,7 @@ async def generate_cover2(input: UserAlbumInput):
         "genre": input.genre,
         "lyric": input.lyric,
         "gender": input.gender,
-        "image_urls": image_urls,
+        "image_urls": input.image_urls,
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
     bigquery_logger.log(input_log, "input")
@@ -469,7 +469,7 @@ async def inference(input: UserAlbumInput):
         "genre": input.genre,
         "lyric": input.lyric,
         "gender": input.gender,
-        "image_urls": image_urls,
+        "image_urls": input.image_urls,
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
     bigquery_logger.log(input_log, "input")

@@ -48,7 +48,7 @@ function addImagesToContainer(userImages) {
 function showImageModal(image) {
     const modalBody = document.querySelector('.modal-body');
     // 이미지 클릭 시 모달의 내용을 새로운 정보로 업데이트
-    document.getElementById('create_time').innerText = image.create_time;
+    document.getElementById('create_date').innerText = image.create_date;
     document.getElementById('song_name').innerText = image.song_name;
     document.getElementById('artist_name').innerText = image.artist_name;
     document.getElementById('genre').innerText = image.genre;
@@ -63,7 +63,6 @@ function showImageModal(image) {
 document.addEventListener("DOMContentLoaded", () => {
     const imageContainer = document.getElementById('imageContainer');
     user_id = sessionStorage.getItem('user_id')
-    console.log(user_id)
     if (user_id != null) {
         document.getElementById('logincheck').innerText = "이미지를 클릭하면 생성시 입력했던 정보를 볼 수 있습니다."
         fetchAlbumImages(user_id)

@@ -101,13 +101,6 @@ class AlbumImage(BaseModel):
     url: str
 
 
-class ImageInput(BaseModel):
-    file_path: str  # 이미지 url(upload를 통해 gcs에 들어가면 생기는 url)
-    width: int  # 이미지 너비
-    height: int  # 이미지 높이
-    format: str  # 이미지 포맷 (e.g., JPEG, PNG )
-
-
 class UserInfo(BaseModel):
     nickname: str
     age_range: str
@@ -148,7 +141,7 @@ async def user_login(userinfo: UserInfo):
 
     dataset_id = gcp_config["bigquery"]["dataset_id"]
     user_table = gcp_config["bigquery"]["table_id"]["user"]
-    login_log_table = gcp_config["bigquery"]["table_id"]["login_log"]
+
     masked_email = mask_email_domain(userinfo.email)
     query = f"""
            SELECT user_id FROM `{dataset_id}.{user_table}`
@@ -160,18 +153,23 @@ async def user_login(userinfo: UserInfo):
     if len(result) == 0:  # 새로운 유저 정보 저장
         print("New User Login!")
         user_id = str(uuid.uuid4())
+        create_date = datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat()
         User = {
             "user_id": user_id,
             "nickname": userinfo.nickname,
             "age_range": userinfo.age_range,
             "email": masked_email,
-            "create_date": datetime.utcnow()
-            .astimezone(timezone("Asia/Seoul"))
-            .isoformat(),
+            "create_date": create_date,
         }
         bigquery_logger.log(User, "user")
+        LoginLog = {
+            "login_log_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "login_date": create_date,
+        }
+        bigquery_logger.log(LoginLog, "login_log")
         return {"user_id": user_id}
-    else:  # 기존 유저는 로그인로그만 저장
+    else:  # 기존 유저는 로그인 로그만 저장
         print("Existing User Login!")
         LoginLog = {
             "login_log_id": str(uuid.uuid4()),
@@ -297,10 +295,9 @@ async def get_album_images(user: Optional[str] = None):
     input_table = gcp_config["bigquery"]["table_id"]["input"]
 
     if user:
-        print("login")
         query = f"""
             SELECT input.song_name, input.artist_name, input.album_name, input.genre, input.lyric,
-            input.gender, input.create_date, output.image_urls[review.url_id-1] AS image_url
+            input.gender, review.create_date, output.image_urls[review.url_id-1] AS image_url
             FROM {dataset_id}.{review_table} AS review
             JOIN {dataset_id}.{output_table} AS output
             ON review.output_id = output.output_id
@@ -311,10 +308,9 @@ async def get_album_images(user: Optional[str] = None):
             LIMIT 20
         """
     else:
-        print("not login")
         query = f"""
             SELECT input.song_name, input.artist_name, input.album_name, input.genre, input.lyric,
-            input.gender, input.create_date, output.image_urls[review.url_id-1] AS image_url
+            input.gender, review.create_date, output.image_urls[review.url_id-1] AS image_url
             FROM {dataset_id}.{review_table} AS review
             JOIN {dataset_id}.{output_table} AS output
             ON review.output_id = output.output_id
@@ -342,8 +338,6 @@ async def get_album_images(user: Optional[str] = None):
             url=row["image_url"],
         )
         album_images.append(album_image)
-    # logging
-    # print("Retrieved album images:", album_images)
 
     return {"album_images": album_images}
 

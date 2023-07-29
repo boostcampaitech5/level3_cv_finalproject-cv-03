@@ -161,13 +161,14 @@ function resetInput() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector('#mypage_login').addEventListener('click', () => {
-        user_id = sessionStorage.getItem('user_id')
+    document.querySelector('#mypage_login').addEventListener('click', (event) => {
+        event.preventDefault();
+        user_id = sessionStorage.getItem('user_id');
         if (user_id == null) {
             alert("로그인 후 사용가능합니다.");
         }
         else {
-            document.querySelector('#mypage_login').href = 'mypage.html'
+            window.location.href = 'mypage.html';
         }
     })
 

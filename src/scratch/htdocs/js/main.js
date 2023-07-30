@@ -3,7 +3,6 @@ async function fetchAlbumImages() {
         const response = await fetch('http://34.22.72.143:80/api/get_album_images', { method: 'GET',
 
         mode: "cors",
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
             // 'Content-Type': 'application/x-www-form-urlencoded',

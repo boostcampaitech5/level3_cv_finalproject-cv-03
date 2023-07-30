@@ -382,7 +382,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch(server_domain + '/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
-                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -429,6 +428,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error(`HTTP error! status: ${response.status}`);
                 }
             }
+            async function getTaskResult(taskId) {
+                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+            
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data)
+                    console.log(data.result)
+                    for (let i = 1; i <= 4; i++) {
+                        let imgElement = document.getElementById(`image${i}`);
+                        imgElement.src = data.result.image_urls[i - 1];
+                    }
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
+                }
+            }                   
         }
         else {  // DreamBooth
             const imagePreview = document.querySelector('#imagePreview');
@@ -523,17 +542,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        clearInterval(timerId)
-        document.getElementById("create_spinner").style.display = "none";
-        document.getElementById("info_alert").style.display = "block";
-        watermark = document.getElementsByClassName("watermark");
-        for (let i = 0; i < watermark.length; i++) {
-            watermark[i].style.display = "block";
-        }
-        download_btn = document.getElementsByClassName("download_btn");
-        for (let i = 0; i < download_btn.length; i++) {
-            download_btn[i].style.pointerEvents = "auto";
-        }
+        // clearInterval(timerId)
+        // document.getElementById("create_spinner").style.display = "none";
+        // document.getElementById("info_alert").style.display = "block";
+        // watermark = document.getElementsByClassName("watermark");
+        // for (let i = 0; i < watermark.length; i++) {
+        //     watermark[i].style.display = "block";
+        // }
+        // download_btn = document.getElementsByClassName("download_btn");
+        // for (let i = 0; i < download_btn.length; i++) {
+        //     download_btn[i].style.pointerEvents = "auto";
+        // }
     })
 
     document.querySelectorAll(".genre").forEach(obj => {

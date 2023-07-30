@@ -66,7 +66,7 @@ def generate_cover(input, request_id):
     urls = []
 
     summarization = get_description(
-        input["lyric"], input["artist_name"], input["album_name"], input["song_names"]
+        input["lyric"], input["artist_name"], input["album_name"], input["song_name"]
     )
 
     seeds = np.random.randint(

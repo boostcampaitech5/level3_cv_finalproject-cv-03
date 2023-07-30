@@ -115,7 +115,7 @@ def train_inference(input, token):
     summarization = get_dreambooth_prompt(
         input["lyric"],
         input["album_name"],
-        input["song_names"],
+        input["song_name"],
         input["gender"],
         input["genre"],
         input["artist_name"],

@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ album: UserAlbumInput, user: user }),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {

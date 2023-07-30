@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 # Celery
 from celery import Celery
+from celery.result import AsyncResult
 
 # Other modules
 import numpy as np

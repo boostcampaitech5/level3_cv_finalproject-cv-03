@@ -216,7 +216,6 @@ async def review(review: UserReviewInput):
 
 
 @api_router.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
-# @app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
 async def get_album_images(user: Optional[str] = None):
     # Query to retrieve latest and best-rated images from BigQuery
 
@@ -296,10 +295,8 @@ async def upload_image(image: UploadFile = File(...)):
 
 
 @api_router.post("/train_inference")
-async def train(user: UserInput, album: UserAlbumInput):
-    task = celery_app.send_task(
-        "train_inference", args=[user.dict(), album.dict(), token]
-    )
+async def train(input: UserAlbumInput):
+    task = celery_app.send_task("train_inference", args=[input.dict(), token])
 
     # Wait for the task for 2000 seconds to complete and get the result
     task_result = task.get(timeout=2000)

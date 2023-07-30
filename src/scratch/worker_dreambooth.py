@@ -75,7 +75,7 @@ def save_image(filename, image_content, token):
 
 
 @celery_app.task(name="train_inference")
-def train_inference(user, album, token):
+def train_inference(input, token):
     try:
         global model
         del model
@@ -113,16 +113,16 @@ def train_inference(user, album, token):
     os.chdir("/opt/ml/input/code/level3_cv_finalproject-cv-03")
 
     summarization = get_dreambooth_prompt(
-        album["lyric"],
-        album["album_name"],
-        album["song_names"],
-        user["gender"],
-        album["genre"],
-        album["artist_name"],
+        input["lyric"],
+        input["album_name"],
+        input["song_names"],
+        input["gender"],
+        input["genre"],
+        input["artist_name"],
     )
 
-    prompt = f"A image of a {album['genre']} music album cover that visualizes a {summarization} atmoshpere.\
-        a {token} {user['gender']} is in image."
+    prompt = f"A image of a {input['genre']} music album cover that visualizes a {summarization} atmoshpere.\
+        a {token} {input['gender']} is in image."
 
     # Run the train.py script as a separate process
     process = subprocess.Popen(
@@ -168,15 +168,15 @@ def train_inference(user, album, token):
 
     input_log = {
         "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
+        "user_id": input["user_id"],
+        "model": input["model"],
+        "song_name": input["song_name"],
+        "artist_name": input["artist_name"],
+        "album_name": input["album_name"],
+        "genre": input["genre"],
+        "lyric": input["lyric"],
+        "gender": input["gender"],
+        "image_urls": input["image_urls"],
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
     bigquery_logger.log(input_log, "input")

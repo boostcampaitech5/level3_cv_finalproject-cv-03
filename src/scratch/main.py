@@ -13,6 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 # Pydantic
 from pydantic import BaseModel
 
+# Celery
+from celery import Celery
+
 # Other modules
 import numpy as np
 from pytz import timezone
@@ -178,7 +181,7 @@ async def generate_cover(input: UserAlbumInput):
     request_id = str(uuid.uuid4())
 
     # Push task to the Celery queue
-    task = celery_app.send_task("generate_cover", args=[album.dict(), request_id])
+    task = celery_app.send_task("generate_cover", args=[input.dict(), request_id])
 
     return {"task_id": task.id}
 

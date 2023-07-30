@@ -55,7 +55,7 @@ def setup_worker_init(*args, **kwargs):
 
 
 @celery_app.task(name="generate_cover")
-def generate_cover(album, request_id):
+def generate_cover(input, request_id):
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     device = "cuda" if cuda.is_available() else "cpu"
 
@@ -66,12 +66,15 @@ def generate_cover(album, request_id):
     urls = []
 
     summarization = get_description(
-        album["lyric"], album["artist_name"], album["album_name"], album["song_names"]
+        input["lyric"], input["artist_name"], input["album_name"], input["song_names"]
     )
 
     seeds = np.random.randint(
         public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
     )
+
+    # Inference Prompt
+    prompt = f"A photo of a {input['genre']} album cover with a {summarization} atmosphere visualized."
 
     for i, seed in enumerate(seeds):
         generator = torch.Generator(device=device).manual_seed(int(seed))
@@ -79,7 +82,7 @@ def generate_cover(album, request_id):
         # Generate Images
         with torch.no_grad():
             image = model.pipeline(
-                prompt=f"A photo of a {album['genre']} album cover with a {summarization} atmosphere visualized.",
+                prompt=prompt,
                 num_inference_steps=20,
                 generator=generator,
             ).images[0]
@@ -107,15 +110,15 @@ def generate_cover(album, request_id):
 
     input_log = {
         "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
+        "user_id": input["user_id"],
+        "model": input["model"],
+        "song_name": input["song_name"],
+        "artist_name": input["artist_name"],
+        "album_name": input["album_name"],
+        "genre": input["genre"],
+        "lyric": input["lyric"],
+        "gender": input["gender"],
+        "image_urls": input["image_urls"],
         "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
     }
     bigquery_logger.log(input_log, "input")

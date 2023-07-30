@@ -24,8 +24,8 @@ def get_description(
 
     # message
     message = [
-        f"Describe the atmosphere or vibe of these lyrics into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. \n\n{lyrics}",
-        f"Also describe a atmosphere using the following Artist name, Album name and Song names into 5 different words seperated with comma. They should be optimal for visualizing a atmosphere. Artist name : {artist_name} \n Album name : {album_name} \n Song names : {song_names}",
+        f"Describe the atmosphere or vibe of these lyrics into 3 different words seperated with comma. They should be optimal for visualizing a atmosphere. \n\n{lyrics}",
+        f"Describe a atmosphere using the Artist name, Album name and Song names into 2 different words seperated with comma. Should be optimal for visualizing a atmosphere. Artist name : {artist_name} \n Album name : {album_name} \n Song names : {song_names}",
     ]
 
     # Set up the API call
@@ -72,7 +72,7 @@ def get_dreambooth_prompt(
     lyrics = lyrics.replace("\n", " ")
 
     message = [
-        f"read a \n\n {lyrics} \n and give me three English keywords which express atmosphere."
+        f"read the \n\n {lyrics} \n and give me 3 keywords which express the atmosphere."
     ]
 
     # Set up the API call

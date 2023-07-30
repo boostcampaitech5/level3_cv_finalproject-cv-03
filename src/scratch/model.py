@@ -6,7 +6,7 @@ from diffusers import StableDiffusionPipeline
 from diffusers import UNet2DConditionModel
 
 
-class AlbumModel:
+class StableDiffusion:
     def __init__(self, model_config: dict, lang: str, device: str):
         self.device = device
         self.model_config = model_config
@@ -39,3 +39,6 @@ class AlbumModel:
             pipeline.enable_xformers_memory_efficient_attention()
 
         return pipeline
+
+
+## -- 아래에 Stable Diffusion XL 모델 추가해주세요

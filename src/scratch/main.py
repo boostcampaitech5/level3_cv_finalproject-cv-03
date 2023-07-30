@@ -293,7 +293,7 @@ async def upload_image(image: UploadFile = File(...)):
 
 
 @api_router.post("/train_inference")
-async def train(user: UserInput, album: AlbumInput):
+async def train(user: UserInput, album: UserAlbumInput):
     task = celery_app.send_task(
         "train_inference", args=[user.dict(), album.dict(), token]
     )

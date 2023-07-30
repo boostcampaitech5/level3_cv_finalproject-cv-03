@@ -6,7 +6,7 @@ window.onload = function () {
 const server_domain = 'http://34.22.72.143:80'
 async function LoginInfo(user) {
     try {
-        const response = await fetch(server_domain+'/api/user', {
+        const response = await fetch(server_domain + '/api/user', {
             method: 'POST',
             mode: "cors",
             credentials: 'include',
@@ -86,9 +86,9 @@ function kakaoLogout() {
 }
 // 로그인 상태에 따라 화면 갱신
 function updateLoginState() {
-    user_id = sessionStorage.getItem('user_id');
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     // alert(isLoggedIn)
-    if (user_id !== null) {
+    if (isLoggedIn === 'true') {
         // 로그인 상태
         document.getElementById('kakao_login').style.display = 'none';
         document.getElementById('kakao_logout').style.display = 'block';
@@ -264,14 +264,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const UserReviewInput = {
                 output_id: output_id,
                 url_id: buttonType,
-                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
+                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
                 rating: user_starpoint,
                 comment: user_review
             }
 
             try {
                 console.log("Review data being sent:", UserReviewInput);
-                const response = await fetch(server_domain+'/api/review', {
+                const response = await fetch(server_domain + '/api/review', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         UserAlbumInput = {
-            user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
+            user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
             model: select_model,
             song_name: select_song,
             artist_name: select_artist,
@@ -379,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             async function generateCover(UserAlbumInput) {
-                const response = await fetch(server_domain+'/api/generate_cover', {
+                const response = await fetch(server_domain + '/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append('image', imageBlob, `image${i}.jpg`);
 
                     // Send the image data to the server
-                    const uploadResponse = await fetch(server_domain+'/api/upload_image', {
+                    const uploadResponse = await fetch(server_domain + '/api/upload_image', {
                         method: 'POST',
                         body: formData
                     });
@@ -496,7 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Training and Inference in one Process
             try {
                 const user = { gender: selectedGender };
-                const response = await fetch(server_domain+'/api/train_inference', {
+                const response = await fetch(server_domain + '/api/train_inference', {
                     method: 'POST',
                     mode: "cors",
                     headers: {
@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log(data);
                 console.log(data.images);
 
-                for (let i = 1; i <= 4; i++){
+                for (let i = 1; i <= 4; i++) {
                     let imgElement = document.getElementById(`image${i}`);
                     imgElement.src = data.images[i - 1];
                 }

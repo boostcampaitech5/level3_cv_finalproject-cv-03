@@ -3,7 +3,7 @@ window.onload = function () {
     updateLoginState();
 };
 // 임시 서버주소
-const server_domain = 'http://101.101.219.22:30011'
+const server_domain = 'http://34.22.72.143:80'
 async function LoginInfo(user) {
     try {
         const response = await fetch(server_domain+'/api/user', {
@@ -373,6 +373,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 1000);
 
             try {
+                await generateCover(UserAlbumInput);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+
+            async function generateCover(UserAlbumInput) {
                 const response = await fetch(server_domain+'/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
@@ -383,23 +389,45 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify(UserAlbumInput),
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    checkTaskStatus(data.task_id);
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
                 }
+            }
 
-                const data = await response.json();
-                output_id = data.output_id;
-                console.log(data.images);  // Log the images data to check if it's correct
-                for (let i = 1; i <= 4; i++) {
-                    let imgElement = document.getElementById(`image${i}`);
-                    // Log img element
-                    // console.log(imgElement);
-                    // console.log(data.images[i-1]);
-                    // imgElement.src = 'data:image/jpeg;base64,' + data.images[i - 1];
-                    imgElement.src = data.images[i - 1];
+            async function checkTaskStatus(taskId) {
+                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'SUCCESS') {
+                        getTaskResult(taskId);
+
+                        clearInterval(timerId);
+                        document.getElementById("create_spinner").style.display = "none";
+                        document.getElementById("info_alert").style.display = "block";
+                        watermark = document.getElementsByClassName("watermark");
+                        for (let i = 0; i < watermark.length; i++) {
+                            watermark[i].style.display = "block";
+                        }
+                        download_btn = document.getElementsByClassName("download_btn");
+                        for (let i = 0; i < download_btn.length; i++) {
+                            download_btn[i].style.pointerEvents = "auto";
+                        }
+
+                    } else {
+                        setTimeout(() => checkTaskStatus(taskId), 1000);
+                    }
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
                 }
-            } catch (error) {
-                console.error('Error:', error);
             }
         }
         else {  // DreamBooth
@@ -465,16 +493,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Training the model
+            // Training and Inference in one Process
             try {
-                const response = await fetch(server_domain+'/api/train', {
+                const user = { gender: selectedGender };
+                const response = await fetch(server_domain+'/api/train_inference', {
                     method: 'POST',
                     mode: "cors",
-                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(UserAlbumInput),
+                    body: JSON.stringify({ album: UserAlbumInput, user: user }),
                 });
 
                 if (!response.ok) {
@@ -483,31 +511,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const data = await response.json();
                 console.log(data);
-
-                $('#create_modal3').modal('show');
-            } catch (error) {
-                console.error('Error:', error);
-            }
-
-            // Inference to get the generated images
-            try {
-                const user = { gender: selectedGender };
-                const response = await fetch(server_domain+'/api/inference', {
-                    method: 'POST',
-                    mode: "cors",
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(UserAlbumInput),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                output_id = data.output_id;
                 console.log(data.images);
 
                 for (let i = 1; i <= 4; i++){

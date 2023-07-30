@@ -2,9 +2,33 @@
 window.onload = function () {
     updateLoginState();
 };
+// 임시 서버주소
+const server_domain = 'http://101.101.219.22:30011'
+async function LoginInfo(user) {
+    try {
+        const response = await fetch(server_domain+'/api/user', {
+            method: 'POST',
+            mode: "cors",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        });
 
-let user_nickname;
-let user_email;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+        sessionStorage.setItem('user_id', data.user_id);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 //카카오 로그인
 function kakaoLogin() {
     Kakao.Auth.login({
@@ -12,15 +36,14 @@ function kakaoLogin() {
             Kakao.API.request({
                 url: '/v2/user/me',
                 success: function (response) {
-                    // alert('사용자 닉네임: ' + response.kakao_account.profile.nickname + '\n'
-                    //     + '사용자 성별: ' + response.kakao_account.gender + '\n'
-                    //     + '사용자 연령대: ' + response.kakao_account.age_range + '\n'
-                    //     + '사용자 이메일: ' + response.kakao_account.email);
-                    user_nickname = response.kakao_account.profile.nickname
-                    user_email = response.kakao_account.email
+                    const user = {
+                        nickname: response.kakao_account.profile.nickname,
+                        age_range: response.kakao_account.age_range,
+                        email: response.kakao_account.email
+                    }
                     sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('user_nickname', user_nickname);
-                    sessionStorage.setItem('user_email', user_email);   // 테이블에서 사용자 식별할때는 이메일로 해야할 듯
+                    sessionStorage.setItem('user_nickname', user.nickname);
+                    LoginInfo(user);
                     updateLoginState();
                 },
                 fail: function (error) {
@@ -45,8 +68,8 @@ function kakaoLogout() {
             success: function (response) {
                 alert('로그아웃되었습니다.')
                 sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('user_id');
                 sessionStorage.removeItem('user_nickname');
-                sessionStorage.removeItem('user_email');
                 updateLoginState();
                 window.location.href = 'index.html';
                 window.onload()
@@ -63,18 +86,16 @@ function kakaoLogout() {
 }
 // 로그인 상태에 따라 화면 갱신
 function updateLoginState() {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    user_id = sessionStorage.getItem('user_id');
     // alert(isLoggedIn)
-    if (isLoggedIn === 'true') {
+    if (user_id !== null) {
         // 로그인 상태
         document.getElementById('kakao_login').style.display = 'none';
-        document.getElementById('mypage_login').style.display = 'block';
         document.getElementById('kakao_logout').style.display = 'block';
         document.getElementById('text_login').innerText = sessionStorage.getItem('user_nickname') + '님'
     } else {
         // 로그아웃 상태
         document.getElementById('kakao_login').style.display = 'block';
-        document.getElementById('mypage_login').style.display = 'none';
         document.getElementById('kakao_logout').style.display = 'none';
         document.getElementById('text_login').innerText = '';
     }
@@ -140,6 +161,17 @@ function resetInput() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector('#mypage_login').addEventListener('click', (event) => {
+        event.preventDefault();
+        user_id = sessionStorage.getItem('user_id');
+        if (user_id == null) {
+            alert("로그인 후 사용가능합니다.");
+        }
+        else {
+            window.location.href = 'mypage.html';
+        }
+    })
+
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -156,9 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    document.querySelector('#kakao_login').addEventListener('click', () => {
-        kakaoLogin();
-    })
     document.querySelector('#imageUpload').addEventListener('change', function () {
         const selectedFiles = this.files;
         const previewContainer = document.querySelector('#imagePreview');
@@ -229,32 +258,27 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("review_comment").focus();
         }
         else {
-            console.log('review login user email:', sessionStorage.getItem('user_email'));
-            user_email = sessionStorage.getItem('user_email')
-            if (user_email == null){
-                user_email = '';
-            }
-            const reviewData = {
+            console.log('review login user id:', sessionStorage.getItem('user_id'));
+            user_id = sessionStorage.getItem('user_id')
+
+            const UserReviewInput = {
+                output_id: output_id,
+                url_id: buttonType,
+                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
                 rating: user_starpoint,
-                comment: user_review,
-                image_url: imageUrl,
-                artist_name: select_artist,
-                song_names: select_song,
-                genre: select_genre,
-                album_name: select_album,
-                user_email: user_email,
-            };
+                comment: user_review
+            }
 
             try {
-                console.log("Review data being sent:", reviewData);
-                const response = await fetch('http://118.67.129.85:30010/api/review', {
+                console.log("Review data being sent:", UserReviewInput);
+                const response = await fetch(server_domain+'/api/review', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(reviewData),
+                    body: JSON.stringify(UserReviewInput),
                 });
 
                 if (!response.ok) {
@@ -279,12 +303,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-
     let select_artist = '';
     let select_song = '';
     let select_genre = '';
     let select_album = '';
 
+    let output_id;
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
         e.preventDefault()
         // 버튼 동작 체크
@@ -302,7 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
         select_song = document.getElementById("song_name").value
         select_artist = document.getElementById("artist_name").value
         select_album = document.getElementById("album_name").value
-        select_lyrics = document.getElementById("lyrics").value
+        select_lyric = document.getElementById("lyrics").value
+        select_genre = ''
         genre = document.getElementsByClassName("genre")
         for (let i = 0; i < genre.length; i++) {
             cur_genre = genre[i].id;
@@ -315,15 +340,27 @@ document.addEventListener("DOMContentLoaded", () => {
             artist_name: select_artist,
             genre: select_genre,
             album_name: select_album,
-            lyric: select_lyrics,
+            lyric: select_lyric,
         };
-
         if (document.getElementById("listGroupRadioGrid1").checked == true) {
             select_model = document.getElementById("listGroupRadioGrid1").value
         }
         else {
             select_model = document.getElementById("listGroupRadioGrid2").value
         }
+
+        UserAlbumInput = {
+            user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') :'',
+            model: select_model,
+            song_name: select_song,
+            artist_name: select_artist,
+            album_name: select_album,
+            genre: select_genre,
+            lyric: select_lyric,
+            gender: '',
+            image_urls: [],
+        };
+
         if (select_model == "Stable Diffusion") {
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal1').modal('show');
@@ -336,14 +373,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 1000);
 
             try {
-                const response = await fetch('http://118.67.129.85:30010/api/generate_cover', {
+                const response = await fetch(server_domain+'/api/generate_cover', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(albumInput),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {
@@ -351,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await response.json();
-
+                output_id = data.output_id;
                 console.log(data.images);  // Log the images data to check if it's correct
                 for (let i = 1; i <= 4; i++) {
                     let imgElement = document.getElementById(`image${i}`);
@@ -385,6 +422,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log(selectedGender)   // 성별: 'man', 'woman'
                 }
             });
+            UserAlbumInput.gender = selectedGender
+            UserAlbumInput.image_urls = imageUrls // TODO: 스토리지 주소로 바꿔야할까?
 
             // 이미지 생성시간 안내 모달창 띄우기
             $('#create_modal2').modal('show');
@@ -409,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append('image', imageBlob, `image${i}.jpg`);
 
                     // Send the image data to the server
-                    const uploadResponse = await fetch('http://118.67.129.85:30010/api/upload_image', {
+                    const uploadResponse = await fetch(server_domain+'/api/upload_image', {
                         method: 'POST',
                         body: formData
                     });
@@ -428,14 +467,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Training the model
             try {
-                const response = await fetch('http://118.67.129.85:30010/api/train', {
+                const response = await fetch(server_domain+'/api/train', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ gender: selectedGender }),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {
@@ -453,14 +492,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // Inference to get the generated images
             try {
                 const user = { gender: selectedGender };
-                const response = await fetch('http://118.67.129.85:30010/api/inference', {
+                const response = await fetch(server_domain+'/api/inference', {
                     method: 'POST',
                     mode: "cors",
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ album: albumInput, user: user }),
+                    body: JSON.stringify(UserAlbumInput),
                 });
 
                 if (!response.ok) {
@@ -468,12 +507,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await response.json();
+                output_id = data.output_id;
                 console.log(data.images);
 
                 for (let i = 1; i <= 4; i++){
                     let imgElement = document.getElementById(`image${i}`);
                     imgElement.src = data.images[i - 1];
-            }
+                }
             } catch (error) {
                 console.error('Error:', error);
             }

@@ -31,7 +31,7 @@
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="index.html" class="nav-link px-2 link-secondary">HOME</a></li>
                 <li><a href="create.html" class="nav-link px-2 link-secondary">CREATE</a></li>
-                <li><a href="mypage.html" class="nav-link px-2" id="mypage_login" style="display: none">MYPAGE</a></li>
+                <li><a href="" class="nav-link px-2" id="mypage_login">MYPAGE</a></li>
             </ul>
 
 
@@ -52,8 +52,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="album-info">
-                        <p><strong>생성 날짜:</strong> <span id="request_time"></span></p>
-                        <p><strong>노래 제목:</strong> <span id="song_names"></span></p>
+                        <p><strong>리뷰 작성 날짜:</strong> <span id="create_date"></span></p>
+                        <p><strong>노래 제목:</strong> <span id="song_name"></span></p>
                         <p><strong>아티스트명:</strong> <span id="artist_name"></span></p>
                         <p><strong>장르:</strong> <span id="genre"></span></p>
                         <p><strong>앨범명:</strong> <span id="album_name"></span></p>
@@ -65,7 +65,7 @@
     </div>
     <h2 class="fw-light text-center"><strong>🎨<u>My Artworks</u>🖌</strong></h2>
     <h6 class="fw-light text-center mb-4">리뷰를 남긴 이미지 목록</h6>
-    <h6 class="fw-light text-center mb-2">이미지를 클릭하면 생성시 입력했던 정보를 볼 수 있습니다.</h6>
+    <h6 class="fw-light text-center mb-2" id="logincheck"></h6>
     <div id="imageContainer" class="container-fluid mx-auto">
         <div class="image-grid"></div>
     </div>

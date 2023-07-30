@@ -1,6 +1,6 @@
-async function fetchAlbumImages(user_email) {
+async function fetchAlbumImages(user_id) {
     try {
-        const response = await fetch('http://49.50.167.24:30008/api/get_album_images?user='+user_email, { method: 'GET',
+        const response = await fetch('http://49.50.167.24:30008/api/get_album_images?user='+user_id, { method: 'GET',
 
         mode: "cors",
         credentials: 'include',
@@ -48,12 +48,12 @@ function addImagesToContainer(userImages) {
 function showImageModal(image) {
     const modalBody = document.querySelector('.modal-body');
     // 이미지 클릭 시 모달의 내용을 새로운 정보로 업데이트
-    // document.getElementById('request_time').innerText = image.request_time;
-    document.getElementById('song_names').innerText = image.song_names;
+    document.getElementById('create_date').innerText = image.create_date;
+    document.getElementById('song_name').innerText = image.song_name;
     document.getElementById('artist_name').innerText = image.artist_name;
     document.getElementById('genre').innerText = image.genre;
     document.getElementById('album_name').innerText = image.album_name;
-    // document.getElementById('lyric').innerText = image.lyric;
+    document.getElementById('lyric').innerText = image.lyric;
 
     // 모달 띄우기
     const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
@@ -62,19 +62,12 @@ function showImageModal(image) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const imageContainer = document.getElementById('imageContainer');
-    // 여러 입력 테스트용
-    const albumInput = {
-        request_time: '생성날짜',
-        song_names: '노래제목',
-        artist_name: '아티스트명',
-        genre: '장르',
-        album_name: '앨범명',
-        lyric: '가사',
-        url: 'images/example1.jpg'
-    };
-    // TODO: 현재 사용자의 기록들 보여주기
-    user_email = sessionStorage.getItem('user_email')  // 식별자 - 현재 사용자의 이메일
-    const userImages = new Array(16).fill(albumInput)  // [albumInput, albumInput, ...] 와 같음
-    // addImagesToContainer(userImages)
-    fetchAlbumImages(user_email)
+    user_id = sessionStorage.getItem('user_id')
+    if (user_id != null) {
+        document.getElementById('logincheck').innerText = "이미지를 클릭하면 생성시 입력했던 정보를 볼 수 있습니다."
+        fetchAlbumImages(user_id)
+    }
+    else {
+        document.getElementById('logincheck').innerText = "*로그인 후 사용가능합니다.*"
+    }
 })

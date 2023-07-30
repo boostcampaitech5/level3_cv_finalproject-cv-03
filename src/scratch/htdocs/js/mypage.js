@@ -1,6 +1,6 @@
 async function fetchAlbumImages(user_id) {
     try {
-        const response = await fetch('http://49.50.167.24:30008/api/get_album_images?user='+user_id, { method: 'GET',
+        const response = await fetch('http://34.22.72.143:80/api/get_album_images?user='+user_id, { method: 'GET',
 
         mode: "cors",
         credentials: 'include',

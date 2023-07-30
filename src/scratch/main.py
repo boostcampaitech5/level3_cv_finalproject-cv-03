@@ -5,15 +5,12 @@ import base64
 import uuid
 from datetime import datetime
 
-# Pytorch
-import torch
-from torch import cuda
-
 # Backend
 from fastapi import FastAPI, Request, Depends, APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+# Pydantic
 from pydantic import BaseModel
 
 # Other modules
@@ -29,11 +26,8 @@ from typing import Optional
 from typing import List
 
 # Built-in modules
-from .gpt3_api import get_description, get_dreambooth_prompt
 from .gcp.bigquery import BigQueryLogger
-from .gcp.cloud_storage import GCSUploader
 from .gcp.error import ErrorReporter
-from .model import AlbumModel
 from .utils import load_yaml
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -46,7 +40,6 @@ bigquery_config = gcp_config["bigquery"]
 
 
 bigquery_logger = BigQueryLogger(gcp_config)
-gcs_uploader = GCSUploader(gcp_config)
 error_reporter = ErrorReporter(gcp_config)
 
 # Start fastapi
@@ -73,11 +66,6 @@ celery_app = Celery(
     broker="redis://localhost:6379/0",
     backend="redis://localhost:6379/0",
 )
-
-
-bigquery_logger = BigQueryLogger(gcp_config)
-gcs_uploader = GCSUploader(gcp_config)
-error_reporter = ErrorReporter(gcp_config)
 
 
 def get_random_string(length):

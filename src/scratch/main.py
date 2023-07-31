@@ -13,9 +13,10 @@ from fastapi.middleware.cors import CORSMiddleware
 # Pydantic
 from pydantic import BaseModel
 
-# Celery
+# Celery 
 from celery import Celery
 from celery.result import AsyncResult
+import asyncio
 
 # Other modules
 import numpy as np
@@ -58,7 +59,7 @@ origins = ["http://aibum.net", "http://34.22.72.143"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -116,7 +117,7 @@ class UserReviewInput(BaseModel):
     output_id: str
     url_id: int
     user_id: str
-    rating: int
+    rating: float
     comment: str
 
 
@@ -282,32 +283,33 @@ async def upload_image(image: UploadFile = File(...)):
     image_bytes = await image.read()
     image_content = base64.b64encode(image_bytes).decode()
 
-    task = celery_app.send_task(
-        "save_image", args=[image.filename, image_content, token]
-    )
+     # Use asyncio.gather to run the task asynchronously
+    task = celery_app.send_task("save_image", args=[image.filename, image_content, token])
+    asyncio.create_task(wait_for_task_completion(task))  # Run the task in the background
+    return {"status": "File upload started"}
 
-    task_result = task.get(timeout=60)
-
-    # Check if the task failed
-    if task.failed():
-        raise HTTPException(status_code=500, detail="Processing error")
-
-    return {"status": "File has been processed", "result": task_result["image_url"]}
-
-
+ 
 @api_router.post("/train_inference")
 async def train(input: UserAlbumInput):
-    task = celery_app.send_task("train_inference", args=[input.dict(), token])
+ 
+    # Use asyncio.gather to run the task asynchronously
+    task = celery_app.send_task("train_inference", args=[input.dict(), token, request_id])
+    
+    return {"task_id": task.id}
 
-    # Wait for the task for 2000 seconds to complete and get the result
-    task_result = task.get(timeout=2000)
 
-    # Check if the task failed
-    if task.failed():
-        raise HTTPException(status_code=500, detail="Processing error")
-
-    return {"images": task_result["images"]}
-
+# Helper function to wait for task completion
+async def wait_for_task_completion(task):
+    try:
+        result = task.get()
+        # Process the result if needed
+        print(result)
+    except asyncio.TimeoutError:
+        # Task took too long to complete
+        print("Task timed out.")
+    except Exception as e:
+        # Handle any other exceptions
+        print("Error occurred:", e)
 
 app.include_router(api_router)
 

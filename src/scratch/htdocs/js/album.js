@@ -9,7 +9,6 @@ async function LoginInfo(user) {
         const response = await fetch(server_domain + '/api/user', {
             method: 'POST',
             mode: "cors",
-            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -230,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let button = $(event.relatedTarget);
         buttonType = button.data('button-type');
         console.log(buttonType); // check the value of buttonType
-
+        console.log(typeof buttonType)
         // Determine the id of the image to be reviewed
         let imageId = 'image' + buttonType;
 
@@ -243,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.querySelector("#review_send_btn").addEventListener("click", async (e) => {
+        let output_id;
         e.preventDefault()
         user_starpoint = 0
         user_review = document.getElementById("review_comment").value
@@ -260,7 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             console.log('review login user id:', sessionStorage.getItem('user_id'));
             user_id = sessionStorage.getItem('user_id')
-
+            console.log(user_starpoint)
+            
             const UserReviewInput = {
                 output_id: output_id,
                 url_id: buttonType,
@@ -274,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch(server_domain + '/api/review', {
                     method: 'POST',
                     mode: "cors",
-                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -308,7 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let select_genre = '';
     let select_album = '';
 
-    let output_id;
     document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
         e.preventDefault()
         // 버튼 동작 체크
@@ -512,8 +511,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Training and Inference in one Process
+            
             try {
+                await train_inference(UserAlbumInput);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+
+            async function train_inference(UserAlbumInput) {
                 const user = { gender: selectedGender };
                 const response = await fetch(server_domain + '/api/train_inference', {
                     method: 'POST',
@@ -524,35 +529,67 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify(UserAlbumInput),
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    checkTaskStatus_train(data.task_id);
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
                 }
+            }
 
-                const data = await response.json();
-                console.log(data);
-                console.log(data.images);
+            async function checkTaskStatus_train(taskId) {
+                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                for (let i = 1; i <= 4; i++) {
-                    let imgElement = document.getElementById(`image${i}`);
-                    imgElement.src = data.images[i - 1];
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'SUCCESS') {
+                        getTaskResult(taskId);
+
+                        clearInterval(timerId);
+                        document.getElementById("create_spinner").style.display = "none";
+                        document.getElementById("info_alert").style.display = "block";
+                        watermark = document.getElementsByClassName("watermark");
+                        for (let i = 0; i < watermark.length; i++) {
+                            watermark[i].style.display = "block";
+                        }
+                        download_btn = document.getElementsByClassName("download_btn");
+                        for (let i = 0; i < download_btn.length; i++) {
+                            download_btn[i].style.pointerEvents = "auto";
+                        }
+
+                    } else {
+                        setTimeout(() => checkTaskStatus_train(taskId), 30000);
+                    }
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
                 }
-            } catch (error) {
-                console.error('Error:', error);
+            }
+            async function getTaskResult(taskId) {
+                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+            
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data)
+                    console.log(data.result)
+                    for (let i = 1; i <= 4; i++) {
+                        let imgElement = document.getElementById(`image${i}`);
+                        imgElement.src = data.result.image_urls[i - 1];
+                    }
+                } else {
+                    console.error(`HTTP error! status: ${response.status}`);
+                }
             }
         }
-
-
-        // clearInterval(timerId)
-        // document.getElementById("create_spinner").style.display = "none";
-        // document.getElementById("info_alert").style.display = "block";
-        // watermark = document.getElementsByClassName("watermark");
-        // for (let i = 0; i < watermark.length; i++) {
-        //     watermark[i].style.display = "block";
-        // }
-        // download_btn = document.getElementsByClassName("download_btn");
-        // for (let i = 0; i < download_btn.length; i++) {
-        //     download_btn[i].style.pointerEvents = "auto";
-        // }
     })
 
     document.querySelectorAll(".genre").forEach(obj => {

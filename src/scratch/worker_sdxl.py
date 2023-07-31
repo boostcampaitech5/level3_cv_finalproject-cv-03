@@ -23,7 +23,7 @@ from celery import signals
 
 # User Defined modules
 from .model import StableDiffusionXL
-from .gpt3_api import get_description, get_translation
+from .gpt3_api import get_description, get_translation, get_vibes
 from .gcp.cloud_storage import GCSUploader
 from .gcp.bigquery import BigQueryLogger
 from .utils import load_yaml

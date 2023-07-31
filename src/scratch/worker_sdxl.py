@@ -78,9 +78,15 @@ def generate_cover(input, request_id):
                 input["album_name"],
                 input["song_name"],
             )
-            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {summarization} atmosphere visualized well for a album cover"
+            vibe = get_vibes(
+                input["lyric"],
+                input["album_name"],
+                input["song_name"],
+                input["genre"],
+            )
+            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {vibe} atmosphere visualized for a album cover with {summarization} on it"
         else:
-            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {summarization} atmosphere visualized well for a album cover"
+            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {vibe} atmosphere visualized for a album cover with {summarization} on it"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)

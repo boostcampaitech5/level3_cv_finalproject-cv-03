@@ -13,13 +13,14 @@ import numpy as np
 from numpy import random
 from datetime import datetime
 from pytz import timezone
+import uuid
 
 # Celery
 from celery import Celery
 from celery import signals
 
 # User Defined modules
-from .gpt3_api import get_description
+from .gpt3_api import get_description, get_dreambooth_prompt
 from .gcp.cloud_storage import GCSUploader
 from .gcp.bigquery import BigQueryLogger
 from .utils import load_yaml
@@ -75,7 +76,7 @@ def save_image(filename, image_content, token):
 
 
 @celery_app.task(name="train_inference")
-def train_inference(input, token):
+def train_inference(input, token, request_id):
     try:
         global model
         del model
@@ -193,7 +194,7 @@ def train_inference(input, token):
     }
     bigquery_logger.log(output_log, "output")
 
-    return {"images": image_urls, "output_id": output_id}
+    return {"image_urls": image_urls, "output_id": output_id}
 
 
 if __name__ == "__main__":

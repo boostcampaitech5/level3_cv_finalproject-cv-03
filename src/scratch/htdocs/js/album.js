@@ -27,7 +27,6 @@ async function LoginInfo(user) {
     }
 }
 
-
 //카카오 로그인
 function kakaoLogin() {
     Kakao.Auth.login({
@@ -171,6 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
+
     select_model = document.querySelectorAll('.select_model')
     model2_contents = document.querySelectorAll('.model_content')
     select_model.forEach((radio) => {
@@ -284,28 +284,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify(UserReviewInput),
                 });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    console.log(data);  // Log the response data to check if it's correct
-
-                    $('#download_modal').modal('hide');
-                    // TODO : 리뷰 저장하는 코드 추가
-                    alert("소중한 리뷰 감사드립니다!" + "\n" + "별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review);
-                    // 리뷰 초기화
-                    document.getElementById("review_comment").value = ""
-                    document.getElementById(cur_review).checked = false
-
-                    // 리뷰작성시 이미지 다운로드
-                    imageDownload(buttonType);
-                } catch (error) {
-                    console.error('Error:', error);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                const data = await response.json();
+                console.log(data);  // Log the response data to check if it's correct
+
+                $('#download_modal').modal('hide');
+                // TODO : 리뷰 저장하는 코드 추가
+                alert("소중한 리뷰 감사드립니다!" + "\n" + "별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review);
+                 // 리뷰 초기화
+                document.getElementById("review_comment").value = ""
+                document.getElementById(cur_review).checked = false
+
+                // 리뷰작성시 이미지 다운로드
+                imageDownload(buttonType);
+            } catch (error) {
+                console.error('Error:', error);
             }
-        })
-    }
+        }
+    })
+}
 
     let select_artist = '';
     let select_song = '';
@@ -517,87 +517,86 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error('Error:', error);
                     }
                 }
-
-            
-            try {
-                await train_inference(UserAlbumInput);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-
-            async function train_inference(UserAlbumInput) {
-                const user = { gender: selectedGender };
-                const response = await fetch(server_domain + '/api/train_inference', {
-                    method: 'POST',
-                    mode: "cors",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(UserAlbumInput),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    checkTaskStatus_train(data.task_id);
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
+                try {
+                    await train_inference(UserAlbumInput);
+                } catch (error) {
+                    console.error('Error:', error);
                 }
-            }
-
-            async function checkTaskStatus_train(taskId) {
-                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'SUCCESS') {
-                        getTaskResult(taskId);
-
-                        clearInterval(timerId);
-                        document.getElementById("create_spinner").style.display = "none";
-                        document.getElementById("info_alert").style.display = "block";
-                        watermark = document.getElementsByClassName("watermark");
-                        for (let i = 0; i < watermark.length; i++) {
-                            watermark[i].style.display = "block";
-                        }
-                        download_btn = document.getElementsByClassName("download_btn");
-                        for (let i = 0; i < download_btn.length; i++) {
-                            download_btn[i].style.pointerEvents = "auto";
-                        }
-
+    
+                async function train_inference(UserAlbumInput) {
+                    const user = { gender: selectedGender };
+                    const response = await fetch(server_domain + '/api/train_inference', {
+                        method: 'POST',
+                        mode: "cors",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(UserAlbumInput),
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        checkTaskStatus_train(data.task_id);
                     } else {
-                        setTimeout(() => checkTaskStatus_train(taskId), 30000);
+                        console.error(`HTTP error! status: ${response.status}`);
                     }
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
+                }
+    
+                async function checkTaskStatus_train(taskId) {
+                    const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === 'SUCCESS') {
+                            getTaskResult(taskId);
+    
+                            clearInterval(timerId);
+                            document.getElementById("create_spinner").style.display = "none";
+                            document.getElementById("info_alert").style.display = "block";
+                            watermark = document.getElementsByClassName("watermark");
+                            for (let i = 0; i < watermark.length; i++) {
+                                watermark[i].style.display = "block";
+                            }
+                            download_btn = document.getElementsByClassName("download_btn");
+                            for (let i = 0; i < download_btn.length; i++) {
+                                download_btn[i].style.pointerEvents = "auto";
+                            }
+    
+                        } else {
+                            setTimeout(() => checkTaskStatus_train(taskId), 30000);
+                        }
+                    } else {
+                        console.error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+                async function getTaskResult(taskId) {
+                    const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(data)
+                        console.log(data.result)
+                        for (let i = 1; i <= 4; i++) {
+                            let imgElement = document.getElementById(`image${i}`);
+                            imgElement.src = data.result.image_urls[i - 1];
+                        }
+                    } else {
+                        console.error(`HTTP error! status: ${response.status}`);
+                    }
                 }
             }
-            async function getTaskResult(taskId) {
-                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-            
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data)
-                    console.log(data.result)
-                    for (let i = 1; i <= 4; i++) {
-                        let imgElement = document.getElementById(`image${i}`);
-                        imgElement.src = data.result.image_urls[i - 1];
-                    }
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
-                }
-            }
-        }
-    })
+        })
+    }
 
     document.querySelectorAll(".genre").forEach(obj => {
         obj.addEventListener("click", () => {

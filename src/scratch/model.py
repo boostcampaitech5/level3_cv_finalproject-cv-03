@@ -1,3 +1,6 @@
+# Python built-in modules
+import os
+
 # torch
 import torch
 
@@ -10,6 +13,11 @@ from diffusers import UNet2DConditionModel
 from diffusers.pipelines.stable_diffusion_xl.pipeline_stable_diffusion_xl import (
     StableDiffusionXLPipeline,
 )
+
+# User Defined Modules
+from .utils import load_yaml
+
+private_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"))
 
 
 class StableDiffusion:
@@ -59,6 +67,7 @@ class StableDiffusionXL:
             self.model_config["SDXL"]["stable_diffusion"],
             torch_dtype=torch.float16,
             variant="fp16",
+            token=private_config["huggingface"]["sdxl_token"],
         ).to("cuda")
 
         pipe.load_lora_weights(self.model_config["SDXL"]["ckpt"], use_safetensors=False)

@@ -1,6 +1,6 @@
 from .gpt3_api import get_description, get_translation
 from .main import *
-from .model import StableDiffusion
+from .model import StableDiffusion, StableDiffusionXL
 from .streamlit_frontend import main
 from .utils import load_yaml
 from .gcp import bigquery, cloud_storage, error

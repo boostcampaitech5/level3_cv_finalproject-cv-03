@@ -15,6 +15,7 @@ from numpy import random
 from pytz import timezone
 from datetime import datetime
 import uuid
+import time
 
 # Celery
 from celery import Celery
@@ -77,9 +78,9 @@ def generate_cover(input, request_id):
                 input["album_name"],
                 input["song_name"],
             )
-            prompt = f"song title is '{get_translation(input['song_name'])}', singer name is '{get_translation(input['artist_name'])}', keyword is '{summarization}'"
+            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {summarization} atmosphere visualized well for a album cover"
         else:
-            prompt = f"song title is '{get_translation(input['song_name'])}', singer name is '{get_translation(input['artist_name'])}'"
+            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {summarization} atmosphere visualized well for a album cover"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)
@@ -88,6 +89,9 @@ def generate_cover(input, request_id):
 
         if len(prompt) <= 150:
             break
+
+    if model is None:
+        time.sleep(20)
 
     seeds = np.random.randint(
         public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
@@ -150,7 +154,7 @@ def generate_cover(input, request_id):
     }
     bigquery_logger.log(output_log, "output")
 
-    return {"images": image_urls, "output_id": output_id}
+    return {"image_urls": image_urls, "output_id": output_id}
 
 
 # Start the worker

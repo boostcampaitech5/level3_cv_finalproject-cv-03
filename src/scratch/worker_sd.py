@@ -13,6 +13,7 @@ import numpy as np
 from numpy import random
 from pytz import timezone
 from datetime import datetime
+import uuid
 
 # Celery
 from celery import Celery
@@ -50,7 +51,7 @@ bigquery_logger = BigQueryLogger(gcp_config)
 def setup_worker_init(*args, **kwargs):
     device = "cuda" if cuda.is_available() else "cpu"
     global model
-    model = AlbumModel(public_config["model"], public_config["language"], device)
+    model = StableDiffusion(public_config["model"], public_config["language"], device)
     model.get_model()
 
 
@@ -134,7 +135,7 @@ def generate_cover(input, request_id):
     }
     bigquery_logger.log(output_log, "output")
 
-    return {"images": image_urls, "output_id": output_id}
+    return {"image_urls": image_urls, "output_id": output_id}
 
 
 # Start the worker

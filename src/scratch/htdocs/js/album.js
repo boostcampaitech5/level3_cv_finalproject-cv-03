@@ -188,37 +188,40 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    document.querySelector('#imageUpload').addEventListener('change', function () {
-        const selectedFiles = this.files;
-        const previewContainer = document.querySelector('#imagePreview');
+    image_upload = document.querySelector('#imageUpload');
+    if (image_upload) {
+        image_upload.addEventListener('change', function () {
+            const selectedFiles = this.files;
+            const previewContainer = document.querySelector('#imagePreview');
 
-        // 이미지 갯수가 최소 4장, 최대 10장인지 확인
-        if (selectedFiles.length < 4 || selectedFiles.length > 10) {
-            alert('최소 4장에서 최대 10장의 이미지를 업로드해주세요.');
-            document.getElementById("imageUpload").value = null
-            return;
-        }
+            // 이미지 갯수가 최소 4장, 최대 10장인지 확인
+            if (selectedFiles.length < 4 || selectedFiles.length > 10) {
+                alert('최소 4장에서 최대 10장의 이미지를 업로드해주세요.');
+                document.getElementById("imageUpload").value = null
+                return;
+            }
 
-        // 기존의 미리보기 이미지를 모두 삭제
-        while (previewContainer.firstChild) {
-            previewContainer.removeChild(previewContainer.firstChild);
-        }
+            // 기존의 미리보기 이미지를 모두 삭제
+            while (previewContainer.firstChild) {
+                previewContainer.removeChild(previewContainer.firstChild);
+            }
 
-        // 선택된 파일들의 미리보기 이미지를 생성하여 추가
-        for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            const reader = new FileReader();
+            // 선택된 파일들의 미리보기 이미지를 생성하여 추가
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const reader = new FileReader();
 
-            reader.onload = function (event) {
-                const image = document.createElement('img');
-                image.setAttribute('src', event.target.result);
-                image.setAttribute('class', 'preview-image');
-                previewContainer.appendChild(image);
-            };
+                reader.onload = function (event) {
+                    const image = document.createElement('img');
+                    image.setAttribute('src', event.target.result);
+                    image.setAttribute('class', 'preview-image');
+                    previewContainer.appendChild(image);
+                };
 
-            reader.readAsDataURL(file);
-        }
-    });
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 
 
     // 모달을 열 때 클릭된 버튼 숫자정보(1~4) 가져오기
@@ -242,66 +245,69 @@ document.addEventListener("DOMContentLoaded", () => {
         imageUrl = imageElement.src;
     });
 
-    document.querySelector("#review_send_btn").addEventListener("click", async (e) => {
-        e.preventDefault()
-        user_starpoint = 0
-        user_review = document.getElementById("review_comment").value
-        for (let i = 1; i <= 10; i++) {
-            cur_review = "starpoint_" + i
-            if (document.getElementById(cur_review).checked == true) {
-                user_starpoint = Math.round(i / 2);
-                break;
+    review_send_btn = document.querySelector("#review_send_btn");
+    if (review_send_btn) {
+        review_send_btn.addEventListener("click", async (e) => {
+            e.preventDefault()
+            user_starpoint = 0
+            user_review = document.getElementById("review_comment").value
+            for (let i = 1; i <= 10; i++) {
+                cur_review = "starpoint_" + i
+                if (document.getElementById(cur_review).checked == true) {
+                    user_starpoint = Math.round(i / 2);
+                    break;
+                }
             }
-        }
-        if (user_starpoint == 0 || user_review == "") {
-            alert('별점과 리뷰를 모두 작성해주세요.');
-            document.getElementById("review_comment").focus();
-        }
-        else {
-            console.log('review login user id:', sessionStorage.getItem('user_id'));
-            user_id = sessionStorage.getItem('user_id')
-
-            const UserReviewInput = {
-                output_id: output_id,
-                url_id: buttonType,
-                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
-                rating: user_starpoint,
-                comment: user_review
+            if (user_starpoint == 0 || user_review == "") {
+                alert('별점과 리뷰를 모두 작성해주세요.');
+                document.getElementById("review_comment").focus();
             }
+            else {
+                console.log('review login user id:', sessionStorage.getItem('user_id'));
+                user_id = sessionStorage.getItem('user_id')
 
-            try {
-                console.log("Review data being sent:", UserReviewInput);
-                const response = await fetch(server_domain + '/api/review', {
-                    method: 'POST',
-                    mode: "cors",
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(UserReviewInput),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const UserReviewInput = {
+                    output_id: output_id,
+                    url_id: buttonType,
+                    user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
+                    rating: user_starpoint,
+                    comment: user_review
                 }
 
-                const data = await response.json();
-                console.log(data);  // Log the response data to check if it's correct
+                try {
+                    console.log("Review data being sent:", UserReviewInput);
+                    const response = await fetch(server_domain + '/api/review', {
+                        method: 'POST',
+                        mode: "cors",
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(UserReviewInput),
+                    });
 
-                $('#download_modal').modal('hide');
-                // TODO : 리뷰 저장하는 코드 추가
-                alert("소중한 리뷰 감사드립니다!" + "\n" + "별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review);
-                // 리뷰 초기화
-                document.getElementById("review_comment").value = ""
-                document.getElementById(cur_review).checked = false
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-                // 리뷰작성시 이미지 다운로드
-                imageDownload(buttonType);
-            } catch (error) {
-                console.error('Error:', error);
+                    const data = await response.json();
+                    console.log(data);  // Log the response data to check if it's correct
+
+                    $('#download_modal').modal('hide');
+                    // TODO : 리뷰 저장하는 코드 추가
+                    alert("소중한 리뷰 감사드립니다!" + "\n" + "별점 : " + user_starpoint + "점" + "\n" + "한줄평 : " + user_review);
+                    // 리뷰 초기화
+                    document.getElementById("review_comment").value = ""
+                    document.getElementById(cur_review).checked = false
+
+                    // 리뷰작성시 이미지 다운로드
+                    imageDownload(buttonType);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
-        }
-    })
+        })
+    }
 
     let select_artist = '';
     let select_song = '';
@@ -309,251 +315,254 @@ document.addEventListener("DOMContentLoaded", () => {
     let select_album = '';
 
     let output_id;
-    document.querySelector("#img_create_btn").addEventListener("click", async (e) => {
-        e.preventDefault()
-        // 버튼 동작 체크
-        console.log("Button Clicked!");
-        const startTimestamp = Date.now();
+    img_create_btn = document.querySelector("#img_create_btn");
+    if (img_create_btn) {
+        img_create_btn.addEventListener("click", async (e) => {
+            e.preventDefault()
+            // 버튼 동작 체크
+            console.log("Button Clicked!");
+            const startTimestamp = Date.now();
 
-        const required_ids = ["song_name", "artist_name"];
-        for (let i of required_ids) {
-            if (document.getElementById(i).value == "") {
-                alert("모든 필수 입력란을 입력해주세요.");
-                document.getElementById(i).focus();
-                return;
-            }
-        }
-        select_song = document.getElementById("song_name").value
-        select_artist = document.getElementById("artist_name").value
-        select_album = document.getElementById("album_name").value
-        select_lyric = document.getElementById("lyrics").value
-        select_genre = ''
-        genre = document.getElementsByClassName("genre")
-        for (let i = 0; i < genre.length; i++) {
-            cur_genre = genre[i].id;
-            if (document.getElementById(cur_genre).className == badge_checked) {
-                select_genre = document.getElementById(cur_genre).textContent
-            }
-        }
-        const albumInput = {
-            song_names: select_song,
-            artist_name: select_artist,
-            genre: select_genre,
-            album_name: select_album,
-            lyric: select_lyric,
-        };
-        if (document.getElementById("listGroupRadioGrid1").checked == true) {
-            select_model = document.getElementById("listGroupRadioGrid1").value
-        }
-        else {
-            select_model = document.getElementById("listGroupRadioGrid2").value
-        }
-
-        UserAlbumInput = {
-            user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
-            model: select_model,
-            song_name: select_song,
-            artist_name: select_artist,
-            album_name: select_album,
-            genre: select_genre,
-            lyric: select_lyric,
-            gender: '',
-            image_urls: [],
-        };
-
-        if (select_model == "Stable Diffusion") {
-            // 이미지 생성시간 안내 모달창 띄우기
-            $('#create_modal1').modal('show');
-
-            // 스피너 보이기
-            document.getElementById("create_spinner").style.display = "block"
-            // 1초마다 경과 시간을 갱신
-            timerId = setInterval(() => {
-                updateElapsedTime(startTimestamp);
-            }, 1000);
-
-            try {
-                await generateCover(UserAlbumInput);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-
-            async function generateCover(UserAlbumInput) {
-                const response = await fetch(server_domain + '/api/generate_cover', {
-                    method: 'POST',
-                    mode: "cors",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(UserAlbumInput),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    checkTaskStatus(data.task_id);
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
+            const required_ids = ["song_name", "artist_name"];
+            for (let i of required_ids) {
+                if (document.getElementById(i).value == "") {
+                    alert("모든 필수 입력란을 입력해주세요.");
+                    document.getElementById(i).focus();
+                    return;
                 }
             }
-
-            async function checkTaskStatus(taskId) {
-                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.status === 'SUCCESS') {
-                        getTaskResult(taskId);
-
-                        clearInterval(timerId);
-                        document.getElementById("create_spinner").style.display = "none";
-                        document.getElementById("info_alert").style.display = "block";
-                        watermark = document.getElementsByClassName("watermark");
-                        for (let i = 0; i < watermark.length; i++) {
-                            watermark[i].style.display = "block";
-                        }
-                        download_btn = document.getElementsByClassName("download_btn");
-                        for (let i = 0; i < download_btn.length; i++) {
-                            download_btn[i].style.pointerEvents = "auto";
-                        }
-
-                    } else {
-                        setTimeout(() => checkTaskStatus(taskId), 1000);
-                    }
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
+            select_song = document.getElementById("song_name").value
+            select_artist = document.getElementById("artist_name").value
+            select_album = document.getElementById("album_name").value
+            select_lyric = document.getElementById("lyrics").value
+            select_genre = ''
+            genre = document.getElementsByClassName("genre")
+            for (let i = 0; i < genre.length; i++) {
+                cur_genre = genre[i].id;
+                if (document.getElementById(cur_genre).className == badge_checked) {
+                    select_genre = document.getElementById(cur_genre).textContent
                 }
             }
-            async function getTaskResult(taskId) {
-                const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-            
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data)
-                    console.log(data.result)
-                    for (let i = 1; i <= 4; i++) {
-                        let imgElement = document.getElementById(`image${i}`);
-                        imgElement.src = data.result.image_urls[i - 1];
-                    }
-                } else {
-                    console.error(`HTTP error! status: ${response.status}`);
-                }
-            }                   
-        }
-        else {  // DreamBooth
-            const imagePreview = document.querySelector('#imagePreview');
-            const images = imagePreview.querySelectorAll('img');
-            const imageUrls = Array.from(images).map(img => img.src);
-            console.log(imageUrls.length)
-            console.log('업로드한 이미지 목록들:', imageUrls);
-            if (imageUrls.length == 0) {
-                alert('이미지를 업로드해주세요.')
-                document.getElementById("imageUpload").click();
-                return;
+            const albumInput = {
+                song_names: select_song,
+                artist_name: select_artist,
+                genre: select_genre,
+                album_name: select_album,
+                lyric: select_lyric,
+            };
+            if (document.getElementById("listGroupRadioGrid1").checked == true) {
+                select_model = document.getElementById("listGroupRadioGrid1").value
+            }
+            else {
+                select_model = document.getElementById("listGroupRadioGrid2").value
             }
 
-            const genderButtons = document.querySelectorAll('.gender');
-            let selectedGender = '';
-            genderButtons.forEach((button) => {
-                if (button.checked) {
-                    selectedGender = button.value;
-                    console.log(selectedGender)   // 성별: 'man', 'woman'
-                }
-            });
-            UserAlbumInput.gender = selectedGender
-            UserAlbumInput.image_urls = imageUrls // TODO: 스토리지 주소로 바꿔야할까?
+            UserAlbumInput = {
+                user_id: sessionStorage.getItem('user_id') !== null ? sessionStorage.getItem('user_id') : '',
+                model: select_model,
+                song_name: select_song,
+                artist_name: select_artist,
+                album_name: select_album,
+                genre: select_genre,
+                lyric: select_lyric,
+                gender: '',
+                image_urls: [],
+            };
 
-            // 이미지 생성시간 안내 모달창 띄우기
-            $('#create_modal2').modal('show');
-            document.getElementById("create_spinner").style.display = "block"
-            // 1초마다 경과 시간을 갱신
-            timerId = setInterval(() => {
-                updateElapsedTime(startTimestamp);
-            }, 1000);
+            if (select_model == "Stable Diffusion") {
+                // 이미지 생성시간 안내 모달창 띄우기
+                $('#create_modal1').modal('show');
 
-            // TODO: DreamBooth back-end connect
-            // Uploading each image
-            for (let i = 0; i < imageUrls.length; i++) {
-                const imageUrl = imageUrls[i];
+                // 스피너 보이기
+                document.getElementById("create_spinner").style.display = "block"
+                // 1초마다 경과 시간을 갱신
+                timerId = setInterval(() => {
+                    updateElapsedTime(startTimestamp);
+                }, 1000);
 
                 try {
-                    // Fetch the image data from the URL
-                    const response = await fetch(imageUrl);
-                    const imageBlob = await response.blob();
+                    await generateCover(UserAlbumInput);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
 
-                    // Create a FormData object and append the image blob to it
-                    const formData = new FormData();
-                    formData.append('image', imageBlob, `image${i}.jpg`);
-
-                    // Send the image data to the server
-                    const uploadResponse = await fetch(server_domain + '/api/upload_image', {
+                async function generateCover(UserAlbumInput) {
+                    const response = await fetch(server_domain + '/api/generate_cover', {
                         method: 'POST',
-                        body: formData
+                        mode: "cors",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(UserAlbumInput),
                     });
 
-                    if (!uploadResponse.ok) {
-                        throw new Error(`HTTP error! status: ${uploadResponse.status}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        checkTaskStatus(data.task_id);
+                    } else {
+                        console.error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+
+                async function checkTaskStatus(taskId) {
+                    const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === 'SUCCESS') {
+                            getTaskResult(taskId);
+
+                            clearInterval(timerId);
+                            document.getElementById("create_spinner").style.display = "none";
+                            document.getElementById("info_alert").style.display = "block";
+                            watermark = document.getElementsByClassName("watermark");
+                            for (let i = 0; i < watermark.length; i++) {
+                                watermark[i].style.display = "block";
+                            }
+                            download_btn = document.getElementsByClassName("download_btn");
+                            for (let i = 0; i < download_btn.length; i++) {
+                                download_btn[i].style.pointerEvents = "auto";
+                            }
+
+                        } else {
+                            setTimeout(() => checkTaskStatus(taskId), 1000);
+                        }
+                    } else {
+                        console.error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+                async function getTaskResult(taskId) {
+                    const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(data)
+                        console.log(data.result)
+                        for (let i = 1; i <= 4; i++) {
+                            let imgElement = document.getElementById(`image${i}`);
+                            imgElement.src = data.result.image_urls[i - 1];
+                        }
+                    } else {
+                        console.error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+            }
+            else {  // DreamBooth
+                const imagePreview = document.querySelector('#imagePreview');
+                const images = imagePreview.querySelectorAll('img');
+                const imageUrls = Array.from(images).map(img => img.src);
+                console.log(imageUrls.length)
+                console.log('업로드한 이미지 목록들:', imageUrls);
+                if (imageUrls.length == 0) {
+                    alert('이미지를 업로드해주세요.')
+                    document.getElementById("imageUpload").click();
+                    return;
+                }
+
+                const genderButtons = document.querySelectorAll('.gender');
+                let selectedGender = '';
+                genderButtons.forEach((button) => {
+                    if (button.checked) {
+                        selectedGender = button.value;
+                        console.log(selectedGender)   // 성별: 'man', 'woman'
+                    }
+                });
+                UserAlbumInput.gender = selectedGender
+                UserAlbumInput.image_urls = imageUrls // TODO: 스토리지 주소로 바꿔야할까?
+
+                // 이미지 생성시간 안내 모달창 띄우기
+                $('#create_modal2').modal('show');
+                document.getElementById("create_spinner").style.display = "block"
+                // 1초마다 경과 시간을 갱신
+                timerId = setInterval(() => {
+                    updateElapsedTime(startTimestamp);
+                }, 1000);
+
+                // TODO: DreamBooth back-end connect
+                // Uploading each image
+                for (let i = 0; i < imageUrls.length; i++) {
+                    const imageUrl = imageUrls[i];
+
+                    try {
+                        // Fetch the image data from the URL
+                        const response = await fetch(imageUrl);
+                        const imageBlob = await response.blob();
+
+                        // Create a FormData object and append the image blob to it
+                        const formData = new FormData();
+                        formData.append('image', imageBlob, `image${i}.jpg`);
+
+                        // Send the image data to the server
+                        const uploadResponse = await fetch(server_domain + '/api/upload_image', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!uploadResponse.ok) {
+                            throw new Error(`HTTP error! status: ${uploadResponse.status}`);
+                        }
+
+                        // Parse the JSON response
+                        const data = await uploadResponse.json();
+                        console.log(data);
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
+
+                // Training and Inference in one Process
+                try {
+                    const user = { gender: selectedGender };
+                    const response = await fetch(server_domain + '/api/train_inference', {
+                        method: 'POST',
+                        mode: "cors",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(UserAlbumInput),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    // Parse the JSON response
-                    const data = await uploadResponse.json();
+                    const data = await response.json();
                     console.log(data);
+                    console.log(data.images);
+
+                    for (let i = 1; i <= 4; i++) {
+                        let imgElement = document.getElementById(`image${i}`);
+                        imgElement.src = data.images[i - 1];
+                    }
                 } catch (error) {
                     console.error('Error:', error);
                 }
             }
 
-            // Training and Inference in one Process
-            try {
-                const user = { gender: selectedGender };
-                const response = await fetch(server_domain + '/api/train_inference', {
-                    method: 'POST',
-                    mode: "cors",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(UserAlbumInput),
-                });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(data);
-                console.log(data.images);
-
-                for (let i = 1; i <= 4; i++) {
-                    let imgElement = document.getElementById(`image${i}`);
-                    imgElement.src = data.images[i - 1];
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-
-        // clearInterval(timerId)
-        // document.getElementById("create_spinner").style.display = "none";
-        // document.getElementById("info_alert").style.display = "block";
-        // watermark = document.getElementsByClassName("watermark");
-        // for (let i = 0; i < watermark.length; i++) {
-        //     watermark[i].style.display = "block";
-        // }
-        // download_btn = document.getElementsByClassName("download_btn");
-        // for (let i = 0; i < download_btn.length; i++) {
-        //     download_btn[i].style.pointerEvents = "auto";
-        // }
-    })
+            // clearInterval(timerId)
+            // document.getElementById("create_spinner").style.display = "none";
+            // document.getElementById("info_alert").style.display = "block";
+            // watermark = document.getElementsByClassName("watermark");
+            // for (let i = 0; i < watermark.length; i++) {
+            //     watermark[i].style.display = "block";
+            // }
+            // download_btn = document.getElementsByClassName("download_btn");
+            // for (let i = 0; i < download_btn.length; i++) {
+            //     download_btn[i].style.pointerEvents = "auto";
+            // }
+        })
+    }
 
     document.querySelectorAll(".genre").forEach(obj => {
         obj.addEventListener("click", () => {

@@ -46,6 +46,9 @@ celery_app = Celery(
 
 celery_app.conf.worker_pool = "solo"
 
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
+
 gcs_uploader = GCSUploader(gcp_config)
 bigquery_logger = BigQueryLogger(gcp_config)
 

@@ -5,16 +5,18 @@ import base64
 import uuid
 from datetime import datetime
 
-# Pytorch
-import torch
-from torch import cuda
-
 # Backend
 from fastapi import FastAPI, Request, Depends, APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+# Pydantic
 from pydantic import BaseModel
+
+# Celery
+from celery import Celery
+from celery.result import AsyncResult
+import asyncio
 
 # Other modules
 import numpy as np
@@ -29,11 +31,8 @@ from typing import Optional
 from typing import List
 
 # Built-in modules
-from .gpt3_api import get_description, get_dreambooth_prompt
 from .gcp.bigquery import BigQueryLogger
-from .gcp.cloud_storage import GCSUploader
 from .gcp.error import ErrorReporter
-from .model import AlbumModel
 from .utils import load_yaml
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -44,11 +43,19 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 train_config = load_yaml(os.path.join("src/scratch/dreambooth", "dreambooth.yaml"))
 bigquery_config = gcp_config["bigquery"]
 
+
+bigquery_logger = BigQueryLogger(gcp_config)
+error_reporter = ErrorReporter(gcp_config)
+
 # Start fastapi
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
-# --- 정리 예정, Refactoring x, Configuration x ---
+# Allowed Methods
+ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+
+# Origins for CORS
+origins = ["http://aibum.net", "http://34.22.72.143"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,25 +65,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -----------------------------------------------
-
-bigquery_logger = BigQueryLogger(gcp_config)
-gcs_uploader = GCSUploader(gcp_config)
-error_reporter = ErrorReporter(gcp_config)
-
-device = "cuda" if cuda.is_available() else "cpu"
-
-
-def load_model():
-    model = AlbumModel(public_config["model"], public_config["language"], device)
-    return model
-
-
-@app.on_event("startup")
-async def startup_event():
-    global model
-    model = load_model()
-    print("Model loaded successfully!")
+# Initialize Celery
+celery_app = Celery(
+    "tasks",
+    broker="redis://localhost:6379/0",
+    backend="redis://localhost:6379/0",
+)
 
 
 def get_random_string(length):
@@ -123,7 +117,7 @@ class UserReviewInput(BaseModel):
     output_id: str
     url_id: int
     user_id: str
-    rating: int
+    rating: float
     comment: str
 
 
@@ -184,88 +178,27 @@ async def user_login(userinfo: UserInfo):
 
 @api_router.post("/generate_cover")
 async def generate_cover(input: UserAlbumInput):
+    # Generate a unique ID for this request(This will be shared with "/review")
     global request_id
     request_id = str(uuid.uuid4())
 
-    input_log = {
-        "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
-        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
-    }
-    bigquery_logger.log(input_log, "input")
+    # Push task to the Celery queue
+    task = celery_app.send_task("generate_cover", args=[input.dict(), request_id])
 
-    images = []
-    urls = []
-
-    summarization = get_description(
-        input.lyric,
-        input.artist_name,
-        input.album_name,
-        input.song_name,
-    )
-
-    seeds = np.random.randint(
-        public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
-    )
-    prompt = f"A photo of a {input.genre} album cover with a {summarization} atmosphere visualized."
-    for i, seed in enumerate(seeds):
-        generator = torch.Generator(device=device).manual_seed(int(seed))
-
-        # Generate Images
-        with torch.no_grad():
-            image = model.pipeline(
-                prompt=prompt,
-                num_inference_steps=public_config["generate"]["inference_step"],
-                generator=generator,
-            ).images[0]
-
-        image = image.resize(
-            (public_config["generate"]["height"], public_config["generate"]["width"])
-        )
-
-        # Convert to base64-encoded string
-        byte_arr = io.BytesIO()
-        image.save(byte_arr, format=public_config["generate"]["save_format"])
-        byte_arr = byte_arr.getvalue()
-        # base64_str = base64.b64encode(byte_arr).decode()
-
-        urls.append(
-            [
-                byte_arr,
-                f"{request_id}_image_{i}.{public_config['generate']['save_format']}",
-            ]
-        )
-
-        images.append(byte_arr)
-
-    # Upload to GCS
-    image_urls = gcs_uploader.save_image_to_gcs(urls)
-
-    # Log to BigQuery
-    output_id = str(uuid.uuid4())
-    output_log = {
-        "output_id": output_id,
-        "input_id": request_id,
-        "image_urls": image_urls,
-        "seeds": [int(seed) for seed in seeds],
-        "prompt": prompt,
-        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
-    }
-    bigquery_logger.log(output_log, "output")
-
-    return {"images": image_urls, "output_id": output_id}
+    return {"task_id": task.id}
 
 
-# REST API - Post ~/review
-# @app.post("/review")
+@api_router.get("/get_task_result/{task_id}")
+async def get_task_result(task_id: str):
+    task_result = AsyncResult(task_id, app=celery_app)
+
+    if not task_result.ready():
+        return {"status": str(task_result.status)}
+
+    result = task_result.get()
+    return {"status": str(task_result.status), "result": result}
+
+
 @api_router.post("/review")
 async def review(review: UserReviewInput):
     # Log to BigQuery
@@ -285,7 +218,6 @@ async def review(review: UserReviewInput):
 
 
 @api_router.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
-# @app.get("/get_album_images", response_model=Dict[str, List[AlbumImage]])
 async def get_album_images(user: Optional[str] = None):
     # Query to retrieve latest and best-rated images from BigQuery
 
@@ -342,164 +274,55 @@ async def get_album_images(user: Optional[str] = None):
     return {"album_images": album_images}
 
 
+@api_router.post("/upload_image")
+async def upload_image(image: UploadFile = File(...)):
+    global token, request_id
+    request_id = str(uuid.uuid4())
+
+    # Read the image file
+    image_bytes = await image.read()
+    image_content = base64.b64encode(image_bytes).decode()
+
+    # Use asyncio.gather to run the task asynchronously
+    task = celery_app.send_task(
+        "save_image", args=[image.filename, image_content, token]
+    )
+    asyncio.create_task(
+        wait_for_task_completion(task)
+    )  # Run the task in the background
+    return {"status": "File upload started"}
+
+
+@api_router.post("/train_inference")
+async def train(input: UserAlbumInput):
+    # Use asyncio.gather to run the task asynchronously
+    task = celery_app.send_task(
+        "train_inference", args=[input.dict(), token, request_id]
+    )
+
+    return {"task_id": task.id}
+
+
+# Helper function to wait for task completion
+async def wait_for_task_completion(task):
+    try:
+        result = task.get()
+        # Process the result if needed
+        print(result)
+    except asyncio.TimeoutError:
+        # Task took too long to complete
+        print("Task timed out.")
+    except Exception as e:
+        # Handle any other exceptions
+        print("Error occurred:", e)
+
+
+app.include_router(api_router)
+
+
 # Exception handling using google cloud
 @app.exception_handler(Exception)
 async def handle_exceptions(request: Request, exc: Exception):
     error_reporter.python_error()
 
     return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
-
-
-@api_router.post("/upload_image")
-async def upload_image(image: UploadFile = File(...)):
-    global request_id
-    request_id = str(uuid.uuid4())
-
-    # Read the image file
-    image_bytes = await image.read()
-
-    # Generate a unique name for the image based on the request_id and original filename
-    destination_filename = f"{image.filename}"
-
-    # Define the directory where to save the image
-    image_dir = Path("src/scratch/dreambooth/data/users") / token
-
-    # Create the directory if it does not exist
-    image_dir.mkdir(parents=True, exist_ok=True)
-
-    # Save the image locally
-    with open(image_dir / destination_filename, "wb") as buffer:
-        buffer.write(image_bytes)
-
-    return {"image_url": str(image_dir / destination_filename)}
-
-
-@api_router.post("/train")
-async def train(input: UserAlbumInput):
-    try:
-        global model
-        del model
-    except:
-        pass
-    torch.cuda.empty_cache()
-
-    # Log to BigQuery
-    input_log = {
-        "input_id": request_id,
-        "user_id": input.user_id,
-        "model": input.model,
-        "song_name": input.song_name,
-        "artist_name": input.artist_name,
-        "album_name": input.album_name,
-        "genre": input.genre,
-        "lyric": input.lyric,
-        "gender": input.gender,
-        "image_urls": input.image_urls,
-        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
-    }
-    bigquery_logger.log(input_log, "input")
-
-    seeds = np.random.randint(100000)
-    # Run the train.py script as a separate process
-    process = subprocess.Popen(
-        [
-            "python",
-            "src/scratch/dreambooth/run.py",
-            "--config-file",
-            "src/scratch/dreambooth/dreambooth.yaml",
-            "--token",
-            token,
-            "--user-gender",
-            input.gender,
-            "--seed",
-            str(seeds),
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-    stdout, stderr = process.communicate()
-
-    if process.returncode != 0:
-        return {"status": "error", "message": stderr.decode()}
-    command = stdout.decode()
-
-    os.chdir("src/scratch")
-    subprocess.run(command, shell=True)
-    os.chdir("/opt/ml/level3_cv_finalproject-cv-03")
-    return {"status": "Train started", "message": command}
-
-
-@api_router.post("/inference")
-async def inference(input: UserAlbumInput):
-    summarization = get_dreambooth_prompt(
-        input.lyric,
-        input.album_name,
-        input.song_name,
-        input.gender,
-        input.genre,
-        input.artist_name,
-    )
-
-    prompt = f"A image of {summarization} music album cover with song title {input.song_name} by {input.artist_name}.\
-        a {token} {input.gender} is in image."
-
-    # Run the train.py script as a separate process
-    process = subprocess.Popen(
-        [
-            "python",
-            "src/scratch/dreambooth/inference.py",
-            "--token",
-            token,
-            "--prompt",
-            prompt,
-            "--user-gender",
-            input.gender,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-    # Get the output and error messages from the process
-    stdout, stderr = process.communicate()
-
-    # Check if the process completed successfully
-    if process.returncode != 0:
-        return {"status": "error", "message": stderr.decode()}
-
-    saved_dir = f"src/scratch/dreambooth/data/results/{token}"
-
-    files = os.listdir(saved_dir)
-    urls = []
-
-    for file in files:
-        # Only process image files (png, jpg, etc.)
-        if file.endswith((".png", ".jpg", ".jpeg")):
-            # Open image file in binary mode and read it
-            with open(os.path.join(saved_dir, file), "rb") as image_file:
-                byte_arr = image_file.read()
-
-            blob_name = f"{token}/{file}"
-            # Append the tuple (byte_arr, desired_blob_name) to urls
-            urls.append((byte_arr, blob_name))
-
-    # Upload the images to GCS and get their URLs
-    image_urls = gcs_uploader.save_image_to_gcs(urls)
-
-    # Log to BigQuery
-    output_id = str(uuid.uuid4())
-    output_log = {
-        "output_id": output_id,
-        "input_id": request_id,
-        "image_urls": image_urls,
-        "seeds": [],  # TODO: 드림부스는 inference할때 시드값이 없나요?
-        "prompt": prompt,
-        "create_date": datetime.utcnow().astimezone(timezone("Asia/Seoul")).isoformat(),
-    }
-    bigquery_logger.log(output_log, "output")
-
-    # return {"images": images}
-    return {"images": image_urls, "output_id": output_id}
-
-
-app.include_router(api_router)

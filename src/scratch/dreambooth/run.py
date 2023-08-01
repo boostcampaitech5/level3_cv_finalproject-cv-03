@@ -34,8 +34,8 @@ if __name__ == "__main__":
     command = "accelerate launch train_dreambooth.py"
     command += f" --pretrained_model_name_or_path={quote_arg(config['MODEL_NAME'])}"
     command += f" --pretrained_vae_model_name_or_path={quote_arg(config['PRETRAINED_VAE_MODEL_NAME_OR_PATH'])}"
-    command += f" --instance_data_dir=/opt/ml/level3_cv_finalproject-cv-03/src/scratch/dreambooth/data/users/{token}"
-    command += f" --output_dir=/opt/ml/level3_cv_finalproject-cv-03/src/scratch/dreambooth/weights/{token}"
+    command += f" --instance_data_dir=/opt/ml/input/code/level3_cv_finalproject-cv-03/src/scratch/dreambooth/data/users/{token}"
+    command += f" --output_dir=/opt/ml/input/code/level3_cv_finalproject-cv-03/src/scratch/dreambooth/weights/{token}"
     command += f" --mixed_precision={config['MIXED_PRECISION']}"
     command += f" --instance_prompt='A photo of a {token} {class_name}'"
     command += f" --resolution={config['RESOLUTION']}"
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         command += " --with_prior_preservation"
         command += f" --prior_loss_weight={config['PRIOR_LOSS_WEIGHT']}"
         command += f" --num_class_images={config['NUM_CLASS_IMAGES']}"
-        command += f" --class_data_dir=/opt/ml/level3_cv_finalproject-cv-03/src/scratch/dreambooth/data/generated/{class_name}"
+        command += f" --class_data_dir=/opt/ml/input/code/level3_cv_finalproject-cv-03/src/scratch/dreambooth/data/generated/{class_name}"
         command += f" --class_prompt='A photo of {class_name}'"
 
     if config["PUSH_TO_HUB"]:

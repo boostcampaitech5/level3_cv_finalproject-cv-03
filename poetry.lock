@@ -1535,17 +1535,17 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.28.12"
+version = "1.28.15"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.12-py3-none-any.whl", hash = "sha256:cfcb20d5784428f31d89889e68b26efeda90f231c3119eef4af8b25ad405c55f"},
-    {file = "boto3-1.28.12.tar.gz", hash = "sha256:d5ac6599951fdd519ed26c6fe15c41a7aa4021cb9adce33167344f8ce5cdb07b"},
+    {file = "boto3-1.28.15-py3-none-any.whl", hash = "sha256:84b7952858e9319968b0348d9894a91a6bb5f31e81a45c68044d040a12362abe"},
+    {file = "boto3-1.28.15.tar.gz", hash = "sha256:a6e711e0b6960c3a5b789bd30c5a18eea7263f2a59fc07f85efa5e04804e49d2"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.12,<1.32.0"
+botocore = ">=1.31.15,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -1554,13 +1554,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.12"
+version = "1.31.15"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.12-py3-none-any.whl", hash = "sha256:86380672151866b5e425636e3ebad74f2b83e7163e36ef5d38d11a04b9cba33b"},
-    {file = "botocore-1.31.12.tar.gz", hash = "sha256:7e5db466c762a071bb58c9a39d070f1333ce4f4ba6fdf9820ba21e87bd4c7e29"},
+    {file = "botocore-1.31.15-py3-none-any.whl", hash = "sha256:b3a0f787f275711875476cbe12a0123b2e6570b2f505e2fa509dcec3c5410b57"},
+    {file = "botocore-1.31.15.tar.gz", hash = "sha256:b46d1ce4e0cf42d28fdf61ce0c999904645d38b51cb809817a361c0cec16d487"},
 ]
 
 [package.dependencies]
@@ -2244,7 +2244,7 @@ develop = false
 [package.dependencies]
 filelock = "*"
 huggingface-hub = ">=0.13.2"
-importlib_metadata = "*"
+importlib-metadata = "*"
 numpy = "*"
 Pillow = "*"
 regex = "!=2019.12.17"
@@ -2264,7 +2264,7 @@ training = ["Jinja2", "accelerate (>=0.11.0)", "datasets", "protobuf (>=3.20.3,<
 type = "git"
 url = "https://github.com/huggingface/diffusers.git"
 reference = "main"
-resolved_reference = "20e92586c1fda968ea3343ba0f44f2b21f3c09d2"
+resolved_reference = "aae27262f408957ff53c64b3a18581959e8fd8e0"
 
 [[package]]
 name = "dill"
@@ -3494,13 +3494,13 @@ protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4
 
 [[package]]
 name = "google-cloud-pubsub"
-version = "2.18.0"
+version = "2.18.1"
 description = "Google Cloud Pub/Sub API client library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-cloud-pubsub-2.18.0.tar.gz", hash = "sha256:7a70df4111d9cb694a25cecdd2328827159c5213ae1e6304cb3abb38f379dd29"},
-    {file = "google_cloud_pubsub-2.18.0-py2.py3-none-any.whl", hash = "sha256:c2aeec5cc80d55c94689cd72db74273cf5a5fba5f00771a623271086dfde161c"},
+    {file = "google-cloud-pubsub-2.18.1.tar.gz", hash = "sha256:4a2bf3c04f8278504f934b2bdbafe927fa650d7c5397c7633a0b30e10a5127f3"},
+    {file = "google_cloud_pubsub-2.18.1-py2.py3-none-any.whl", hash = "sha256:00691ca49bed09946f92f6001f9f7456f561b32a205e4f82dd8aa74dc3e97d9e"},
 ]
 
 [package.dependencies]
@@ -5185,46 +5185,46 @@ files = [
 
 [[package]]
 name = "mypy-boto3-appflow"
-version = "1.28.12"
-description = "Type annotations for boto3.Appflow 1.28.12 service generated with mypy-boto3-builder 7.15.2"
+version = "1.28.15.post2"
+description = "Type annotations for boto3.Appflow 1.28.15 service generated with mypy-boto3-builder 7.16.2"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mypy-boto3-appflow-1.28.12.tar.gz", hash = "sha256:6b6aa97c154ff98dece67b0d4baf7bf8091a8b70e45ad7f89460fb27fafa59de"},
-    {file = "mypy_boto3_appflow-1.28.12-py3-none-any.whl", hash = "sha256:366bfbe29eb68c2661345abb051e803c9b7b5f19f3801490f98717af7268ca3e"},
+    {file = "mypy-boto3-appflow-1.28.15.post2.tar.gz", hash = "sha256:257bef7e6995c3c846638afed1ce93a891b5c46ec6b11a6fd990f0b6ea4eb9ac"},
+    {file = "mypy_boto3_appflow-1.28.15.post2-py3-none-any.whl", hash = "sha256:bc4f422d03c35f06c7f40edabdba1ed0ab1ddac959e3a246154ce1fae8bddf96"},
 ]
 
 [[package]]
 name = "mypy-boto3-rds"
-version = "1.28.11"
-description = "Type annotations for boto3.RDS 1.28.11 service generated with mypy-boto3-builder 7.15.1"
+version = "1.28.15.post1"
+description = "Type annotations for boto3.RDS 1.28.15 service generated with mypy-boto3-builder 7.16.2"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mypy-boto3-rds-1.28.11.tar.gz", hash = "sha256:e3311ed37663b149b425e28f2dd707306f6f09d9da7085ed4f322a2c207cae2d"},
-    {file = "mypy_boto3_rds-1.28.11-py3-none-any.whl", hash = "sha256:515677c2daf4a30538a096a88b8fdc8c676e11bedef4980925332fb8d4e09788"},
+    {file = "mypy-boto3-rds-1.28.15.post1.tar.gz", hash = "sha256:6ceb482d2c97f04442ce88f7316634b4490b6c779fd0442b7bd52afc0934f8f2"},
+    {file = "mypy_boto3_rds-1.28.15.post1-py3-none-any.whl", hash = "sha256:16470a62a29b0a23e914634d122217af701ffb5be55d772874030aafe9dfdf0c"},
 ]
 
 [[package]]
 name = "mypy-boto3-redshift-data"
-version = "1.28.0"
-description = "Type annotations for boto3.RedshiftDataAPIService 1.28.0 service generated with mypy-boto3-builder 7.14.5"
+version = "1.28.15.post1"
+description = "Type annotations for boto3.RedshiftDataAPIService 1.28.15 service generated with mypy-boto3-builder 7.16.2"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mypy-boto3-redshift-data-1.28.0.tar.gz", hash = "sha256:cd4fb9c2bae84741370478f6da9a2971c42e08d1ade6368c14269b5c9620e9b1"},
-    {file = "mypy_boto3_redshift_data-1.28.0-py3-none-any.whl", hash = "sha256:2c07099cc9d08836802514eccbe18cf3bbcf9e85a46f50c1ee56cb18211b4518"},
+    {file = "mypy-boto3-redshift-data-1.28.15.post1.tar.gz", hash = "sha256:1feab375a92e786068b83f3690a2c63e8413788cac57d2c7ff3b3baba34c7aac"},
+    {file = "mypy_boto3_redshift_data-1.28.15.post1-py3-none-any.whl", hash = "sha256:6293f2a3124e39e1ceb35be8fe0cc9bd8b69cf388d877e4eabc2227824be7dcc"},
 ]
 
 [[package]]
 name = "mypy-boto3-s3"
-version = "1.28.8"
-description = "Type annotations for boto3.S3 1.28.8 service generated with mypy-boto3-builder 7.15.1"
+version = "1.28.15.post1"
+description = "Type annotations for boto3.S3 1.28.15 service generated with mypy-boto3-builder 7.16.2"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mypy-boto3-s3-1.28.8.tar.gz", hash = "sha256:c9ed17fee2c0e2edeb2966b3796af7b349dcc4eeee54dbd59a269fdb9418eb55"},
-    {file = "mypy_boto3_s3-1.28.8-py3-none-any.whl", hash = "sha256:75b929c517c5ad8f97c14dfba5f8521db569157dc4ac76a07a178805777cff8c"},
+    {file = "mypy-boto3-s3-1.28.15.post1.tar.gz", hash = "sha256:65502be825789fd16e4cacf10aecd6408554b60ae5d261be60fd46bee69d8592"},
+    {file = "mypy_boto3_s3-1.28.15.post1-py3-none-any.whl", hash = "sha256:2e7d26fd2b56a13843afdba88576185aaa16aa7493f02576e3e94337be29f56c"},
 ]
 
 [[package]]
@@ -5732,18 +5732,18 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "platformdirs"
-version = "3.9.1"
+version = "3.10.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.9.1-py3-none-any.whl", hash = "sha256:ad8291ae0ae5072f66c16945166cb11c63394c7a3ad1b1bc9828ca3162da8c2f"},
-    {file = "platformdirs-3.9.1.tar.gz", hash = "sha256:1b42b450ad933e981d56e59f1b97495428c9bd60698baab9f3eb3d00d5822421"},
+    {file = "platformdirs-3.10.0-py3-none-any.whl", hash = "sha256:d7c24979f292f916dc9cbf8648319032f551ea8c49a4c9bf2fb556a02070ec1d"},
+    {file = "platformdirs-3.10.0.tar.gz", hash = "sha256:b45696dab2d7cc691a3226759c0d3b00c47c8b6e293d96f6436f733303f77f6d"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
-test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4.1)", "pytest-mock (>=3.10)"]
+docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.1)", "sphinx-autodoc-typehints (>=1.24)"]
+test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)"]
 
 [[package]]
 name = "pluggy"
@@ -6918,13 +6918,13 @@ six = "*"
 
 [[package]]
 name = "rich"
-version = "13.4.2"
+version = "13.5.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "rich-13.4.2-py3-none-any.whl", hash = "sha256:8f87bc7ee54675732fa66a05ebfe489e27264caeeff3728c945d25971b6485ec"},
-    {file = "rich-13.4.2.tar.gz", hash = "sha256:d653d6bccede5844304c605d5aac802c7cf9621efd700b46c7ec2b51ea914898"},
+    {file = "rich-13.5.0-py3-none-any.whl", hash = "sha256:996670a7618ccce27c55ba6fc0142e6e343773e11d34c96566a17b71b0e6f179"},
+    {file = "rich-13.5.0.tar.gz", hash = "sha256:62c81e88dc078d2372858660e3d5566746870133e51321f852ccc20af5c7e7b2"},
 ]
 
 [package.dependencies]
@@ -8635,5 +8635,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.10.12"
-content-hash = "04b24c4948cc41325247ba6ed3abe029bd4da9e1ded210d728ce8211c8ec4e1f"
-
+content-hash = "bba9a791c92f9301403c8e7a83e933d946a2f4f20a1f2c7fea61c58d0f53c3c5"

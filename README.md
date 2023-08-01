@@ -9,8 +9,15 @@
         <img src="https://img.shields.io/badge/HTML-239120?style=for-the-badge&logo=html5&logoColor=white">
         <img src="https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white">
         <img src="https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E">
+        <img src="https://img.shields.io/badge/bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white">
         <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white">
-        <img src="https://img.shields.io/badge/Airflow-017CEE?style=for-the-badge&logo=Apache%20Airflow&logoColor=white">
+        <img src="https://img.shields.io/badge/Airflow-017CEE?style=for-the-badge&logo=Apache%20Airflow&logoColor=black">
+        <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white">
+        <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
+        <img src="https://img.shields.io/badge/celery-37814A?style=for-the-badge&logo=celery&logoColor=white">
+        <img src="https://img.shields.io/badge/github_actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
+        <img src="https://img.shields.io/badge/opencv-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white">
+        <img src="https://img.shields.io/badge/openai-412991?style=for-the-badge&logo=openai&logoColor=white">
     </div>
 </p>
 
@@ -106,28 +113,26 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 7. [발표영상](https://www.youtube.com/watch?v=3K4XhE7L0Pg)⭐
 
 # 🗒️ 프로젝트 결과
-## 데이터셋
-데이터 수집이 편리하고 국내/국외 노래 데이터 골고루 수집가능한 [멜론 음원사이트](https://www.melon.com/) 선택
+## 🔸Dataset
+- 데이터 수집이 편리하고 국내/국외 노래 데이터 골고루 수집가능한 [멜론 음원사이트](https://www.melon.com/) 선택
+- 해당 음원사이트로부터 노래 제목, 가수 이름, 앨범 이
+름, 발매일, 노래 장르, 노래 가사, 앨범 표지 URL을 Crawling하여 총 3,851개의 데이터 수집
 
-## 모델
+## 🔸Model
 
-### - Stable Diffusion
+### 1. Stable Diffusion
 Stable Diffusion은 높은 품질의 이미지를 생성하고, Text-To-Image 작업을 가능하게 해주는 모델입니다. 사용자로부터 입력 받은 노래 정보를 ChatGPT API를 통해 Prompt로 생성한 후, 이를 Stable Diffusion 모델에 입력하여 앨범 커버를 생성합니다.
 <img align="center" src="imgs/stablediffusion.jpeg">
 
-### - Dreambooth
+### 2. Dreambooth
 Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 가수의 사진을 입력 받고 이를 통해 Fine-Tuning하여 가수 사진이 포함된 앨범 커버를 생성해줍니다.
 <img align="center" src="imgs/dreambooth.jpeg">
-
-<br/>
-
-## 시연영상
 
 
 <br/>
 
 # 🔄️ Directory
-디렉토리는 추후 변경예정
+(추후 디렉토리 리펙토링 예정)
 ```bash
 ├── .gitignore
 ├── .pre-commit-config.yaml
@@ -135,25 +140,46 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 ├── README.md
 ├── Makefile
 ├── poetry.lock
+├── pyproject.toml
 ├── imgs
-├── tests/
+├── docs
+├── tests
 └── src
     ├──  scratch
     │    ├── apache_config
     │    ├── config
     │    ├── dags
+    │    │    ├── bigquery_data_pipeline.py
+    │    │    └── model_retrain.py
     │    ├── dreambooth
+    │    │    ├── dreambooth.yaml
+    │    │    ├── inference.py
+    │    │    └── run.py
     │    ├── gcp
+    │    │    ├── bigquery.py
+    │    │    ├── cloud_storage.py
+    │    │    └── error.py
     │    ├── htdocs
-    │    ├── Makefile
+    │    │    └── html/css/js/img
     │    ├── gpt3-api.py
     │    ├── main.py
     │    ├── model.py
     │    ├── streamlit_frontend.py
     │    ├── train_dreambooth.py
-    │    └── utils.py
+    │    ├── utils.py
+    │    ├── worker_dreambooth.py
+    │    ├── worker_sd.py
+    │    └── worker_sdxl.py
     │
     ├── stable_diffusion
+    │    ├── dataset.py
+    │    ├── main.py
+    │    ├── test.py
+    │    ├── train.py
+    │    ├── utils
+    │    │    ├── plot.py
+    │    │    ├── training.py
+    │    │    └── util.py
     │    └── experiments
     │         └── [tag]ExpName
     │			    ├── albums.csv
@@ -161,7 +187,8 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
     │			    ├── checkpoints
     │			    └── results
     │			     
-    └── stable_diffusion_xl
+    └── stable_diffusion_xl 
+         └── (stable_diffusion과 구조 동일)
 ```
 
 

@@ -69,8 +69,16 @@ app.add_middleware(
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["redis_server_ip"],
-    backend=redis_config["redis_server_ip"],
+    broker="redis://kimseungki1011:cv03@localhost:6379/0",
+    backend="redis://kimseungki1011:cv03@localhost:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    beat_schedule={
+        "check_worker_heartbeats": {
+            "task": "celery.ping",
+            "schedule": 180,  # Check worker heartbeats every 60 seconds
+        },
+    },
 )
 
 

@@ -444,7 +444,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (response.ok) {
                         const data = await response.json();
+                        output_id = data.result.output_id;
                         console.log(data)
+                        console.log(data.result.output_id)
                         console.log(data.result)
                         for (let i = 1; i <= 4; i++) {
                             let imgElement = document.getElementById(`image${i}`);
@@ -522,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (error) {
                     console.error('Error:', error);
                 }
-    
+
                 async function train_inference(UserAlbumInput) {
                     const user = { gender: selectedGender };
                     const response = await fetch(server_domain + '/api/train_inference', {
@@ -533,7 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         },
                         body: JSON.stringify(UserAlbumInput),
                     });
-    
+
                     if (response.ok) {
                         const data = await response.json();
                         checkTaskStatus_train(data.task_id);
@@ -541,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error(`HTTP error! status: ${response.status}`);
                     }
                 }
-    
+
                 async function checkTaskStatus_train(taskId) {
                     const response = await fetch(`${server_domain}/api/get_task_result/${taskId}`, {
                         method: 'GET',
@@ -549,12 +551,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             'Content-Type': 'application/json',
                         },
                     });
-    
+
                     if (response.ok) {
                         const data = await response.json();
                         if (data.status === 'SUCCESS') {
                             getTaskResult(taskId);
-    
+
                             clearInterval(timerId);
                             document.getElementById("create_spinner").style.display = "none";
                             document.getElementById("info_alert").style.display = "block";
@@ -566,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             for (let i = 0; i < download_btn.length; i++) {
                                 download_btn[i].style.pointerEvents = "auto";
                             }
-    
+
                         } else {
                             setTimeout(() => checkTaskStatus_train(taskId), 30000);
                         }
@@ -581,10 +583,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             'Content-Type': 'application/json',
                         },
                     });
-                
+
                     if (response.ok) {
                         const data = await response.json();
+                        output_id = data.result.output_id;
                         console.log(data)
+                        console.log(data.result.output_id)
                         console.log(data.result)
                         for (let i = 1; i <= 4; i++) {
                             let imgElement = document.getElementById(`image${i}`);

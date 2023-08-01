@@ -47,7 +47,7 @@ celery_app = Celery(
     worker_heartbeat=280,
 )
 
-celery_app.conf.worker_pool = "solo"
+# celery_app.conf.worker_pool = "solo"
 
 # Set Celery Time-zone
 celery_app.conf.timezone = "Asia/Seoul"
@@ -66,7 +66,7 @@ def setup_worker_init(*args, **kwargs):
 
 @celery_app.task(name="generate_cover", queue="sdxl")
 def generate_cover(input, request_id):
-    # os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+    os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     device = "cuda" if cuda.is_available() else "cpu"
 
     # Request time

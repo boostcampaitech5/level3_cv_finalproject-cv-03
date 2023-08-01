@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>[CV-03] Aibum</title>
+    <link rel="icon" href="images/album_logo.png">
+    <meta charset="utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles/album.css" />
+    <script src="js/album.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script>Kakao.init('24c6ad39029213044f93f8006b5d33b3');</script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+
+<body oncontextmenu="return false;" ondragstart="return false;">
+    <div class="container">
+        <header
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+            <div class="col-md-4 mb-2 mb-md-0">
+                <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
+                    <img src="images/album_logo.png" style="width:2rem;">
+                </a>
+            </div>
+
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="index.html" class="nav-link px-2">HOME</a></li>
+                <li><a href="create.html" class="nav-link px-2 link-secondary">CREATE</a></li>
+
+                <li><a href="" class="nav-link px-2 link-secondary" id="mypage_login">MYPAGE</a></li>
+            </ul>
+            <div class="col-md-4 d-flex justify-content-end">
+                <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
+                <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
+                <button type="button" id="kakao_logout" class="btn btn-dark py-2" onclick="kakaoLogout();" style="display: none">로그아웃</button>
+            </div>
+        </header>
+    </div>
+
+    <div class="container">
+        <section class="py-5 text-center container">
+            <div class="row py-lg-5">
+                <div class="col-lg-6 col-md-8 mx-auto">
+                    <h1 class="fw-light">'Ai'bum</h1>
+                    <p class="lead text-body-secondary">
+                        저희 제품은 노래 제목, 장르, 가사, 사진 등 여러 정보를 입력하면 사용자가 원하는 앨범커버 이미지를 만들어드립니다.</p>
+                    <a href="create.html" class="btn btn-primary my-2">QUICK START</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="container">
+        <div class="py-5" id="example-images" style="display: none;">
+            <h class="fw-light no-wrap-text">🚩가장 최신순으로 높은 별점을 받은 이미지 12개를 보여드립니다.</h>
+            <div id="album-images-container" class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 justify-content-center">
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-1" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <div class="card-text" id="album-prompt-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-2" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-2"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-3" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-3"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-4" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-4"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-5" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-5"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-6" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-6"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-7" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-7"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-8" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-8"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-9" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-9"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-10" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-10"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-11" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-11"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="images/main.jpg" id="album-image-12" class="album-image rounded-top" width="100%" height="100%"/>
+                        <div class="card-body">
+                            <p class="card-text" id="album-prompt-12"></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

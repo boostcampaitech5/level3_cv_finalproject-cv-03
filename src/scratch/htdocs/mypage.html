@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>[CV-03] Aibum</title>
+    <link rel="icon" href="images/album_logo.png">
+    <meta charset="utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles/album.css" />
+    <script src="js/album.js"></script>
+    <script src="js/mypage.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script>Kakao.init('24c6ad39029213044f93f8006b5d33b3');</script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+
+<body oncontextmenu="return false;" ondragstart="return false;">
+    <div class="container">
+        <header
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <div class="col-md-4 mb-2 mb-md-0">
+                <a href="index.html" class="d-inline-flex link-body-emphasis text-decoration-none">
+                    <img src="images/album_logo.png" style="width:2rem;">
+                </a>
+            </div>
+
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="index.html" class="nav-link px-2 link-secondary">HOME</a></li>
+                <li><a href="create.html" class="nav-link px-2 link-secondary">CREATE</a></li>
+                <li><a href="" class="nav-link px-2" id="mypage_login">MYPAGE</a></li>
+            </ul>
+
+
+            <div class="col-md-4 d-flex justify-content-end">
+                <a href="mypage.html" class="fw-light no-wrap-text p-2 link-body-emphasis" id="text_login"></a>
+                <img src="images/kakao_login_medium.png" id="kakao_login" alt="카카오 로그인" onclick="kakaoLogin();" style="display: none" />
+                <button type="button" id="kakao_logout" class="btn btn-dark py-2" onclick="kakaoLogout();" style="display: none">로그아웃</button>
+            </div>
+        </header>
+    </div>
+
+      <div class="modal fade" id="imageModal">
+        <div class="modal-dialog modal-dialog-centered w-50">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal_title">입력한 정보</h1>
+                    <button class="btn-close px-3" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="album-info">
+                        <p><strong>리뷰 작성 날짜:</strong> <span id="create_date"></span></p>
+                        <p><strong>노래 제목:</strong> <span id="song_name"></span></p>
+                        <p><strong>아티스트명:</strong> <span id="artist_name"></span></p>
+                        <p><strong>장르:</strong> <span id="genre"></span></p>
+                        <p><strong>앨범명:</strong> <span id="album_name"></span></p>
+                        <p><strong>가사:</strong> <span id="lyric"></span></p>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2 class="fw-light text-center"><strong>🎨<u>My Artworks</u>🖌</strong></h2>
+    <h6 class="fw-light text-center mb-4">리뷰를 남긴 이미지 목록</h6>
+    <h6 class="fw-light text-center mb-2" id="logincheck"></h6>
+    <div id="imageContainer" class="container-fluid mx-auto">
+        <div class="image-grid"></div>
+    </div>
+
+</body>
+
+</html>

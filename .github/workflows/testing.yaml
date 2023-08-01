@@ -1,0 +1,104 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Project Testing
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read
+
+jobs:
+  build:
+    # runs-on: ubuntu-18.04
+    runs-on: self-hosted
+
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pip install poetry==1.5.1
+      - name: Install mysqlclient & redis-server using apt-get
+        run: |
+          sudo apt-get install -y libmysqlclient-dev
+          sudo apt install -y redis-server
+
+      - name: Set up Python 3.10.12 & poetry
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10.12"
+          cache: poetry # caching poetry dependencies
+          architecture: x64
+        env:
+          AGENT_TOOLSDIRECTORY: /home/kjy961226/actions-runner/_work/_temp
+
+      - name: Install dependencies
+        run: PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install
+
+      - name: Run Black
+        run: poetry run black . --check
+      - name: Access to secrets # 추후 통합
+        run: |
+          echo $GCP | base64 --decode > src/scratch/config/gcp.json
+          echo $PUBLIC | base64 --decode > src/scratch/config/public.yaml
+          echo $PRIVATE | base64 --decode > src/scratch/config/private.yaml
+          echo $TRANSLATION | base64 --decode > src/scratch/config/translation.yaml
+          echo $GCP | base64 --decode > src/redis_celery/config/gcp.json
+          echo $PUBLIC | base64 --decode > src/redis_celery/config/public.yaml
+          echo $PRIVATE | base64 --decode > src/redis_celery/config/private.yaml
+          echo $TRANSLATION | base64 --decode > src/redis_celery/config/translation.yaml
+        env:
+          GCP: ${{secrets.GCP}}
+          PUBLIC: ${{secrets.PUBLIC}}
+          PRIVATE: ${{secrets.PRIVATE}}
+          TRANSLATION: ${{secrets.TRANSLATION}}
+
+      # GCP
+      - id: auth
+        name: Authenticate to GCP
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{secrets.GCP_WORKLOAD}}
+          service_account: ${{secrets.GCP_ACCOUNT}}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - id: gcloud
+        name: Google Cloud Platform
+        run: |
+          poetry run gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+      # Airflow
+      - name: Run airflow
+        run: |
+          poetry run airflow db init
+        env:
+          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
+          TZ: UTC
+
+      # Pytest
+      - name: Run pytest
+        run: poetry run python -m pytest
+        env:
+          SLACK_TOKEN: ${{secrets.SLACK_TOKEN}}
+          AIRFLOW_HOME: /home/kjy961226/actions-runner/_work/level3_cv_finalproject-cv-03/level3_cv_finalproject-cv-03/src/scratch
+
+      # Slack
+      - name: Send slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Junyoung
+          icon_emoji: ":octocat:"
+          fields: repo, message, commit, author, action, eventName, ref, workflow, job, took
+          if_mention: success, failure, cancelled
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()

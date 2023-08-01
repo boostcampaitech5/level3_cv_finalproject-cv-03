@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Pydantic
 from pydantic import BaseModel
 
-# Celery 
+# Celery
 from celery import Celery
 from celery.result import AsyncResult
 import asyncio
@@ -283,18 +283,23 @@ async def upload_image(image: UploadFile = File(...)):
     image_bytes = await image.read()
     image_content = base64.b64encode(image_bytes).decode()
 
-     # Use asyncio.gather to run the task asynchronously
-    task = celery_app.send_task("save_image", args=[image.filename, image_content, token])
-    asyncio.create_task(wait_for_task_completion(task))  # Run the task in the background
+    # Use asyncio.gather to run the task asynchronously
+    task = celery_app.send_task(
+        "save_image", args=[image.filename, image_content, token]
+    )
+    asyncio.create_task(
+        wait_for_task_completion(task)
+    )  # Run the task in the background
     return {"status": "File upload started"}
 
- 
+
 @api_router.post("/train_inference")
 async def train(input: UserAlbumInput):
- 
     # Use asyncio.gather to run the task asynchronously
-    task = celery_app.send_task("train_inference", args=[input.dict(), token, request_id])
-    
+    task = celery_app.send_task(
+        "train_inference", args=[input.dict(), token, request_id]
+    )
+
     return {"task_id": task.id}
 
 
@@ -310,6 +315,7 @@ async def wait_for_task_completion(task):
     except Exception as e:
         # Handle any other exceptions
         print("Error occurred:", e)
+
 
 app.include_router(api_router)
 

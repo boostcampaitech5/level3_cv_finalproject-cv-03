@@ -1,4 +1,4 @@
-from .gpt3_api import get_description, get_translation
+from .gpt3_api import get_description, get_translation, get_vibes
 from .main import *
 from .model import StableDiffusion, StableDiffusionXL
 from .streamlit_frontend import main

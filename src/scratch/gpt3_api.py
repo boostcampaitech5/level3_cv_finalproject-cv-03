@@ -26,7 +26,6 @@ def get_description(
     message = [
         f"Tell me 2 to 1 words (objects) that come to mind when you saw \n{lyrics}\n seperated by commas"
     ]
-        
 
     # Set up the API call
     responses = []
@@ -51,6 +50,7 @@ def get_description(
         responses.append(response["choices"][0]["message"]["content"])
 
     return ",".join(responses)
+
 
 def get_vibes(
     lyrics: str,
@@ -95,6 +95,7 @@ def get_vibes(
         responses.append(response["choices"][0]["message"]["content"])
 
     return ",".join(responses)
+
 
 def get_dreambooth_prompt(
     lyrics: str,

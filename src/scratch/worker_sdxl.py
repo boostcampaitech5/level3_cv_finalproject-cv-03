@@ -70,6 +70,7 @@ def generate_cover(input, request_id):
 
     lyric = input["lyric"].replace(" ", "").replace("\n", "")
     prompt = ""
+    negative_prompt = ""
     while True:
         if lyric:
             summarization = get_description(
@@ -84,9 +85,9 @@ def generate_cover(input, request_id):
                 input["song_name"],
                 input["genre"],
             )
-            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {vibe} atmosphere visualized for a album cover with {summarization} on it"
+            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
         else:
-            prompt = f"Pictorialist photo of a {input['genre']} album cover with a {vibe} atmosphere visualized for a album cover with {summarization} on it"
+            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)
@@ -110,10 +111,10 @@ def generate_cover(input, request_id):
         with torch.no_grad():
             image = model.pipeline(
                 prompt=prompt,
-                prompt_2=prompt,
+                prompt_2=negative_prompt,
                 height=public_config["generate"]["height"],
                 width=public_config["generate"]["width"],
-                num_inference_steps=100,
+                num_inference_steps=20,
                 generator=generator,
             ).images[0]
 

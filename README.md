@@ -31,19 +31,19 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
         <td align="center"><a href="https://github.com/jjjuuuun"><img src="https://avatars.githubusercontent.com/u/86290308?v=4?s=100" width="100px;" alt=""/><br /><sub><b>김준영</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=jjjuuuun" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Data">🔣</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/blob/develop/.github/workflows/testing.yaml" title="Test">⚠️</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/blob/main/.github/workflows/testing.yaml" title="Test">⚠️</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/issues" title="Talk">📢</a>
         </td>
         <td align="center"><a href="https://github.com/helpmeIamnewbie"><img src="https://avatars.githubusercontent.com/u/102274521?v=4?s=100" width="100px;" alt=""/><br /><sub><b>전형우</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=helpmeIamnewbie" title="Code">💻</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/tree/develop/src/scratch/dreambooth" title="Infra">🚇</a>
+        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/tree/main/src/scratch/dreambooth" title="Infra">🚇</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=" title="Research">🔬</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Test">⚠️</a>
         </td>
         <td align="center"><a href="https://github.com/CheonJiEun"><img src="https://avatars.githubusercontent.com/u/53997172?v=4?s=100" width="100px;" alt=""/><br /><sub><b>천지은</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=CheonJiEun" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/pulls?q=is%3Apr+is%3Aclosed" title="Research">🔬</a>
-                <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/tree/develop/src/scratch/htdocs" title="Design">🎨</a>
+                <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/tree/main/src/scratch/htdocs" title="Design">🎨</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Test">⚠️</a>
         </td>
         <td align="center"><a href="https://github.com/Eyecaramba"><img src="https://avatars.githubusercontent.com/u/86091292?v=4?s=100" width="100px;" alt=""/><br /><sub><b>신우진</b></sub></a><br />
@@ -102,8 +102,8 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 3. [Dreambooth](https://www.notion.so/Dreambooth-7d39d2c78b8743c1ba97dfa50d7110f2)✔️
 4. [Scratch](https://www.notion.so/Scratch-548c2eb084e84209968b5494742f7811)✔️
 5. [Experiments](https://www.notion.so/Experiments-2f2a4e824cd04168b3ed006d530a787b)✔️
-6. [발표자료]()⭐
-7. [발표영상]()⭐
+6. [발표자료](https://www.notion.so/a792509efb004cb6b1be92e3cd0e2d7d)⭐
+7. [발표영상](https://www.youtube.com/watch?v=3K4XhE7L0Pg)⭐
 
 # 🗒️ 프로젝트 결과
 ## 데이터셋
@@ -144,6 +144,7 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
     │    ├── dags
     │    ├── dreambooth
     │    ├── gcp
+    │    ├── htdocs
     │    ├── Makefile
     │    ├── gpt3-api.py
     │    ├── main.py
@@ -166,9 +167,9 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 
 
 # 🤔 Wrap-Up Report
-- [Wrap-Up Report]()⭐
+- [Wrap-Up Report](https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/blob/main/docs/%EC%B5%9C%EC%A2%85%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8_CV_%ED%8C%80%20%EB%A6%AC%ED%8F%AC%ED%8A%B8(03%EC%A1%B0).pdf)⭐
 
 
 # ⚠️저작권 표기
 - [멜론 음원사이트](https://www.melon.com/) <br/>
-- <a href="https://www.flaticon.com/kr/free-icons/" title="앨범 아이콘">앨범 아이콘  제작자: Freepik - Flaticon</a>
+- <a href="https://www.flaticon.com/kr/" title="앨범 아이콘">앨범 아이콘  제작자: Freepik - Flaticon</a>

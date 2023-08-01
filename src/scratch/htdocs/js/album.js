@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 1; i <= 10; i++) {
                 cur_review = "starpoint_" + i
                 if (document.getElementById(cur_review).checked == true) {
-                    user_starpoint = Math.round(i / 2);
+                    user_starpoint = (i / 2);
                     break;
                 }
             }

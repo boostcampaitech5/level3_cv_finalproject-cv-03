@@ -55,6 +55,9 @@ celery_app = Celery(
 )
 celery_app.conf.worker_pool = "solo"
 
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
+
 device = "cuda" if cuda.is_available() else "cpu"
 
 

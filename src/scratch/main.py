@@ -74,6 +74,10 @@ celery_app = Celery(
 )
 
 
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
+
+
 def get_random_string(length):
     # choose from all lowercase letter
     letters = string.ascii_lowercase

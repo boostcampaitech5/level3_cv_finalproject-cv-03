@@ -69,8 +69,8 @@ app.add_middleware(
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["local_redis_server"],
-    backend=redis_config["local_redis_server"],
+    broker=redis_config["redis_server_ip"],
+    backend=redis_config["redis_server_ip"],
 )
 
 

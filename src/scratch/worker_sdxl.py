@@ -40,8 +40,11 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["redis_server_ip"],
-    backend=redis_config["redis_server_ip"],
+    broker="redis://kimseungki1011:cv03@34.22.72.143:6379/0",
+    backend="redis://kimseungki1011:cv03@34.22.72.143:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    worker_heartbeat=280,
 )
 
 celery_app.conf.worker_pool = "solo"
@@ -61,7 +64,7 @@ def setup_worker_init(*args, **kwargs):
     model.get_model()
 
 
-@celery_app.task(name="generate_cover")
+@celery_app.task(name="generate_cover", queue="sdxl")
 def generate_cover(input, request_id):
     # os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     device = "cuda" if cuda.is_available() else "cpu"

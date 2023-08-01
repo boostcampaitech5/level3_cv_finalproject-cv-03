@@ -50,8 +50,11 @@ login(token=huggingface_config["token"], add_to_git_credential=True)
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["redis_server_ip"],
-    backend=redis_config["redis_server_ip"],
+    broker="redis://kimseungki1011:cv03@34.22.72.143:6379/0",
+    backend="redis://kimseungki1011:cv03@34.22.72.143:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    worker_heartbeat=280,
 )
 celery_app.conf.worker_pool = "solo"
 
@@ -61,7 +64,7 @@ celery_app.conf.timezone = "Asia/Seoul"
 device = "cuda" if cuda.is_available() else "cpu"
 
 
-@celery_app.task(name="save_image")
+@celery_app.task(name="save_image", queue="dreambooth")
 def save_image(filename, image_content, token):
     # Define the directory where to save the image
     image_dir = Path("src/scratch/dreambooth/data/users") / token
@@ -78,7 +81,7 @@ def save_image(filename, image_content, token):
     return {"image_url": str(image_dir / filename)}
 
 
-@celery_app.task(name="train_inference")
+@celery_app.task(name="train_inference", queue="dreambooth")
 def train_inference(input, token, request_id):
     try:
         global model

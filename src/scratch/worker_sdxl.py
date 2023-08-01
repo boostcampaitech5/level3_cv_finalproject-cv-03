@@ -27,6 +27,7 @@ from .gpt3_api import get_description, get_translation, get_vibes
 from .gcp.cloud_storage import GCSUploader
 from .gcp.bigquery import BigQueryLogger
 from .utils import load_yaml
+from .translation import translate_genre_to_english
 
 
 # Load config
@@ -59,7 +60,7 @@ def setup_worker_init(*args, **kwargs):
 
 @celery_app.task(name="generate_cover")
 def generate_cover(input, request_id):
-    os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+    # os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     device = "cuda" if cuda.is_available() else "cpu"
 
     # Request time
@@ -85,20 +86,22 @@ def generate_cover(input, request_id):
                 input["song_name"],
                 input["genre"],
             )
-            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
+            genre = translate_genre_to_english(input["genre"])
+
+            prompt = f"A photo or picture of a {genre} cover with a {vibe} atmosphere visualized with {summarization} objects on it"
         else:
-            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
+            prompt = f"A photo or picture of a {genre} album cover with a {vibe} atmosphere visualized with {summarization} objeects on it"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)
         prompt = re.sub("[()-]", " ", prompt)
         prompt = re.sub("\s+", " ", prompt)
 
-        if len(prompt) <= 150:
+        if len(prompt) <= 200:
             break
 
-    if model is None:
-        time.sleep(20)
+    # if model is None:
+    #     time.sleep(20)
 
     seeds = np.random.randint(
         public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
@@ -111,10 +114,10 @@ def generate_cover(input, request_id):
         with torch.no_grad():
             image = model.pipeline(
                 prompt=prompt,
-                prompt_2=negative_prompt,
+                prompt_2=prompt,
                 height=public_config["generate"]["height"],
                 width=public_config["generate"]["width"],
-                num_inference_steps=20,
+                num_inference_steps=220,
                 generator=generator,
             ).images[0]
 

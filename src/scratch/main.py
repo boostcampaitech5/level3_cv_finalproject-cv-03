@@ -41,6 +41,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 train_config = load_yaml(os.path.join("src/scratch/dreambooth", "dreambooth.yaml"))
+redis_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "redis")
 bigquery_config = gcp_config["bigquery"]
 
 
@@ -68,8 +69,8 @@ app.add_middleware(
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0",
+    broker=redis_config["redis_server_ip"],
+    backend=redis_config["redis_server_ip"],
 )
 
 

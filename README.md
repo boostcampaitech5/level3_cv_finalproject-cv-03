@@ -16,8 +16,6 @@
         <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
         <img src="https://img.shields.io/badge/celery-37814A?style=for-the-badge&logo=celery&logoColor=white">
         <img src="https://img.shields.io/badge/github_actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
-        <img src="https://img.shields.io/badge/opencv-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white">
-        <img src="https://img.shields.io/badge/openai-412991?style=for-the-badge&logo=openai&logoColor=white">
     </div>
 </p>
 
@@ -199,4 +197,4 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 
 # ⚠️저작권 표기
 - [멜론 음원사이트](https://www.melon.com/) <br/>
-- <a href="https://www.flaticon.com/kr/" title="앨범 아이콘">앨범 아이콘  제작자: Freepik - Flaticon</a>
+- [앨범 아이콘 출처](https://www.flaticon.com/kr/) <br/>

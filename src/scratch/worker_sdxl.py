@@ -47,7 +47,7 @@ celery_app = Celery(
     worker_heartbeat=280,
 )
 
-# celery_app.conf.worker_pool = "solo"
+celery_app.conf.worker_pool = "solo"
 
 # Set Celery Time-zone
 celery_app.conf.timezone = "Asia/Seoul"
@@ -94,9 +94,11 @@ def generate_cover(input, request_id):
             )
             genre = translate_genre_to_english(input["genre"])
 
-            prompt = f"A photo or picture of a {genre} cover with a {vibe} atmosphere visualized with {summarization} objects on it"
+            prompt = f"Korean music album photo of a {get_translation(input['artist_name'])} who sang {get_translation(input['song_name'])}, full body, on {summarization}, Bounced lighting, dutch angle, Aaton LTR"
+            new_prompt = f"A photo or picture of a {genre} album cover that has a {vibe} vibe visualzied and has {summarization} on it"
         else:
-            prompt = f"A photo or picture of a {genre} album cover with a {vibe} atmosphere visualized with {summarization} objeects on it"
+            prompt = f"Korean music album photo of a {get_translation(input['artist_name'])} who sang {get_translation(input['song_name'])}, full body, Bounced lighting, dutch angle, Aaton LTR"
+            new_prompt = f"A photo or picture of a {genre} album cover that has a {vibe} vibe visualzied and has {summarization} on it"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)
@@ -123,7 +125,7 @@ def generate_cover(input, request_id):
                 prompt_2=prompt,
                 height=public_config["generate"]["height"],
                 width=public_config["generate"]["width"],
-                num_inference_steps=220,
+                num_inference_steps=100,
                 generator=generator,
             ).images[0]
 
@@ -137,6 +139,34 @@ def generate_cover(input, request_id):
             [
                 byte_arr,
                 f"{request_id}_image_{i}.{public_config['generate']['save_format']}",
+            ]
+        )
+        images.append(byte_arr)
+
+    for i, seed in enumerate(seeds):
+        generator = torch.Generator(device=device).manual_seed(int(seed))
+
+        # Generate Images
+        with torch.no_grad():
+            image = model.pipeline(
+                prompt=new_prompt,
+                prompt_2=new_prompt,
+                height=public_config["generate"]["height"],
+                width=public_config["generate"]["width"],
+                num_inference_steps=100,
+                generator=generator,
+            ).images[0]
+
+        # Convert to base64-encoded string
+        byte_arr = io.BytesIO()
+        image.save(byte_arr, format=public_config["generate"]["save_format"])
+        byte_arr = byte_arr.getvalue()
+
+        # Upload to GCS
+        urls.append(
+            [
+                byte_arr,
+                f"{request_id}_image_{i+2}.{public_config['generate']['save_format']}",
             ]
         )
         images.append(byte_arr)

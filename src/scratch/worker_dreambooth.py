@@ -56,7 +56,7 @@ dream_app = Celery(
     enable_utc=False,
     worker_heartbeat=280,
 )
-# dream_app.conf.worker_pool = "solo"
+dream_app.conf.worker_pool = "solo"
 
 # Set Celery Time-zone
 dream_app.conf.timezone = "Asia/Seoul"

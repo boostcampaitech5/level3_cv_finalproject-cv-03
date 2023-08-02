@@ -41,6 +41,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 gcp_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "gcp")
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 train_config = load_yaml(os.path.join("src/scratch/dreambooth", "dreambooth.yaml"))
+redis_config = load_yaml(os.path.join("src/scratch/config", "private.yaml"), "redis")
 bigquery_config = gcp_config["bigquery"]
 
 
@@ -68,9 +69,35 @@ app.add_middleware(
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0",
+    broker="redis://kimseungki1011:cv03@localhost:6379/0",
+    backend="redis://kimseungki1011:cv03@localhost:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    beat_schedule={
+        "check_worker_heartbeats": {
+            "task": "celery.ping",
+            "schedule": 180,  # Check worker heartbeats every 60 seconds
+        },
+    },
 )
+
+dream_app = Celery(
+    "tasks_dream",
+    broker="redis://kimseungki1011:cv03@localhost:6379/0",
+    backend="redis://kimseungki1011:cv03@localhost:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    beat_schedule={
+        "check_worker_heartbeats": {
+            "task": "celery.ping",
+            "schedule": 180,  # Check worker heartbeats every 60 seconds
+        },
+    },
+)
+
+
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
 
 
 def get_random_string(length):
@@ -284,19 +311,31 @@ async def upload_image(image: UploadFile = File(...)):
     image_content = base64.b64encode(image_bytes).decode()
 
     # Use asyncio.gather to run the task asynchronously
-    task = celery_app.send_task(
+    task = dream_app.send_task(
         "save_image", args=[image.filename, image_content, token]
     )
-    asyncio.create_task(
-        wait_for_task_completion(task)
-    )  # Run the task in the background
+    # asyncio.create_task(
+    #     wait_for_task_completion(task)
+    # )  # Run the task in the background
+    try:
+        # Wait for the task to complete with a timeout of 60 seconds
+        result = task.get(timeout=60)
+        # Process the result if needed
+        print(result)
+    except TimeoutError:
+        # Task took too long to complete
+        print("Task timed out.")
+        return {"status": "Task timed out. Please check the status later."}
+    except Exception as e:
+        # Handle any other exceptions
+        print("Error occurred:", e)
+
     return {"status": "File upload started"}
 
 
 @api_router.post("/train_inference")
 async def train(input: UserAlbumInput):
-    # Use asyncio.gather to run the task asynchronously
-    task = celery_app.send_task(
+    task = dream_app.send_task(
         "train_inference", args=[input.dict(), token, request_id]
     )
 
@@ -304,17 +343,17 @@ async def train(input: UserAlbumInput):
 
 
 # Helper function to wait for task completion
-async def wait_for_task_completion(task):
-    try:
-        result = task.get()
-        # Process the result if needed
-        print(result)
-    except asyncio.TimeoutError:
-        # Task took too long to complete
-        print("Task timed out.")
-    except Exception as e:
-        # Handle any other exceptions
-        print("Error occurred:", e)
+# async def wait_for_task_completion(task):
+#     try:
+#         result = task.get()
+#         # Process the result if needed
+#         print(result)
+#     except asyncio.TimeoutError:
+#         # Task took too long to complete
+#         print("Task timed out.")
+#     except Exception as e:
+#         # Handle any other exceptions
+#         print("Error occurred:", e)
 
 
 app.include_router(api_router)

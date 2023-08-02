@@ -24,7 +24,7 @@ def get_description(
 
     # message
     message = [
-        f"Tell me 2 to 1 words (objects) that come to mind when you saw \n{lyrics}\n seperated by commas"
+        f"Tell me 2 objects that come to mind when you see these lyrics \n{lyrics}\n seperated by commas"
     ]
 
     # Set up the API call

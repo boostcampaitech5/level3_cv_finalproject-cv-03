@@ -34,14 +34,19 @@ celery_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"), "ce
 public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 
 
-# Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["redis_server_ip"],
-    backend=redis_config["redis_server_ip"],
+    broker="redis://kimseungki1011:cv03@localhost:6379/0",
+    backend="redis://kimseungki1011:cv03@localhost:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    worker_heartbeat=280,  # Set the heartbeat timeout in seconds (e.g., 180 seconds)
 )
 
 celery_app.conf.worker_pool = "solo"
+
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
 
 gcs_uploader = GCSUploader(gcp_config)
 bigquery_logger = BigQueryLogger(gcp_config)

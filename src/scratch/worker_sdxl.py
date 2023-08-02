@@ -27,6 +27,7 @@ from .gpt3_api import get_description, get_translation, get_vibes
 from .gcp.cloud_storage import GCSUploader
 from .gcp.bigquery import BigQueryLogger
 from .utils import load_yaml
+from .translation import translate_genre_to_english
 
 
 # Load config
@@ -39,11 +40,17 @@ public_config = load_yaml(os.path.join("src/scratch/config", "public.yaml"))
 # Initialize Celery
 celery_app = Celery(
     "tasks",
-    broker=redis_config["redis_server_ip"],
-    backend=redis_config["redis_server_ip"],
+    broker="redis://kimseungki1011:cv03@34.22.72.143:6379/0",
+    backend="redis://kimseungki1011:cv03@34.22.72.143:6379/1",
+    timezone="Asia/Seoul",  # Set the time zone to KST
+    enable_utc=False,
+    worker_heartbeat=280,
 )
 
 celery_app.conf.worker_pool = "solo"
+
+# Set Celery Time-zone
+celery_app.conf.timezone = "Asia/Seoul"
 
 gcs_uploader = GCSUploader(gcp_config)
 bigquery_logger = BigQueryLogger(gcp_config)
@@ -57,7 +64,7 @@ def setup_worker_init(*args, **kwargs):
     model.get_model()
 
 
-@celery_app.task(name="generate_cover")
+@celery_app.task(name="generate_cover", queue="sdxl")
 def generate_cover(input, request_id):
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     device = "cuda" if cuda.is_available() else "cpu"
@@ -85,20 +92,24 @@ def generate_cover(input, request_id):
                 input["song_name"],
                 input["genre"],
             )
-            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
+            genre = translate_genre_to_english(input["genre"])
+
+            prompt = f"Korean music album photo of a {get_translation(input['artist_name'])} who sang {get_translation(input['song_name'])}, full body, on {summarization}, Bounced lighting, dutch angle, Aaton LTR"
+            new_prompt = f"A photo or picture of a {genre} album cover that has a {vibe} vibe visualzied and has {summarization} on it"
         else:
-            prompt = f"A photo of a {input['genre']} album cover with a {vibe} atmosphere visualized and {summarization} on it"
+            prompt = f"Korean music album photo of a {get_translation(input['artist_name'])} who sang {get_translation(input['song_name'])}, full body, Bounced lighting, dutch angle, Aaton LTR"
+            new_prompt = f"A photo or picture of a {genre} album cover that has a {vibe} vibe visualzied and has {summarization} on it"
 
         prompt = re.sub("\n", ", ", prompt)
         prompt = re.sub("[ㄱ-ㅎ가-힣]+", " ", prompt)
         prompt = re.sub("[()-]", " ", prompt)
         prompt = re.sub("\s+", " ", prompt)
 
-        if len(prompt) <= 150:
+        if len(prompt) <= 200:
             break
 
-    if model is None:
-        time.sleep(20)
+    # if model is None:
+    #     time.sleep(20)
 
     seeds = np.random.randint(
         public_config["generate"]["max_seed"], size=public_config["generate"]["n_gen"]
@@ -111,10 +122,10 @@ def generate_cover(input, request_id):
         with torch.no_grad():
             image = model.pipeline(
                 prompt=prompt,
-                prompt_2=negative_prompt,
+                prompt_2=prompt,
                 height=public_config["generate"]["height"],
                 width=public_config["generate"]["width"],
-                num_inference_steps=20,
+                num_inference_steps=100,
                 generator=generator,
             ).images[0]
 
@@ -128,6 +139,34 @@ def generate_cover(input, request_id):
             [
                 byte_arr,
                 f"{request_id}_image_{i}.{public_config['generate']['save_format']}",
+            ]
+        )
+        images.append(byte_arr)
+
+    for i, seed in enumerate(seeds):
+        generator = torch.Generator(device=device).manual_seed(int(seed))
+
+        # Generate Images
+        with torch.no_grad():
+            image = model.pipeline(
+                prompt=new_prompt,
+                prompt_2=new_prompt,
+                height=public_config["generate"]["height"],
+                width=public_config["generate"]["width"],
+                num_inference_steps=100,
+                generator=generator,
+            ).images[0]
+
+        # Convert to base64-encoded string
+        byte_arr = io.BytesIO()
+        image.save(byte_arr, format=public_config["generate"]["save_format"])
+        byte_arr = byte_arr.getvalue()
+
+        # Upload to GCS
+        urls.append(
+            [
+                byte_arr,
+                f"{request_id}_image_{i+2}.{public_config['generate']['save_format']}",
             ]
         )
         images.append(byte_arr)

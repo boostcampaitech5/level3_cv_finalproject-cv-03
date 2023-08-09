@@ -37,7 +37,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=jjjuuuun" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Data">🔣</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/blob/main/.github/workflows/testing.yaml" title="Test">⚠️</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/issues" title="Talk">📢</a>
+        <a href="https://www.youtube.com/watch?v=3K4XhE7L0Pg" title="Talk">📢</a>
         </td>
         <td align="center"><a href="https://github.com/helpmeIamnewbie"><img src="https://avatars.githubusercontent.com/u/102274521?v=4?s=100" width="100px;" alt=""/><br /><sub><b>전형우</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=helpmeIamnewbie" title="Code">💻</a>
@@ -120,12 +120,17 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ### 1. Stable Diffusion
 Stable Diffusion은 높은 품질의 이미지를 생성하고, Text-To-Image 작업을 가능하게 해주는 모델입니다. 사용자로부터 입력 받은 노래 정보를 ChatGPT API를 통해 Prompt로 생성한 후, 이를 Stable Diffusion 모델에 입력하여 앨범 커버를 생성합니다.
-<img align="center" src="imgs/stablediffusion.jpeg">
+
+<p align="center">
+<img align="center" width ="520" src="imgs/sdxl.gif">
+</p>
 
 ### 2. Dreambooth
 Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 가수의 사진을 입력 받고 이를 통해 Fine-Tuning하여 가수 사진이 포함된 앨범 커버를 생성해줍니다.
-<img align="center" src="imgs/dreambooth.jpeg">
 
+<p align="center">
+<img align="center" width ="520" src="imgs/dreambooth.gif">
+</p>
 
 <br/>
 

@@ -120,14 +120,17 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ### 1. Stable Diffusion
 Stable Diffusion은 높은 품질의 이미지를 생성하고, Text-To-Image 작업을 가능하게 해주는 모델입니다. 사용자로부터 입력 받은 노래 정보를 ChatGPT API를 통해 Prompt로 생성한 후, 이를 Stable Diffusion 모델에 입력하여 앨범 커버를 생성합니다.
-<div style="display: flex; justify-content: center; align-items: center;">
+
+<p align="center">
 <img align="center" src="imgs/sdxl.gif">
-</div>
+</p>
+
 ### 2. Dreambooth
 Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 가수의 사진을 입력 받고 이를 통해 Fine-Tuning하여 가수 사진이 포함된 앨범 커버를 생성해줍니다.
-<div style="display: flex; justify-content: center; align-items: center;">
+
+<p align="center">
 <img align="center" src="imgs/dreambooth.gif">
-</div>
+</p>
 
 <br/>
 

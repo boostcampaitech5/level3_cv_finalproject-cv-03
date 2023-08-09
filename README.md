@@ -37,7 +37,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=jjjuuuun" title="Code">💻</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03" title="Data">🔣</a>
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/blob/main/.github/workflows/testing.yaml" title="Test">⚠️</a>
-        <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/issues" title="Talk">📢</a>
+        <a href="https://www.youtube.com/watch?v=3K4XhE7L0Pg" title="Talk">📢</a>
         </td>
         <td align="center"><a href="https://github.com/helpmeIamnewbie"><img src="https://avatars.githubusercontent.com/u/102274521?v=4?s=100" width="100px;" alt=""/><br /><sub><b>전형우</b></sub></a><br />
         <a href="https://github.com/boostcampaitech5/level3_cv_finalproject-cv-03/commits?author=helpmeIamnewbie" title="Code">💻</a>

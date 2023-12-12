@@ -102,12 +102,12 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 # 👨‍💻 프로젝트 수행
 
-1. [Dataset](https://calico-dance-4bf.notion.site/Dataset-d5eb5c53179a4bc398138109a00236af)✔️
-2. [Stable Diffusion](https://www.notion.so/Stable-Diffusion-Tutorial-b1bf8995d7d14297bd50a6373e89c91a)✔️
-3. [Dreambooth](https://www.notion.so/Dreambooth-7d39d2c78b8743c1ba97dfa50d7110f2)✔️
-4. [Scratch](https://www.notion.so/Scratch-548c2eb084e84209968b5494742f7811)✔️
-5. [Experiments](https://www.notion.so/Experiments-2f2a4e824cd04168b3ed006d530a787b)✔️
-6. [발표자료](https://www.notion.so/a792509efb004cb6b1be92e3cd0e2d7d)⭐
+1. [Dataset](https://jjjuuuun.notion.site/Dataset-d5eb5c53179a4bc398138109a00236af?pvs=4)✔️
+2. [Stable Diffusion](https://jjjuuuun.notion.site/Stable-Diffusion-Tutorial-b1bf8995d7d14297bd50a6373e89c91a?pvs=4)✔️
+3. [Dreambooth](https://jjjuuuun.notion.site/Dreambooth-7d39d2c78b8743c1ba97dfa50d7110f2?pvs=4)✔️
+4. [Scratch](https://jjjuuuun.notion.site/Scratch-548c2eb084e84209968b5494742f7811?pvs=4)✔️
+5. [Experiments](https://jjjuuuun.notion.site/Experiments-2f2a4e824cd04168b3ed006d530a787b?pvs=4)✔️
+6. [발표자료](https://jjjuuuun.notion.site/a792509efb004cb6b1be92e3cd0e2d7d?pvs=4)⭐
 7. [발표영상](https://www.youtube.com/watch?v=3K4XhE7L0Pg)⭐
 
 # 🗒️ 프로젝트 결과
@@ -135,7 +135,6 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
 <br/>
 
 # 🔄️ Directory
-(추후 디렉토리 리펙토링 예정)
 ```bash
 ├── .gitignore
 ├── .pre-commit-config.yaml
@@ -163,12 +162,18 @@ Dreambooth는 Stable Diffusion과는 달리, 사용자로부터 추가적으로 
     │    │    ├── cloud_storage.py
     │    │    └── error.py
     │    ├── htdocs
-    │    │    └── html/css/js/img
+    │    │    ├── images
+    │    │    ├── js
+    │    │    ├── styles
+    │    │    ├── create.html
+    │    │    ├── index.html
+    │    │    └── mypage.html
     │    ├── gpt3-api.py
     │    ├── main.py
     │    ├── model.py
     │    ├── streamlit_frontend.py
     │    ├── train_dreambooth.py
+    │    ├── translation.py
     │    ├── utils.py
     │    ├── worker_dreambooth.py
     │    ├── worker_sd.py
